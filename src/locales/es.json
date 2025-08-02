@@ -2,5 +2,9 @@
    "test": "Test",
    "new-buy-message": "¿Qué hace falta comprar?",
    "add-item": "Añadir",
-   "are-you-sure": "¿Estás seguro?"
+   "are-you-sure": "¿Estás seguro?",
+   "basket-slug-placeholder": "ej: identificador-de-mi-cesta",
+   "connect-basket": "Abre una cesta",
+   "or-create-new-basket": "O crea una nueva",
+   "connect": "Conectar"
 }

@@ -12,9 +12,12 @@ const route = useRoute();
 
 onMounted(() => {
   document.title = "Shopping List";
-  useBasket.currentBasket = route.params.slug;
+  let slug = route.params.slug;
 
-  useBasket.ping();
+  if (slug) {
+    useBasket.currentBasket = slug;
+    useBasket.getBasketProducts();
+  }
 });
 </script>
 

@@ -17,19 +17,63 @@ const basket = defineStore("basket", {
     basketAppVersion: '0.0.1',
     newProductInput: '',
     currentView: 'list',
-    currentBasket: null,
+    currentBasket: '',
+    connectedBaskets: {},
     basketProducts: [],
-    products: [],
+    products: new Map(),
     loading: {
       basketProducts: false,
-    }
+      checkIfBasketExists: false,
+    },
+    newBasketData: {}, 
+    connectBasketData: {},
   }),
 
   actions: {
-    async ping() {
-      const response = await apiClient.get('/api/ping');
-      console.log(response);
+    resetNewBasketData() {
+      this.newBasketData = {
+        name: '',
+        slug: '',
+        password: '',
+        repeatPassword: '',
+      };
     },
+
+    resetConnectBasketData() {
+      this.connectBasketData = {
+        slug: '',
+        password: '',
+      };
+    },
+
+    async checkIfBasketExists(slug) {
+      try {
+        this.loading.checkIfBasketExists = true;
+        const response = await apiClient.get(`/api/basket/check-if-basket-exists/${slug}`);
+        return response.data.exists;
+      } catch (error) {
+        console.error(error);
+        return false;
+      } finally {
+        this.loading.checkIfBasketExists = false;
+      }
+    },
+
+    async getBasketProducts() {
+      try {
+        this.loading.basketProducts = true;
+        const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
+        this.basketProducts = response.data.basketProducts;
+        response.data.products.forEach(product => {
+          this.products.set(product.id, product);
+        });
+        console.log(this.products);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.loading.basketProducts = false;
+      }
+    }
   },
 });
 
