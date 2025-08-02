@@ -12,12 +12,14 @@ const apiClient = axios.create({
 
 const env = import.meta.env.VITE_APP_ENV;
 
-const shop = defineStore("shop", {
+const basket = defineStore("basket", {
   state: () => ({
-    shopVersion: '0.0.1',
-    newItemInput: '',
+    basketAppVersion: '0.0.1',
+    newProductInput: '',
     currentView: 'list',
-    listItems: [],
+    currentBasket: null,
+    basketProducts: [],
+    products: [],
   }),
 
   actions: {
@@ -29,7 +31,7 @@ const shop = defineStore("shop", {
 });
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(shop, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(basket, import.meta.hot));
 }
 
-export default shop;
+export default basket;

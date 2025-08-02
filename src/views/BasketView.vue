@@ -1,14 +1,20 @@
 <script setup>
 import { onMounted } from "vue";
-import shop from "@/stores/shop";
-const useShop = shop();
+import { useRoute } from "vue-router";
+
+import basket from "@/stores/basket";
+const useBasket = basket();
 
 import AddProductInput from "@/views/AddProductInput.vue";
 import BasketList from "@/views/BasketList.vue";
 
+const route = useRoute();
+
 onMounted(() => {
   document.title = "Shopping List";
-  useShop.ping();
+  useBasket.currentBasket = route.params.slug;
+
+  useBasket.ping();
 });
 </script>
 
