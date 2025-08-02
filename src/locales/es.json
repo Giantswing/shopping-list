@@ -1,3 +1,6 @@
 {
-   "test": "Test"
+   "test": "Test",
+   "new-buy-message": "¿Qué hace falta comprar?",
+   "add-item": "Añadir",
+   "are-you-sure": "¿Estás seguro?"
 }

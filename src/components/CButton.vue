@@ -1,139 +1,183 @@
 <script setup>
-import { ref, computed } from "vue";
-
-const pressed = ref(false);
-const emit = defineEmits(["onClick"]);
+import { ref, onMounted, onUnmounted } from "vue";
 
 const props = defineProps({
-   inClass: {
-      type: [String, Array],
-      type: [String, Array],
-      default: "px-6 py-4 h-10 font-semibold md:py-2 xl:px-10 bg-blue-active rounded-md text-white hover:brightness-[1.2] transition duration-100",
-      required: false,
-   },
-   addedClass: {
-      type: [String, Array],
-      default: () => "",
-      required: false,
-   },
-   addedClass: {
-      type: [String, Array],
-      default: () => "",
-      required: false,
-   },
-   link: {
-      default: null,
-      required: false,
-   },
-   disabledLink: {
-      default: false,
-      required: false,
-   },
-   linkNewTab: {
-      default: true,
-      required: false,
-   },
-   delayClick: {
-      default: false,
-      required: false,
-   },
-   customClickClass: {
-      default: null, 
-      required: false,
-   },
-   isLoading: {
-      default: false,
-      required: false,
-   },
-   hideContentWhileLoading: {
-      default: false,
-      required: false,
-   },
-})
+  isDisabled: {
+    type: Boolean,
+    default: false,
+  },
+
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+
+  safetyConfirmation: {
+    type: Boolean,
+    default: false,
+  },
+
+  safetyConfirmationColor: {
+    type: String,
+    default: "#e28743",
+  },
+
+  safetyConfirmationTimeout: {
+    type: Number,
+    default: 8000,
+  },
+
+  addedClass: {
+    type: String,
+    default: "",
+  },
+
+  link: {
+    type: String,
+    default: "",
+  },
+
+  backgroundColor: {
+    type: String,
+    default: "#262D63",
+  },
+
+  delayToBeClickableAgain: {
+    type: Number,
+    default: 300,
+  },
+});
+
+const emit = defineEmits(["onClick"]);
+
+const canClick = ref(true);
+const confirmationState = ref(0);
+const delayToBeClickableAgain = ref(props.delayToBeClickableAgain);
+const safetyConfirmationTimer = ref(null);
+const delayToBeClickableAgainTimer = ref(null);
+
+onMounted(() => {
+  if (props.safetyConfirmation) {
+    delayToBeClickableAgain.value = 700;
+  }
+});
 
 function handleClick() {
-   if(props.isLoading) return;
-   pressed.value = true;
+  /* Early returns */
+  if (props.isDisabled) return;
+  if (props.isLoading) return;
+  if (!canClick.value) return;
 
-   if(props.delayClick == false) {
-      emit("onClick");
+  /* Delay to be clickable again */
+  if (delayToBeClickableAgain.value > 0) {
+    canClick.value = false;
+    delayToBeClickableAgainTimer.value = setTimeout(() => {
+      canClick.value = true;
+    }, delayToBeClickableAgain.value);
+  }
 
-      setTimeout(() => {
-         pressed.value = false;
-      }, 200);
-   } else {
-      requestAnimationFrame(() => {
-         setTimeout(() => {
-            if(props.delayClick) {
-               emit("onClick");
-            }
+  /* Safety confirmation */
+  if (props.safetyConfirmation) {
+    confirmationState.value++;
 
-            pressed.value = false;
-         }, 200);
-      });
-   }
+    if (confirmationState.value >= 2) {
+      confirmationState.value = 0;
+      if (safetyConfirmationTimer.value) {
+        clearTimeout(safetyConfirmationTimer.value);
+      }
+    } else {
+      if (safetyConfirmationTimer.value) {
+        clearTimeout(safetyConfirmationTimer.value);
+      }
+
+      safetyConfirmationTimer.value = setTimeout(() => {
+        confirmationState.value = 0;
+      }, props.safetyConfirmationTimeout);
+
+      return;
+    }
+  }
+
+  emit("onClick");
 }
 
+onUnmounted(() => {
+  if (safetyConfirmationTimer.value) {
+    clearTimeout(safetyConfirmationTimer.value);
+  }
+
+  if (delayToBeClickableAgainTimer.value) {
+    clearTimeout(delayToBeClickableAgainTimer.value);
+  }
+});
 </script>
 
 <template>
-   <component 
-      :is="props.link ? 'a' : 'button'"
+  <Component
+    :is="link ? 'a' : 'button'"
+    :to="link"
+    :disabled="isDisabled"
+    :class="[
+      'px-6 py-1 transition-all duration-100 relative text-white whitespace-nowrap rounded-md overflow-hidden select-none group/button hover:brightness-[1.25] hover:saturate-[1.25] hover:translate-y-[-1px] active:scale-[1.1] active:delay-[-50ms] hover:shadow-sm',
+      canClick && !isLoading ? 'cursor-pointer' : 'cursor-auto',
+      isLoading ? '!cursor-not-allowed' : '',
+      isDisabled ? 'opacity-50 saturate-0 pointer-events-none' : '',
+      addedClass,
+    ]"
+    :style="`background-color: ${backgroundColor}`"
+    @click.prevent="handleClick"
+  >
+    <!-- Loading effect -->
+    <Transition name="tr-fade">
+      <div v-if="props.isLoading" class="absolute inset-0 skeleton" />
+    </Transition>
 
+    <!-- Safety confirmation -->
+    <div
       :class="[
-         props.inClass,
-         props.addedClass,
-         props.isLoading ? 'cursor-not-allowed' : '',
-         pressed ? `${props.customClickClass ? props.customClickClass : 'scale-90'}` : 'scale-100 hover:scale-105',
-         'flex items-center justify-center disabled:saturate-0 disabled:hover:scale-100 disabled:cursor-not-allowed disabled:bg-opacity-90 disabled:bg-gray-400 disabled:select-none w-max select-none transition-all relative overflow-hidden cursor-pointer leading-tight',
-         props.disabledLink ? '!cursor-not-allowed !pointer-events-none !bg-gray-400' : '', 
+        confirmationState === 1 ? 'translate-x-0' : 'translate-x-[-120%]',
+        'absolute inset-0 left-[-35px] right-[-35px] flex items-center justify-center z-50 transition-all duration-[600ms] ease-elastic pointer-events-none text-shadow-sm shadow-black/50 rounded-xl',
       ]"
+      :style="`background-color: ${props.safetyConfirmationColor}`"
+    >
+      <p class="text-white text-center text-sm font-bold group-hover/button:brightness-[0.8] transition-all">
+        {{ $t("are-you-sure") }}
+      </p>
+    </div>
 
-      :href="props.link"
-      :target="props.linkNewTab ? '_blank' : '_self'"
+    <div class="group-active/button:scale-[0.6] group-active/button:delay-[-100ms] transition-all">
+      <div class="relative z-10 grid grid-cols-1 grid-rows-1">
+        <div
+          class="col-start-1 row-start-1 flex items-center justify-center"
+          :class="[props.isLoading ? 'opacity-100' : 'opacity-0']"
+        >
+          <CIcon :icon="'svg-spinners:3-dots-scale-middle'" class="w-[10px] h-[10px] scale-[3.0]" />
+        </div>
 
-      @click="handleClick"
-   >
-
-      <Transition name="tr-fade">
-         <div
-            v-if="props.isLoading"
-            class="absolute inset-0 skeleton -z-20"
-         />
-      </Transition>
-
-      <div v-if="props.hideContentWhileLoading" >
-         <MintyIcon :icon="'eos-icons:three-dots-loading'" v-if="props?.isLoading" class="z-10 text-6xl" />
-         <slot v-else />
+        <div
+          class="col-start-1 row-start-1 group-hover/button:brightness-[0.8] transition-all flex justify-center items-center gap-x-2"
+          :class="[isLoading || confirmationState === 1 ? 'opacity-0' : 'opacity-100']"
+        >
+          <slot />
+        </div>
       </div>
-
-      <div class="contents" v-else>
-         <slot />
-
-         <MintyIcon :icon="'eos-icons:three-dots-loading'" v-if="props?.isLoading" class="z-10 ml-4 text-6xl" />
-      </div>
-
-   </component>
+    </div>
+  </Component>
 </template>
 
 <style lang="scss" scoped>
-
 @keyframes loading {
-0% {
-   background-position: 0% 0%;
-}
-100% {
-   background-position: -200% 0%;
-}
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: -200% 0%;
+  }
 }
 
 .skeleton {
-   z-index: -10;
-
-   background: linear-gradient(90deg, #909090 25%, #808080 50%, #909090 75%);
-   background-size: 200% 100%;
-   animation: loading 1s linear infinite;
+  background: linear-gradient(90deg, #909090 25%, #808080 50%, #909090 75%);
+  background-size: 200% 100%;
+  animation: loading 1s linear infinite;
 }
-
 </style>
-
