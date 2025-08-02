@@ -1,20 +1,21 @@
-import { defineStore } from "pinia";
+import { defineStore, acceptHMRUpdate  } from "pinia";
 
 import toast from "@/includes/toast";
 import axios from "axios";
 import moment from "moment";
 import i18n from "../includes/i18n.js";
 
-// const apiClient = axios.create({
-//   baseURL: import.meta.env.VITE_API_URL,
-//   withCredentials: true,
-// });
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
+});
 
 const env = import.meta.env.VITE_APP_ENV;
 
-export default defineStore("registration", {
+const shop = defineStore("shop", {
   state: () => ({
-    tutorVersion: '0.0.1',
+    shopVersion: '0.0.1',
+    newItemInput: '',
   }),
 
   actions: {
@@ -24,5 +25,8 @@ export default defineStore("registration", {
   },
 });
 
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(shop, import.meta.hot));
+}
 
-
+export default shop;
