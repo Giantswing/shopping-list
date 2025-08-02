@@ -1,0 +1,270 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+
+/* Transition animations for <Transition> names, use names like "tr-translate" */
+
+/* Translate */
+
+.tr-appear-delay-move,
+.tr-appear-delay-enter-active,
+.tr-appear-delay-leave-active {
+  transition: all 0.1s ease;
+}
+
+.tr-appear-delay-enter-from,
+.tr-appear-delay-leave-to {
+  opacity: 0;
+}
+
+.tr-bounce-enter-active,
+.tr-bounce-leave-active {
+  transition: all 0.1s ease;
+}
+
+.tr-bounce-enter-from,
+.tr-bounce-leave-to {
+  opacity: 0;
+  transform: scale(0.5);
+}
+
+.tr-translate-enter-active,
+.tr-translate-leave-active {
+  transition: all 0.1s ease;
+}
+
+.tr-translate-enter-from,
+.tr-translate-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.tr-translate-left-enter-active,
+.tr-translate-left-leave-active {
+  transition: all 0.15s ease;
+}
+
+.tr-translate-left-enter-from,
+.tr-translate-left-leave-to {
+  opacity: 0;
+  @apply -skew-x-12 translate-x-[-320px]
+}
+
+.tr-translate-down-enter-active,
+.tr-translate-down-leave-active {
+  transition: all 0.15s ease;
+}
+
+.tr-translate-down-enter-from,
+.tr-translate-down-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+
+/* Exit up */
+
+.tr-exit-up-enter-active,
+.tr-exit-up-leave-active {
+  transition: margin-top 0.1s ease-in-out, opacity 0.1s ease;
+  max-height: 50vh; 
+}
+
+.tr-exit-up-enter-from,
+.tr-exit-up-leave-to {
+  opacity: 0;
+  margin-top: -100px;
+}
+
+
+/* Fade */
+.tr-fade-enter-active,
+.tr-fade-leave-active {
+  transition: all 0.1s ease;
+}
+
+.tr-fade-enter-from,
+.tr-fade-leave-to {
+  opacity: 0;
+}
+
+
+.tr-list-move,
+.tr-list-enter-active {
+  transition: transform 0.2s ease, opacity 0.5s ease;
+}
+
+.tr-list-enter-from {
+  opacity: 0;
+  transform: translateX(-100%);
+}
+
+.tr-list-leave-active {
+  transition: transform 0.2s ease, opacity 0.8s ease;
+}
+
+.tr-list-leave-to {
+  opacity: 0;
+  transform: translate(-100%, -126%);
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+animations can be calculated correctly. */
+.tr-list-leave-active {
+  background-color: white;
+  position: absolute;
+}
+
+
+.tr-message-list-enter-active,
+.tr-message-list-leave-active {
+  transition: opacity 0.5s, max-height 0.8s, transform 0.2s;
+  max-height: 1000px;
+}
+
+.tr-message-list-enter-from,
+.tr-message-list-leave-to {
+  opacity: 0;
+  max-height: 0;
+  transform: translateX(-150%);
+}
+
+::-webkit-scrollbar {
+   appearance: none;
+}
+
+::-webkit-scrollbar:vertical {
+   @apply w-[6px];
+}
+
+::-webkit-scrollbar:horizontal {
+   @apply h-[10px];
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   @apply bg-transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+   @apply bg-mh-green hover:bg-mh-accent transition duration-200;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+   @apply rounded-r-[3px];
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+   @apply rounded-b-[3px];
+}
+
+
+.heartbeat {
+	-webkit-animation: heartbeat 1.5s ease-in-out 2 both;
+	        animation: heartbeat 1.5s ease-in-out 2 both;
+}
+
+
+/* Keyframes for custom animations */
+
+/**
+ * ----------------------------------------
+ * animation heartbeat
+ * ----------------------------------------
+ */
+@-webkit-keyframes heartbeat {
+  from {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transform-origin: center center;
+            transform-origin: center center;
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  10% {
+    -webkit-transform: scale(0.91);
+            transform: scale(0.91);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  17% {
+    -webkit-transform: scale(0.98);
+            transform: scale(0.98);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  33% {
+    -webkit-transform: scale(0.87);
+            transform: scale(0.87);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  45% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+}
+@keyframes heartbeat {
+  from {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-transform-origin: center center;
+            transform-origin: center center;
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  10% {
+    -webkit-transform: scale(0.91);
+            transform: scale(0.91);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  17% {
+    -webkit-transform: scale(0.98);
+            transform: scale(0.98);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+  33% {
+    -webkit-transform: scale(0.87);
+            transform: scale(0.87);
+    -webkit-animation-timing-function: ease-in;
+            animation-timing-function: ease-in;
+  }
+  45% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
+  }
+
+  @keyframes anim-shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    50% { transform: translateX(8px); }
+    75% { transform: translateX(-8px); }
+    100% { transform: translateX(0); }
+  }
+}
