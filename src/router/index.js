@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Main from "@/views/Main.vue"
+import BasketView from "@/views/BasketView.vue"
 
 const routes = [
    {
-      path: "/",
-      name: "main",
-      component: Main,
+      path: "/:slug",
+      name: "basket",
+      component: BasketView,
    },
 ];
 

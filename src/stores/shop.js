@@ -21,8 +21,9 @@ const shop = defineStore("shop", {
   }),
 
   actions: {
-    test() {
-      console.log("test");
+    async ping() {
+      const response = await apiClient.get('/api/ping');
+      console.log(response);
     },
   },
 });
