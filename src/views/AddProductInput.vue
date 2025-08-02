@@ -4,7 +4,7 @@ const useBasket = basket();
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2 items-center sticky bottom-0 bg-white z-20 p-1 pb-2">
+  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2">
     <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
       <h2 class="text-xs font-semibold text-blue-600">{{ $t("new-buy-message") }}</h2>
       <input

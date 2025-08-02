@@ -20,6 +20,9 @@ const basket = defineStore("basket", {
     currentBasket: null,
     basketProducts: [],
     products: [],
+    loading: {
+      basketProducts: false,
+    }
   }),
 
   actions: {

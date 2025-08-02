@@ -19,8 +19,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col items-center px-4 max-h-screen overflow-y-auto relative">
-    <BasketList />
+  <div class="w-full flex flex-col items-center h-screen px-2">
+    <div class="flex-grow w-full overflow-y-auto"><BasketList /></div>
     <AddProductInput />
   </div>
 </template>
