@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import basket from "@/stores/basket";
 const useBasket = basket();
@@ -9,14 +9,16 @@ import AddProductInput from "@/views/AddProductInput.vue";
 import BasketList from "@/views/BasketList.vue";
 
 const route = useRoute();
+const router = useRouter();
 
 onMounted(() => {
   document.title = "Shopping List";
   let slug = route.params.slug;
 
   if (slug) {
-    useBasket.currentBasket = slug;
-    useBasket.getBasketProducts();
+    if (!useBasket.checkIfBasketExists(slug)) {
+      router.push("/");
+    }
   }
 });
 </script>

@@ -6,5 +6,8 @@
    "basket-slug-placeholder": "ej: identificador-de-mi-cesta",
    "connect-basket": "Abre una cesta",
    "or-create-new-basket": "O crea una nueva",
-   "connect": "Conectar"
+   "connect": "Conectar",
+   "go-back-to-connect": "Volver a conectar",
+   "create-basket": "Crear cesta",
+   "basket-not-found": "Cesta no encontrada"
 }
