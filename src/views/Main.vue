@@ -5,7 +5,7 @@ import ItemList from "@/views/ItemList.vue";
 
 <template>
     <div class="w-full flex flex-col items-center px-4 max-h-screen overflow-y-auto relative">
-        <NewItemInput />
         <ItemList />
+        <NewItemInput />
     </div>
 </template>

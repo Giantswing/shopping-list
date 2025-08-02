@@ -148,36 +148,6 @@ animations can be calculated correctly. */
   transform: translateX(-150%);
 }
 
-::-webkit-scrollbar {
-   appearance: none;
-}
-
-::-webkit-scrollbar:vertical {
-   @apply w-[6px];
-}
-
-::-webkit-scrollbar:horizontal {
-   @apply h-[10px];
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-   @apply bg-transparent;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-   @apply bg-mh-green hover:bg-mh-accent transition duration-200;
-}
-
-::-webkit-scrollbar-thumb:vertical {
-   @apply rounded-r-[3px];
-}
-
-::-webkit-scrollbar-thumb:horizontal {
-   @apply rounded-b-[3px];
-}
-
 
 .heartbeat {
 	-webkit-animation: heartbeat 1.5s ease-in-out 2 both;

@@ -16,6 +16,8 @@ const shop = defineStore("shop", {
   state: () => ({
     shopVersion: '0.0.1',
     newItemInput: '',
+    currentView: 'list',
+    listItems: [],
   }),
 
   actions: {

@@ -1,13 +1,12 @@
 <script setup>
-import shop from "@/stores/store";
+import shop from "@/stores/shop";
 const useShop = shop();
 </script>
 
 <template>
-    <div class="w-full flex flex-col gap-2 items-center">
+    <div class="w-full flex flex-col-reverse gap-2 items-center ">
         <div v-for="i in 40">
             <span>Test {{ i }}</span>
         </div>
-
     </div>
 </template>
