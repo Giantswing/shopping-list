@@ -14,22 +14,23 @@ const apiClient = axios.create({
 });
 
 /* Interceptor to add the basket password to the request headers */
-// apiClient.interceptors.request.use((config) => {
-//   if (basket.currentBasket) {
-//     let basketCredentials = basket.connectedBaskets[basket.currentBasket];
-//     if (basketCredentials) {
-//       config.headers['X-Basket-Password'] = basketCredentials.password;
-//     }
-//   }
+apiClient.interceptors.request.use((config) => {
+  if (basket.currentBasket) {
+    let basketCredentials = basket.getBasketCredentials(basket.currentBasket);
+    if (basketCredentials) {
+      config.headers['X-Basket-Slug'] = basketCredentials.slug;
+      config.headers['X-Basket-Password'] = basketCredentials.password;
+    }
+  }
 
-//   return config;
-// }, (error) => {
-//   return Promise.reject(error);
-// });
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
 const env = import.meta.env.VITE_APP_ENV;
 
-const basket = defineStore("basket", {
+export const basket = defineStore("basket", {
   state: () => ({
     basketAppVersion: '0.0.1',
     newProductInput: '',
@@ -147,5 +148,3 @@ const basket = defineStore("basket", {
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(basket, import.meta.hot));
 }
-
-export default basket;

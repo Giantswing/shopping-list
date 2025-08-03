@@ -2,7 +2,7 @@
 import { onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import basket from "@/stores/basket";
+import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 import AddProductInput from "@/views/AddProductInput.vue";
@@ -32,6 +32,9 @@ onMounted(async () => {
         router.push(`/connect-basket/${slug}`);
       }
     }
+
+    /* If we reach this point, we have valid credentials */
+    useBasket.getBasketProducts();
   }
 });
 </script>

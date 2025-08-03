@@ -1,5 +1,5 @@
 <script setup>
-import basket from "@/stores/basket";
+import { basket } from "@/stores/basket";
 const useBasket = basket();
 </script>
 

@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import basket from "@/stores/basket";
+import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const router = useRouter();

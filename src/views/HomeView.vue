@@ -3,7 +3,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import i18n from "../includes/i18n.js";
 
-import basket from "@/stores/basket";
+import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const router = useRouter();
