@@ -10,7 +10,6 @@ const useBasket = basket();
       <input
         v-model="useBasket.newProductInput"
         class="w-full border-b-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1"
-        @blur="useBasket.newProductInput = ''"
       />
     </div>
 
@@ -20,7 +19,10 @@ const useBasket = basket();
         useBasket.newProductInput.length > 0 ? 'max-h-[100px] mt-2' : 'max-h-[0px]'
       ]"
     >
-      <CButton :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'">
+      <CButton
+        :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+        @onClick="useBasket.addProductToBasket(useBasket.newProductInput)"
+      >
         <span>{{ $t("add-item") }}</span> <span class="font-bold">{{ useBasket.newProductInput }}</span>
       </CButton>
     </div>
