@@ -3,30 +3,8 @@ import { defineStore, acceptHMRUpdate  } from "pinia";
 import toast from "@/includes/toast";
 const useToast = toast();
 
-import axios from "axios";
-import moment from "moment";
-
-import i18n from "../includes/i18n.js";
-
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
-});
-
-/* Interceptor to add the basket password to the request headers */
-apiClient.interceptors.request.use((config) => {
-  if (basket.currentBasket) {
-    let basketCredentials = basket.getBasketCredentials(basket.currentBasket);
-    if (basketCredentials) {
-      config.headers['X-Basket-Slug'] = basketCredentials.slug;
-      config.headers['X-Basket-Password'] = basketCredentials.password;
-    }
-  }
-
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+import i18n from "@/includes/i18n.js";
+import apiClient from "@/includes/api-client";
 
 const env = import.meta.env.VITE_APP_ENV;
 
