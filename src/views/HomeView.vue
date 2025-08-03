@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
 import i18n from "../includes/i18n.js";
 
@@ -10,14 +10,59 @@ const router = useRouter();
 const basketSlug = ref("");
 
 import toast from "@/includes/toast";
-const useToast = toast();
 
 const mode = ref("connect");
 
 onMounted(() => {
   useBasket.resetNewBasketData();
   useBasket.resetConnectBasketData();
+
+  document.addEventListener("keydown", event => {
+    handleEnterKey(event);
+  });
 });
+
+onBeforeUnmount(() => {
+  document.removeEventListener("keydown", handleEnterKey);
+});
+
+const doPasswordsMatch = computed(() => {
+  return useBasket.newBasketData.password === useBasket.newBasketData.repeatPassword;
+});
+
+const handleEnterKey = event => {
+  if (event.key === "Enter") {
+    if (mode.value === "connect") {
+      if (basketSlug.value.length > 0) {
+        if (useBasket.checkIfBasketExists(basketSlug.value)) {
+          router.push(`/basket/${basketSlug.value}`);
+        }
+      }
+    } else if (mode.value === "create") {
+      if (
+        useBasket.newBasketData?.name?.length > 0 &&
+        useBasket.newBasketData?.password?.length > 0 &&
+        useBasket.newBasketData?.repeatPassword?.length > 0 &&
+        doPasswordsMatch.value
+      ) {
+        handleCreateBasket();
+      }
+    }
+  }
+};
+
+const handleCreateBasket = async () => {
+  if (
+    useBasket.newBasketData?.name?.length > 0 &&
+    useBasket.newBasketData?.password?.length > 0 &&
+    useBasket.newBasketData?.repeatPassword?.length > 0 &&
+    doPasswordsMatch.value
+  ) {
+    if (await useBasket.createBasket()) {
+      router.push(`/basket/${useBasket.currentBasket}`);
+    }
+  }
+};
 </script>
 
 <template>
@@ -25,8 +70,8 @@ onMounted(() => {
     <div class="w-full max-w-md p-6 bg-white rounded flex flex-col items-center gap-2">
       <div
         :class="[
-          'transition-all duration-500 overflow-hidden delay-100 flex flex-col items-center',
-          mode === 'connect' ? 'max-h-[400px] mt-2' : 'max-h-[0px]'
+          'transition-all duration-500 overflow-hidden flex flex-col items-center',
+          mode === 'connect' ? 'max-h-[100px] mt-2 opacity-100' : 'max-h-[0px] opacity-0'
         ]"
       >
         <h3 class="text-sm text-gray-500 -skew-x-[10deg]">{{ $t("connect-basket") }}</h3>
@@ -67,8 +112,49 @@ onMounted(() => {
       </button>
 
       <!-- Create basket -->
-      <div :class="['transition-all duration-500 overflow-hidden', mode === 'create' ? 'max-h-[400px] mt-2' : 'max-h-[0px]']">
+      <div
+        :class="[
+          'transition-all duration-500 overflow-hidden flex flex-col items-center gap-4',
+          mode === 'create' ? 'max-h-[400px] mt-2' : 'max-h-[0px]'
+        ]"
+      >
         <h3 class="text-sm text-gray-500 -skew-x-[10deg]">{{ $t("create-basket") }}</h3>
+
+        <input
+          class="border-b-2 border-gray-400 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center"
+          v-model="useBasket.newBasketData.name"
+          type="text"
+          :placeholder="$t('basket-name-placeholder')"
+        />
+
+        <input
+          class="border-b-2 border-gray-400 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center"
+          v-model="useBasket.newBasketData.password"
+          type="password"
+          :placeholder="$t('basket-password-placeholder')"
+        />
+
+        <input
+          class="border-b-2 border-gray-400 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center"
+          v-model="useBasket.newBasketData.repeatPassword"
+          type="password"
+          :placeholder="$t('basket-repeat-password-placeholder')"
+        />
+
+        <div class="text-sm text-red-500" v-if="!doPasswordsMatch">{{ $t("passwords-do-not-match") }}</div>
+
+        <button
+          class="text-sm text-gray-500 mt-2 border-2 border-gray-400 rounded-full px-4 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="
+            !doPasswordsMatch ||
+              useBasket.newBasketData?.name?.length === 0 ||
+              useBasket.newBasketData?.password?.length === 0 ||
+              useBasket.newBasketData?.repeatPassword?.length === 0
+          "
+          @click="handleCreateBasket"
+        >
+          {{ $t("create-basket") }}
+        </button>
       </div>
     </div>
   </div>

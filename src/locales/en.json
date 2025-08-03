@@ -1,6 +1,16 @@
 {
-   "test": "Test",
    "new-buy-message": "What do you need to buy?",
    "add-item": "Add",
-   "are-you-sure": "Are you sure?"
+   "are-you-sure": "Are you sure?",
+   "basket-slug-placeholder": "eg: my-basket-slug",
+   "connect-basket": "Open a basket",
+   "or-create-new-basket": "Or create a new one",
+   "connect": "Connect",
+   "go-back-to-connect": "Go back to connect",
+   "create-basket": "Create basket",
+   "basket-not-found": "Basket not found",
+   "basket-name-placeholder": "Basket name",
+   "basket-password-placeholder": "Basket password",
+   "basket-repeat-password-placeholder": "Repeat the password",
+   "passwords-do-not-match": "Passwords do not match"
 }

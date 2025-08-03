@@ -1,5 +1,4 @@
 {
-   "test": "Test",
    "new-buy-message": "¿Qué hace falta comprar?",
    "add-item": "Añadir",
    "are-you-sure": "¿Estás seguro?",
@@ -9,5 +8,8 @@
    "connect": "Conectar",
    "go-back-to-connect": "Volver a conectar",
    "create-basket": "Crear cesta",
-   "basket-not-found": "Cesta no encontrada"
+   "basket-not-found": "Cesta no encontrada",
+   "basket-name-placeholder": "Nombre de la cesta",
+   "basket-password-placeholder": "Contraseña de la cesta",
+   "basket-repeat-password-placeholder": "Repite la contraseña"
 }

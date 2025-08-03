@@ -20,6 +20,8 @@ export const basket = defineStore("basket", {
     loading: {
       basketProducts: false,
       checkIfBasketExists: false,
+      createBasket: false,
+      connectToBasket: false,
     },
     newBasketData: {}, 
     connectBasketData: {},
@@ -52,6 +54,19 @@ export const basket = defineStore("basket", {
       }
     },
 
+    addBasketCredentials(name, slug, password) {
+      const basket = this.connectedBaskets.find(basket => basket.slug === slug);
+      if (basket) {
+        basket.password = password;
+      } else {
+        this.connectedBaskets.push({
+          name: name,
+          slug: slug,
+          password: password,
+        });
+      }
+    },
+
     async checkIfBasketExists(slug) {
       try {
         this.loading.checkIfBasketExists = true;
@@ -76,18 +91,10 @@ export const basket = defineStore("basket", {
 
     async connectToBasket() {
       try {
+        this.loading.connectToBasket = true;
         const response = await apiClient.post(`/api/basket/connect`, this.connectBasketData);
         if (response.data.success) {
-          if (!this.getBasketCredentials(this.connectBasketData.slug)) {
-            this.connectedBaskets.push({
-              name: this.connectBasketData.name,
-              slug: this.connectBasketData.slug,
-              password: this.connectBasketData.password,
-            });
-          }
-          else {
-            this.connectedBaskets.find(basket => basket.slug === this.connectBasketData.slug).password = this.connectBasketData.password;
-          }
+          this.addBasketCredentials(this.connectBasketData.name, this.connectBasketData.slug, this.connectBasketData.password);
 
           this.currentBasket = this.connectBasketData.slug;
           this.connectBasketData = {};
@@ -102,6 +109,29 @@ export const basket = defineStore("basket", {
           useToast.error(i18n.global.t("internal-server-error"));
         }
         console.error(error);
+      } finally {
+        this.loading.connectToBasket = false;
+      }
+    },
+
+    async createBasket() {
+      try {
+        this.loading.createBasket = true;
+        const response = await apiClient.post(`/api/basket/create`, this.newBasketData);
+        if (response.data.success) {
+          this.addBasketCredentials(this.newBasketData.name, response.data.slug, this.newBasketData.password);
+          this.currentBasket = response.data.slug;
+          this.newBasketData = {};
+          return true;
+        } else {
+          useToast.error(i18n.global.t("basket-already-exists"));
+          return false;
+        }
+      } catch (error) {
+        console.error(error);
+        useToast.error(i18n.global.t("internal-server-error"));
+      } finally {
+        this.loading.createBasket = false;
       }
     },
 
