@@ -35,7 +35,7 @@ const basket = defineStore("basket", {
     newProductInput: '',
     currentView: 'list',
     currentBasket: '',
-    connectedBaskets: {},
+    connectedBaskets: [],
     basketProducts: [],
     products: new Map(),
     loading: {
@@ -60,7 +60,17 @@ const basket = defineStore("basket", {
       this.connectBasketData = {
         slug: '',
         password: '',
+        name: '',
       };
+    },
+
+    getBasketCredentials(slug) {
+      const basketCredentials = this.connectedBaskets.find(basket => basket.slug === slug);
+      if (basketCredentials) {
+        return basketCredentials;
+      } else {
+        return null;
+      }
     },
 
     async checkIfBasketExists(slug) {
@@ -68,7 +78,9 @@ const basket = defineStore("basket", {
         this.loading.checkIfBasketExists = true;
         const response = await apiClient.get(`/api/basket/check-if-basket-exists/${slug}`);
         if (response.data.exists) {
-          this.currentBasket = slug;
+          this.connectBasketData.name = response.data.name;
+          this.connectBasketData.slug = slug;
+          return true;
         } else {
           useToast.error(i18n.global.t("basket-not-found"));
           return false;
@@ -80,6 +92,37 @@ const basket = defineStore("basket", {
         return false;
       } finally {
         this.loading.checkIfBasketExists = false;
+      }
+    },
+
+    async connectToBasket() {
+      try {
+        const response = await apiClient.post(`/api/basket/connect`, this.connectBasketData);
+        if (response.data.success) {
+          if (!this.getBasketCredentials(this.connectBasketData.slug)) {
+            this.connectedBaskets.push({
+              name: this.connectBasketData.name,
+              slug: this.connectBasketData.slug,
+              password: this.connectBasketData.password,
+            });
+          }
+          else {
+            this.connectedBaskets.find(basket => basket.slug === this.connectBasketData.slug).password = this.connectBasketData.password;
+          }
+
+          this.currentBasket = this.connectBasketData.slug;
+          this.connectBasketData = {};
+          return true;
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        if (error.response.data.error === 'invalid-password') {
+          useToast.error(i18n.global.t("invalid-password"));
+        } else {
+          useToast.error(i18n.global.t("internal-server-error"));
+        }
+        console.error(error);
       }
     },
 

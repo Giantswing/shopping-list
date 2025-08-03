@@ -6,6 +6,7 @@ import i18n from "../includes/i18n.js";
 import basket from "@/stores/basket";
 const useBasket = basket();
 
+const router = useRouter();
 const basketSlug = ref("");
 
 import toast from "@/includes/toast";
@@ -34,6 +35,7 @@ onMounted(() => {
           v-model="basketSlug"
           type="text"
           :placeholder="$t('basket-slug-placeholder')"
+          autofocus
         />
       </div>
 
@@ -41,9 +43,9 @@ onMounted(() => {
       <button
         class="text-sm text-gray-500 mt-2 border-2 border-gray-400 rounded-full px-4 py-1"
         @click="
-          () => {
+          async () => {
             if (basketSlug?.length > 0) {
-              if (useBasket.checkIfBasketExists(basketSlug)) {
+              if (await useBasket.checkIfBasketExists(basketSlug)) {
                 router.push(`/basket/${basketSlug}`);
               }
             } else {

@@ -4,7 +4,7 @@ const useBasket = basket();
 </script>
 
 <template>
-  <!-- <CSaveLoad
+  <CSaveLoad
     :localStoragePrefix="'shopping_list_v1_'"
     :values="[
       {
@@ -14,7 +14,7 @@ const useBasket = basket();
         change: value => (useBasket.connectedBaskets = value)
       }
     ]"
-  /> -->
+  />
 
   <div class="relative"><RouterView /></div>
 </template>

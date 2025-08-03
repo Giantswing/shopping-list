@@ -11,13 +11,26 @@ import BasketList from "@/views/BasketList.vue";
 const route = useRoute();
 const router = useRouter();
 
-onMounted(() => {
+onMounted(async () => {
   document.title = "Shopping List";
   let slug = route.params.slug;
 
   if (slug) {
-    if (!useBasket.checkIfBasketExists(slug)) {
+    if (!(await useBasket.checkIfBasketExists(slug))) {
       router.push("/");
+    }
+
+    const basketCredentials = useBasket.getBasketCredentials(slug);
+    /* If we don't have credentials */
+    if (!basketCredentials) {
+      router.push(`/connect-basket/${slug}`);
+    } else {
+      useBasket.connectBasketData.password = basketCredentials.password;
+
+      /* Invalid credentials, password has changed */
+      if (!(await useBasket.connectToBasket())) {
+        router.push(`/connect-basket/${slug}`);
+      }
     }
   }
 });
