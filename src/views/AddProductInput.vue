@@ -64,15 +64,10 @@ const suggestions = computed(() => {
     })
     .sort((a, b) => b.combinedScore - a.combinedScore);
 
-  // console.log("Result:", result);
-
   return result.slice(0, 3);
 });
 
 const handleAddProduct = product => {
-  console.log("Suggestions:", suggestions.value);
-  console.log("Product:", product);
-
   if (!product || product.name.length === 0) {
     return;
   }
