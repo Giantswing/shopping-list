@@ -11,5 +11,6 @@
    "basket-not-found": "Cesta no encontrada",
    "basket-name-placeholder": "Nombre de la cesta",
    "basket-password-placeholder": "Contraseña de la cesta",
-   "basket-repeat-password-placeholder": "Repite la contraseña"
+   "basket-repeat-password-placeholder": "Repite la contraseña",
+   "suggestions": "Sugerencias"
 }

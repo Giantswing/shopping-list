@@ -1,11 +1,98 @@
 <script setup>
+import { computed } from "vue";
+import fuzzysort from "fuzzysort";
+
 import { basket } from "@/stores/basket";
 const useBasket = basket();
+
+const suggestions = computed(() => {
+  let result = Array.from(useBasket.products.values());
+
+  if (!result || result.length === 0) {
+    return [];
+  }
+
+  const alreadyAddedIds = useBasket.basketProducts.map(p => p.product_id);
+  result = result.filter(p => !alreadyAddedIds.includes(p.id));
+
+  const search = useBasket.newProductInput.toLowerCase();
+
+  const daysSince = date => {
+    if (!date) return 9999;
+    const now = new Date();
+    const then = new Date(date);
+    return (now - then) / (1000 * 60 * 60 * 24);
+  };
+
+  // Route 1: fuzzy match if input has value
+  if (search.length > 0) {
+    let found = fuzzysort.go(search, result, {
+      key: "name",
+      threshold: -10000
+    });
+
+    // Add scoring boosts (optional)
+    found = found.map(item => {
+      const timesAdded = item.obj.times_added || 0;
+      const recencyPenalty = daysSince(item.obj.last_added_at || null) * 0.5;
+      const boost = timesAdded * 5 - recencyPenalty;
+
+      return {
+        ...item,
+        combinedScore: item.score - boost // lower = better in fuzzysort
+      };
+    });
+
+    found.sort((a, b) => a.combinedScore - b.combinedScore);
+    // Return array of objects with both product and score
+    return found.map(item => ({
+      ...item.obj,
+      combinedScore: item.combinedScore
+    }));
+  }
+
+  // Route 2: no input – fallback to top products
+  result = result
+    .map(p => {
+      const freq = p.times_added || 0;
+      const recency = daysSince(p.last_added_at || null);
+      const score = freq * 5 - recency;
+      return {
+        ...p,
+        combinedScore: score
+      };
+    })
+    .sort((a, b) => b.combinedScore - a.combinedScore);
+
+  // console.log("Result:", result);
+
+  return result.slice(0, 3);
+});
+
+const handleAddProduct = product => {
+  console.log("Suggestions:", suggestions.value);
+  console.log("Product:", product);
+
+  if (!product || product.name.length === 0) {
+    return;
+  }
+
+  useBasket.addProductToBasket(product.name);
+};
 </script>
 
 <template>
   <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2">
     <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
+      <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
+        <h3 class="text-sm font-semibold text-blue-600 mt-[-20px] bg-white px-2">{{ $t("suggestions") }}</h3>
+        <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center">
+          <button class="text-sm text-blue-600 py-2" @click="handleAddProduct(suggestion)">
+            <span class="font-bold">{{ suggestion.name }}</span>
+          </button>
+        </div>
+      </div>
+
       <h2 class="text-xs font-semibold text-blue-600">{{ $t("new-buy-message") }}</h2>
       <input
         v-model="useBasket.newProductInput"
@@ -15,16 +102,44 @@ const useBasket = basket();
 
     <div
       :class="[
-        'transition-all duration-100 overflow-hidden',
+        'transition-all duration-100 overflow-hidden flex gap-2 items-center',
         useBasket.newProductInput.length > 0 ? 'max-h-[100px] mt-2' : 'max-h-[0px]'
       ]"
+      v-auto-animate="{ duration: 50 }"
     >
-      <CButton
-        :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
-        @onClick="useBasket.addProductToBasket(useBasket.newProductInput)"
-      >
-        <span>{{ $t("add-item") }}</span> <span class="font-bold">{{ useBasket.newProductInput }}</span>
-      </CButton>
+      <!-- If there are no suggestions and input is non-empty, show "new item" button with "new" icon -->
+      <template v-if="suggestions?.length === 0 && useBasket.newProductInput.length > 0">
+        <CButton
+          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+          @onClick="handleAddProduct({ name: useBasket.newProductInput })"
+        >
+          <CIcon :icon="'qlementine-icons:new-16'" />
+          <span class="font-bold">{{ useBasket.newProductInput }}</span>
+        </CButton>
+      </template>
+      <!-- If there are suggestions, show suggestion button(s) with default icon, and if input is not equal to first suggestion, show "new item" button with "new" icon -->
+      <template v-else-if="suggestions?.length > 0 && useBasket.newProductInput.length > 0">
+        <CButton
+          :buttonType="'secondary'"
+          v-if="useBasket.newProductInput !== suggestions[0].name"
+          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+          @onClick="handleAddProduct({ name: useBasket.newProductInput })"
+        >
+          <CIcon :icon="'ic:round-fiber-new'" class="h-6 w-6" />
+          <span class="font-bold">{{ useBasket.newProductInput }}</span>
+        </CButton>
+
+        <CButton
+          v-for="(suggestion, idx) in suggestions.slice(0, 1)"
+          :buttonType="'primary'"
+          :key="suggestion.id"
+          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+          @onClick="handleAddProduct(suggestion)"
+        >
+          <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6" />
+          <span class="font-bold">{{ suggestion.name }}</span>
+        </CButton>
+      </template>
     </div>
   </div>
 </template>

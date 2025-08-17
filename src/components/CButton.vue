@@ -4,48 +4,53 @@ import { ref, onMounted, onUnmounted } from "vue";
 const props = defineProps({
   isDisabled: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   isLoading: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   safetyConfirmation: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   safetyConfirmationColor: {
     type: String,
-    default: "#e28743",
+    default: "#e28743"
   },
 
   safetyConfirmationTimeout: {
     type: Number,
-    default: 8000,
+    default: 8000
   },
 
   addedClass: {
     type: String,
-    default: "",
+    default: ""
   },
 
   link: {
     type: String,
-    default: "",
+    default: ""
   },
 
   backgroundColor: {
     type: String,
-    default: "#262D63",
+    default: "#262D63"
   },
 
   delayToBeClickableAgain: {
     type: Number,
-    default: 300,
+    default: 300
   },
+
+  buttonType: {
+    type: String,
+    default: ""
+  }
 });
 
 const emit = defineEmits(["onClick"]);
@@ -118,25 +123,27 @@ onUnmounted(() => {
     :to="link"
     :disabled="isDisabled"
     :class="[
-      'px-6 py-1 transition-all duration-100 relative text-white whitespace-nowrap rounded-md overflow-hidden select-none group/button hover:brightness-[1.25] hover:saturate-[1.25] hover:translate-y-[-1px] active:scale-[1.1] active:delay-[-50ms] hover:shadow-sm',
+      'px-6 py-1 transition-all duration-100 relative text-white whitespace-nowrap rounded-md overflow-hidden select-none group/button hover:brightness-[1.25] hover:saturate-[1.25] active:scale-x-[1.05] active:delay-[-50ms] hover:shadow-sm border-2',
+
+      buttonType == 'primary' ? '!bg-blue-600 border-blue-800' : '',
+      buttonType == 'secondary' ? '!bg-transparent !text-gray-800 !border-gray-800' : '',
+
       canClick && !isLoading ? 'cursor-pointer' : 'cursor-auto',
       isLoading ? '!cursor-not-allowed' : '',
       isDisabled ? 'opacity-50 saturate-0 pointer-events-none' : '',
-      addedClass,
+      addedClass
     ]"
     :style="`background-color: ${backgroundColor}`"
     @click.prevent="handleClick"
   >
     <!-- Loading effect -->
-    <Transition name="tr-fade">
-      <div v-if="props.isLoading" class="absolute inset-0 skeleton" />
-    </Transition>
+    <Transition name="tr-fade"> <div v-if="props.isLoading" class="absolute inset-0 skeleton" /> </Transition>
 
     <!-- Safety confirmation -->
     <div
       :class="[
         confirmationState === 1 ? 'translate-x-0' : 'translate-x-[-120%]',
-        'absolute inset-0 left-[-35px] right-[-35px] flex items-center justify-center z-50 transition-all duration-[600ms] ease-elastic pointer-events-none text-shadow-sm shadow-black/50 rounded-xl',
+        'absolute inset-0 left-[-35px] right-[-35px] flex items-center justify-center z-50 transition-all duration-[600ms] ease-elastic pointer-events-none text-shadow-sm shadow-black/50 rounded-xl'
       ]"
       :style="`background-color: ${props.safetyConfirmationColor}`"
     >

@@ -116,7 +116,6 @@ export const basket = defineStore("basket", {
 
     async addProductToBasket(product) {
       try {
-        console.log(product, this.newProductInput);
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/add-product`, {
           product: product,
         });
@@ -136,6 +135,27 @@ export const basket = defineStore("basket", {
       } catch (error) {
         useToast.error(i18n.global.t("internal-server-error"));
         console.error(error);
+      }
+    },
+
+    async removeProductFromBasket(productId) {
+      try {
+        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product`, {
+          product_id: productId,
+        });
+        if (response.data.success) {
+          this.basketProducts = response.data.basketProducts;
+          this.products = new Map();
+          response.data.products.forEach(product => {
+            this.products.set(product.id, product);
+          });
+          return true;
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error(error);
+        useToast.error(i18n.global.t("internal-server-error"));
       }
     },
 

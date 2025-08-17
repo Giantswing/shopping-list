@@ -12,5 +12,6 @@
    "basket-name-placeholder": "Basket name",
    "basket-password-placeholder": "Basket password",
    "basket-repeat-password-placeholder": "Repeat the password",
-   "passwords-do-not-match": "Passwords do not match"
+   "passwords-do-not-match": "Passwords do not match",
+   "suggestions": "Suggestions"
 }
