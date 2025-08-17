@@ -100,17 +100,27 @@ const handleAddProduct = product => {
         'transition-all duration-100 overflow-hidden flex gap-2 items-center',
         useBasket.newProductInput.length > 0 ? 'max-h-[100px] mt-2' : 'max-h-[0px]'
       ]"
-      v-auto-animate="{ duration: 50 }"
     >
       <!-- If there are no suggestions and input is non-empty, show "new item" button with "new" icon -->
       <template v-if="suggestions?.length === 0 && useBasket.newProductInput.length > 0">
         <CButton
-          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+          :buttonType="'primary'"
+          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2 disabled:opacity-50 disabled:saturate-0'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
+          :disabled="
+            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput)
+          "
         >
           <CIcon :icon="'qlementine-icons:new-16'" />
           <span class="font-bold">{{ useBasket.newProductInput }}</span>
         </CButton>
+
+        <span
+          v-if="useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput)"
+          class="text-sm text-gray-500"
+        >
+          {{ $t("product-already-in-basket") }}
+        </span>
       </template>
       <!-- If there are suggestions, show suggestion button(s) with default icon, and if input is not equal to first suggestion, show "new item" button with "new" icon -->
       <template v-else-if="suggestions?.length > 0 && useBasket.newProductInput.length > 0">

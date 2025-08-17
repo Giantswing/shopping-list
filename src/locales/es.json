@@ -12,5 +12,6 @@
    "basket-name-placeholder": "Nombre de la cesta",
    "basket-password-placeholder": "Contraseña de la cesta",
    "basket-repeat-password-placeholder": "Repite la contraseña",
+   "product-already-in-basket": "Ya en la cesta",
    "suggestions": "Sugerencias"
 }
