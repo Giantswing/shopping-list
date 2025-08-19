@@ -123,7 +123,9 @@ const copyTextToClipboard = text => {
     >
       <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto">
         <p class="text-sm text-white font-semibold">{{ $t("current-basket") }}</p>
-        <h1 class="text-2xl font-bold mb-4">{{ useBasket.currentBasket }}</h1>
+        <h1 class="text-2xl font-bold mb-4">
+          {{ useBasket.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
+        </h1>
 
         <CButton :buttonType="'secondary'" @click="copyTextToClipboard()">
           <CIcon :icon="'solar:copy-bold-duotone'" class="w-[16px] h-[16px]" />
