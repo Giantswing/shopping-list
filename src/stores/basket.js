@@ -132,7 +132,6 @@ export const basket = defineStore("basket", {
     async addProductToBasket(product) {
       try {
         this.shouldAutoUpdate = false;
-        console.log('addProductToBasket', product);
         this.loading.addProductToBasketNames.push(product);
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/add-product`, {
           product: product,
@@ -219,7 +218,6 @@ export const basket = defineStore("basket", {
         const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
         this.basketProducts = response.data.basketProducts;
         this.products = new Map();
-        console.log('Products', response.data.products);
         response.data.products.forEach(product => {
           this.products.set(product.id, product);
         });
