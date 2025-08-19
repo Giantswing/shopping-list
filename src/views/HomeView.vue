@@ -73,6 +73,14 @@ const handleCreateBasket = async () => {
     }
   }
 };
+
+const handleConnectInput = () => {
+  let result = basketSlug.value;
+  result = result.toLowerCase();
+  result = result.replace(/ /g, "-");
+
+  basketSlug.value = result;
+};
 </script>
 
 <template>
@@ -85,6 +93,7 @@ const handleCreateBasket = async () => {
     >
       <h3 class="text-sm text-gray-500 -skew-x-[10deg]">{{ $t("connect-basket") }}</h3>
       <input
+        @input="handleConnectInput"
         class="border-b-2 border-gray-400 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center"
         v-model="basketSlug"
         type="text"
