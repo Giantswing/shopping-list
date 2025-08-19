@@ -82,6 +82,23 @@ const inputRef = ref(null);
 onMounted(() => {
   inputRef.value.focus();
 });
+
+const cleanUpInput = () => {
+  let result = useBasket.newProductInput;
+  result = result.toLowerCase();
+
+  /* replace spanish tildes */
+  result = result.replace(/á/g, "a");
+  result = result.replace(/é/g, "e");
+  result = result.replace(/í/g, "i");
+  result = result.replace(/ó/g, "o");
+  result = result.replace(/ú/g, "u");
+
+  /* remove any character that is not a-z, space */
+  result = result.replace(/[^a-z ]/g, "");
+
+  useBasket.newProductInput = result;
+};
 </script>
 
 <template>
@@ -98,7 +115,7 @@ onMounted(() => {
 
       <h2 class="text-xs font-semibold text-blue-600">{{ $t("new-buy-message") }}</h2>
       <input
-        @input="useBasket.newProductInput = useBasket.newProductInput.toLowerCase()"
+        @input="cleanUpInput"
         ref="inputRef"
         autofocus
         v-model="useBasket.newProductInput"
