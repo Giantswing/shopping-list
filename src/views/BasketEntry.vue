@@ -20,7 +20,10 @@ const props = defineProps({
     ]"
   >
     <div class="flex justify-between items-center w-full h-full">
-      <p class="text-center w-full">{{ useBasket.products.get(props.entry.product_id).name }}</p>
+      <div class="flex justify-center items-center w-full gap-2">
+        <CIcon :icon="'octicon:cloud-offline-16'" v-if="props.entry.offline" class="w-[24px] h-[24px]" />
+        <p class="text-center">{{ useBasket.products.get(props.entry.product_id)?.name }}</p>
+      </div>
 
       <button class="bg-red-400 px-4 h-full" @click.stop="useBasket.removeProductFromBasket(props.entry.product_id)">
         <CIcon :icon="'jam:delete-f'" class="w-[24px] h-[24px] text-gray-500 text-white" />

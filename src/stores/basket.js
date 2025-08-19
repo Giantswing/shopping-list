@@ -85,6 +85,10 @@ export const basket = defineStore("basket", {
 
     async checkIfBasketExists(slug) {
       try {
+        if (this.offlineMode) {
+          return this.connectedBaskets.find(basket => basket.slug === slug);
+        }
+
         this.loading.checkIfBasketExists = true;
         const response = await apiClient.get(`/api/basket/check-if-basket-exists/${slug}`);
         if (response.data.exists) {
@@ -107,6 +111,10 @@ export const basket = defineStore("basket", {
 
     async connectToBasket() {
       try {
+        if (this.offlineMode) {
+          return this.connectedBaskets.find(basket => basket.slug === this.connectBasketData.slug);
+        }
+
         this.loading.connectToBasket = true;
         const response = await apiClient.post(`/api/basket/connect`, this.connectBasketData);
         if (response.data.success) {
@@ -130,10 +138,57 @@ export const basket = defineStore("basket", {
       }
     },
 
+    async syncBasketState() {
+      /* After the app has been disconnected for a moment/while
+      it will look at the basket products and create any products
+      that have been added while offline.
+      */
+
+      console.warn("Syncing basket state");
+      const productsToCreate = this.basketProducts.filter(product => product.offline);
+      console.log("Products to create", productsToCreate);
+      for (const product of productsToCreate) {
+        await this.addProductToBasket(this.products.get(product.product_id).name);
+      }
+
+      // const productsToRemove = this.basketProducts.filter(product => !product.offline && !this.products.has(product.name));
+      // console.log("Products to remove", productsToRemove);
+      // for (const product of productsToRemove) {
+      //   await this.removeProductFromBasket(product.name);
+      // }
+    },
+
     async addProductToBasket(product) {
       try {
         this.shouldAutoUpdate = false;
         this.loading.addProductToBasketNames.push(product);
+
+        if (this.offlineMode) {
+          let productId = null;
+
+          let existingProduct = Array.from(this.products.values()).find(p => p.name === product);
+
+          if (existingProduct) {
+            productId = existingProduct.id;
+          } else {
+            productId = Math.floor(Math.random() * 10000);
+            this.products.set(productId, {
+              name: product,
+              id: productId,
+              offline: true,
+            });
+          }
+
+          this.basketProducts.push({
+            product_id: productId,
+            offline: true,
+          });
+
+          console.log("Basket products", this.basketProducts);
+
+          return true;
+        }
+
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/add-product`, {
           product: product,
         });
@@ -163,6 +218,13 @@ export const basket = defineStore("basket", {
       try {
         this.shouldAutoUpdate = false;
         this.loading.removeProductFromBasketIds.push(productId);
+
+        if (this.offlineMode) {
+          this.basketProducts = this.basketProducts.filter(p => p.product_id !== productId);
+
+          return true;
+        }
+
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product`, {
           product_id: productId,
         });
@@ -208,6 +270,10 @@ export const basket = defineStore("basket", {
 
     async getBasketProducts(fromAutoUpdate = false) {
       try {
+        if (this.offlineMode) {
+          return;
+        }
+
         if (fromAutoUpdate && !this.shouldAutoUpdate) {
           return;
         }

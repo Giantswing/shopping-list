@@ -10,6 +10,7 @@ import i18n from "@/includes/i18n.js";
 
 const checkOnlineStatus = () => {
   const isOffline = !navigator.onLine;
+  // const isOffline = true;
 
   if (isOffline && !useBasket.offlineMode) {
     toast.warning(i18n.global.t("offline-mode-enabled"));
@@ -17,6 +18,7 @@ const checkOnlineStatus = () => {
   } else if (!isOffline && useBasket.offlineMode) {
     toast.success(i18n.global.t("back-online"));
     useBasket.offlineMode = false;
+    useBasket.syncBasketState();
   }
 };
 
@@ -65,6 +67,18 @@ onUnmounted(() => {
         value: useBasket.connectedBaskets,
         mode: 'local',
         change: value => (useBasket.connectedBaskets = value)
+      },
+      {
+        key: 'basketProducts',
+        value: useBasket.basketProducts,
+        mode: 'local',
+        change: value => (useBasket.basketProducts = value)
+      },
+      {
+        key: 'products',
+        value: Array.from(useBasket.products.entries()),
+        mode: 'local',
+        change: value => (useBasket.products = new Map(value))
       }
     ]"
   />
