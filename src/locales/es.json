@@ -22,5 +22,8 @@
    "connect-to-another-basket": "Conectar a otra cesta",
    "connected-baskets": "Otras cestas conectadas",
    "internal-server-error": "Error interno del servidor",
-   "basket-already-exists": "La cesta ya existe"
+   "basket-already-exists": "La cesta ya existe",
+   "times-added-to-basket": "Veces añadido",
+   "add-item-placeholder": "Ej.: Manzanas, tomates, etc.",
+   "last-added-at": "Última vez añadido"
 }

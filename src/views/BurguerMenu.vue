@@ -1,10 +1,13 @@
 <script setup>
+import { ref } from "vue";
+
 import { useRouter } from "vue-router";
 
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const router = useRouter();
+const changingMode = ref(false);
 
 const connectToAnotherBasket = () => {
   router.push("/");
@@ -22,10 +25,61 @@ const connectToBasket = async slug => {
 const removeRecentBasket = slug => {
   useBasket.connectedBaskets = useBasket.connectedBaskets.filter(basket => basket.slug !== slug);
 };
+
+const changeMode = mode => {
+  useBasket.currentView = mode;
+  changingMode.value = true;
+  setTimeout(() => {
+    changingMode.value = false;
+  }, 75);
+};
 </script>
 
 <template>
   <div class="absolute top-0 left-0 z-50 w-full h-full overflow-hidden pointer-events-none">
+    <!-- Other options -->
+    <div class="m-3 absolute left-0 top-16 z-10 flex flex-col gap-3 pointer-events-auto">
+      <!-- Mode select -->
+      <div
+        class="relative flex-col gap-2 outline outline-4 outline-white rounded-full bg-gray-200 flex items-center overflow-hidden"
+      >
+        <!-- Animated background indicator -->
+        <div
+          class="absolute left-1/2 -translate-x-1/2 transition-all duration-100 rounded-full bg-green-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
+          :class="[
+            useBasket.currentView === 'list' ? 'shadow-[0_2px_10px_rgba(0,0,0,0.1)]' : 'shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
+            changingMode ? 'scale-y-[1.8] delay-[-15ms]' : 'scale-y-[1]'
+          ]"
+          :style="{
+            top: useBasket.currentView === 'list' ? '0%' : 'calc(50% + 3px)',
+            width: '48px',
+            height: '48px'
+          }"
+        ></div>
+        <button
+          class="relative z-10 rounded-full w-[48px] h-[48px] flex items-center justify-center"
+          @click="changeMode('list')"
+        >
+          <CIcon
+            :icon="'mingcute:basket-fill'"
+            class="w-[32px] h-[32px] transition-all duration-100"
+            :class="[useBasket.currentView === 'list' ? 'text-white' : 'text-gray-500']"
+          />
+        </button>
+
+        <button
+          class="relative z-10 rounded-full w-[48px] h-[48px] flex items-center justify-center"
+          @click="changeMode('products')"
+        >
+          <CIcon
+            :icon="'material-symbols:list-alt-rounded'"
+            class="w-[32px] h-[32px] transition-all duration-100"
+            :class="[useBasket.currentView === 'products' ? 'text-white' : 'text-gray-500']"
+          />
+        </button>
+      </div>
+    </div>
+
     <!-- Animated expanding background, centered on the button -->
     <div class="pointer-events-none z-10 absolute left-0 top-0 m-3">
       <div
@@ -38,7 +92,7 @@ const removeRecentBasket = slug => {
       ></div>
     </div>
 
-    <!-- Button always on top -->
+    <!-- Burguer Button always on top -->
     <div class="m-3 absolute left-0 top-0 z-20">
       <button class="rounded-full p-6 pointer-events-auto" @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen">
         <CIcon

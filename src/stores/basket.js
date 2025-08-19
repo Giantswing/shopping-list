@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '0.0.2',
+    basketAppVersion: '0.0.3',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -217,6 +217,7 @@ export const basket = defineStore("basket", {
         const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
         this.basketProducts = response.data.basketProducts;
         this.products = new Map();
+        console.log('Products', response.data.products);
         response.data.products.forEach(product => {
           this.products.set(product.id, product);
         });

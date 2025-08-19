@@ -141,7 +141,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       <input
         @input="cleanUpInput"
         ref="inputRef"
-        :placeholder="useBasket.currentBasket"
+        :placeholder="$t('add-item-placeholder')"
         autofocus
         v-model="useBasket.newProductInput"
         class="w-full border-b-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center"

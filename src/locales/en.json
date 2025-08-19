@@ -22,5 +22,8 @@
    "connect-to-another-basket": "Connect to another basket",
    "connected-baskets": "Other connected baskets",
    "internal-server-error": "Internal server error",
-   "basket-already-exists": "Basket already exists"
+   "basket-already-exists": "Basket already exists",
+   "times-added-to-basket": "Times added to basket",
+   "add-item-placeholder": "Eg.: Apples, tomatoes, etc.",
+   "last-added-at": "Last added at"
 }

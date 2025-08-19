@@ -7,6 +7,7 @@ const useBasket = basket();
 
 import AddProductInput from "@/views/AddProductInput.vue";
 import BasketList from "@/views/BasketList.vue";
+import BasketProducts from "@/views/BasketProducts.vue";
 import BurguerMenu from "@/views/BurguerMenu.vue";
 
 const route = useRoute();
@@ -64,9 +65,16 @@ onBeforeUnmount(() => {
 
 <template>
   <!-- Alternative approach: You could also use :key="route.params.slug" to force component re-mounting -->
-  <div class="flex flex-col w-full h-full relative">
+  <div class="flex flex-col w-full h-full relative" v-auto-animate="{ duration: 75 }">
+    <h3 class="font-bold text-right text-blue-700 px-4 opacity-20 select-none mb-[-15px]">
+      {{ useBasket?.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
+    </h3>
     <BurguerMenu />
-    <div class="flex-grow w-full overflow-y-auto overflow-x-hidden"><BasketList /></div>
-    <AddProductInput />
+    <div class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]" v-if="useBasket.currentView === 'list'">
+      <BasketList />
+    </div>
+    <div class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]" v-else><BasketProducts /></div>
+
+    <AddProductInput v-if="useBasket.currentView === 'list'" />
   </div>
 </template>
