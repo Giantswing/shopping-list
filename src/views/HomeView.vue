@@ -14,6 +14,8 @@ import toast from "@/includes/toast";
 const mode = ref("connect");
 
 onMounted(() => {
+  document.title = "Basketi";
+
   useBasket.resetNewBasketData();
   useBasket.resetConnectBasketData();
 
