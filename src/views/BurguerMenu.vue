@@ -16,6 +16,7 @@ const changingMode = ref(false);
 
 const connectToAnotherBasket = () => {
   router.push("/");
+  useBasket.lastUsedBasket = "";
   useBasket.burguerMenuOpen = false;
 };
 
