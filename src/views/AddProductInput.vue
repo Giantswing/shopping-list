@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import fuzzysort from "fuzzysort";
 
 import { basket } from "@/stores/basket";
@@ -80,8 +80,25 @@ const handleAddProduct = product => {
 const inputRef = ref(null);
 
 onMounted(() => {
-  inputRef.value.focus();
+  inputRef.value.addEventListener("keydown", handleInputKeydown);
 });
+
+onUnmounted(() => {
+  inputRef.value.removeEventListener("keydown", handleInputKeydown);
+});
+
+// Add onEnter handler for input
+const handleInputKeydown = event => {
+  if (event.key === "Enter") {
+    // If there are suggestions, add the top suggestion
+    if (suggestions.value.length > 0) {
+      handleAddProduct(suggestions.value[0]);
+    } else if (useBasket.newProductInput.length > 0) {
+      // Otherwise, add as a new product
+      handleAddProduct({ name: useBasket.newProductInput });
+    }
+  }
+};
 
 const cleanUpInput = () => {
   let result = useBasket.newProductInput;
@@ -99,6 +116,8 @@ const cleanUpInput = () => {
 
   useBasket.newProductInput = result;
 };
+
+defineExpose({ handleInputKeydown }); // In case parent wants to use it
 </script>
 
 <template>
