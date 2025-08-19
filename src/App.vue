@@ -16,5 +16,5 @@ const useBasket = basket();
     ]"
   />
 
-  <div class="relative"><RouterView /></div>
+  <div class="relative w-full p-2 flex flex-col items-center justify-center bg-blue-50 h-[100svh]"><RouterView /></div>
 </template>

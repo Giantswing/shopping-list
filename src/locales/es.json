@@ -13,5 +13,7 @@
    "basket-password-placeholder": "Contraseña de la cesta",
    "basket-repeat-password-placeholder": "Repite la contraseña",
    "product-already-in-basket": "Ya en la cesta",
+   "passwords-do-not-match": "Las contraseñas no coinciden",
+   "go-back": "Volver",
    "suggestions": "Sugerencias"
 }

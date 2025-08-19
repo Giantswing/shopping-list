@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, onMounted } from "vue";
 import fuzzysort from "fuzzysort";
 
 import { basket } from "@/stores/basket";
@@ -73,7 +73,15 @@ const handleAddProduct = product => {
   }
 
   useBasket.addProductToBasket(product.name);
+
+  inputRef.value.focus();
 };
+
+const inputRef = ref(null);
+
+onMounted(() => {
+  inputRef.value.focus();
+});
 </script>
 
 <template>
@@ -90,6 +98,8 @@ const handleAddProduct = product => {
 
       <h2 class="text-xs font-semibold text-blue-600">{{ $t("new-buy-message") }}</h2>
       <input
+        ref="inputRef"
+        autofocus
         v-model="useBasket.newProductInput"
         class="w-full border-b-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1"
       />
