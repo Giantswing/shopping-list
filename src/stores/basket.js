@@ -22,6 +22,8 @@ export const basket = defineStore("basket", {
       checkIfBasketExists: false,
       createBasket: false,
       connectToBasket: false,
+      addProductToBasketNames: [],
+      removeProductFromBasketIds: [],
     },
     newBasketData: {}, 
     connectBasketData: {},
@@ -116,6 +118,8 @@ export const basket = defineStore("basket", {
 
     async addProductToBasket(product) {
       try {
+        console.log('addProductToBasket', product);
+        this.loading.addProductToBasketNames.push(product);
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/add-product`, {
           product: product,
         });
@@ -135,6 +139,8 @@ export const basket = defineStore("basket", {
       } catch (error) {
         useToast.error(i18n.global.t("internal-server-error"));
         console.error(error);
+      } finally {
+        this.loading.addProductToBasketNames = this.loading.addProductToBasketNames.filter(name => name !== product);
       }
     },
 
