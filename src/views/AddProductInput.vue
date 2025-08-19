@@ -6,6 +6,7 @@ import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const suggestions = computed(() => {
+  const maxResults = 3;
   let result = Array.from(useBasket.products.values());
 
   if (!result || result.length === 0) {
@@ -45,7 +46,7 @@ const suggestions = computed(() => {
 
     found.sort((a, b) => a.combinedScore - b.combinedScore);
     // Return array of objects with both product and score
-    return found.map(item => ({
+    return found.slice(0, maxResults).map(item => ({
       ...item.obj,
       combinedScore: item.combinedScore
     }));
@@ -64,7 +65,7 @@ const suggestions = computed(() => {
     })
     .sort((a, b) => b.combinedScore - a.combinedScore);
 
-  return result.slice(0, 3);
+  return result.slice(0, maxResults);
 });
 
 const handleAddProduct = (product, comesFromSuggestion = false) => {
