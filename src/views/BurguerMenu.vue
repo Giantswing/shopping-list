@@ -93,7 +93,8 @@ const copyTextToClipboard = text => {
         </button>
       </div>
 
-      <div class="w-[48px] h-[48px] flex items-center justify-center opacity-50">
+      <div class="w-[48px] h-[48px] flex flex-col items-center justify-center opacity-50">
+        <p v-if="useBasket.offlineMode" class="text-center font-semibold text-xs text-gray-600">Offline</p>
         <CIcon :icon="'octicon:cloud-offline-16'" v-if="useBasket.offlineMode" class="w-[32px] h-[32px]" />
       </div>
     </div>

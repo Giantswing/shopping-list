@@ -21,7 +21,7 @@ const props = defineProps({
   >
     <div class="flex justify-between items-center w-full h-full">
       <div class="flex justify-center items-center w-full gap-2">
-        <CIcon :icon="'octicon:cloud-offline-16'" v-if="props.entry.offline" class="w-[24px] h-[24px]" />
+        <p v-if="props.entry.offline" class="text-center font-semibold text-xs text-gray-600">Offline</p>
         <p class="text-center">{{ useBasket.products.get(props.entry.product_id)?.name }}</p>
       </div>
 
