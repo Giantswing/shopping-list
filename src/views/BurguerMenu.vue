@@ -97,10 +97,10 @@ const copyTextToClipboard = text => {
     <!-- Animated expanding background, centered on the button -->
     <div class="pointer-events-none z-10 absolute left-0 top-0 m-3">
       <div
-        class="bg-blue-400 rounded-full"
+        class="rounded-full"
         :class="[
-          'transition-transform duration-1000',
-          useBasket.burguerMenuOpen ? 'scale-[80] opacity-100' : 'scale-[1] opacity-100'
+          'transition-all duration-[550ms]',
+          useBasket.burguerMenuOpen ? 'scale-[80] opacity-[0.95] bg-blue-500' : 'scale-[1] opacity-100 bg-blue-400'
         ]"
         style="width:48px; height:48px;"
       ></div>
@@ -110,7 +110,7 @@ const copyTextToClipboard = text => {
     <div class="m-3 absolute left-0 top-0 z-20">
       <button class="rounded-full p-6 pointer-events-auto" @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen">
         <CIcon
-          :icon="'line-md:menu'"
+          :icon="useBasket.burguerMenuOpen ? 'line-md:close' : 'line-md:menu'"
           class="w-[32px] h-[32px] text-white absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         />
       </button>
@@ -118,7 +118,7 @@ const copyTextToClipboard = text => {
 
     <!-- BURGUER MENU -->
     <div
-      class="z-50 pointer-events-none absolute top-0 left-0 w-full h-full flex justify-center items-center overflow-y-auto transition-all duration-500 delay-[200ms]"
+      class="z-50 pointer-events-none absolute top-0 left-0 w-full h-full flex justify-center items-center overflow-y-auto transition-all duration-[250ms] delay-[200ms]"
       :class="[useBasket.burguerMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full']"
     >
       <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto">
