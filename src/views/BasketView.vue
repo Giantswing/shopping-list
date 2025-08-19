@@ -19,37 +19,38 @@ const connectToBasket = async slug => {
       router.push("/");
       return;
     }
-    let success = false;
 
-    /* basket password can be included in the url */
+    let earlyLoginSuccess = false;
     const urlPass = route.query.pass;
+
     if (urlPass) {
       useBasket.connectBasketData.password = urlPass;
       useBasket.connectBasketData.slug = slug;
 
       /* Invalid credentials, password has changed */
-      success = await useBasket.connectToBasket();
-      if (!success) {
+      earlyLoginSuccess = await useBasket.connectToBasket();
+      if (!earlyLoginSuccess) {
         router.push(`/connect-basket/${slug}`);
         return;
       }
     }
 
-    const basketCredentials = useBasket.getBasketCredentials(slug);
-    console.log("basketCredentials", basketCredentials);
+    if (!earlyLoginSuccess) {
+      const basketCredentials = useBasket.getBasketCredentials(slug);
 
-    /* If we don't have credentials */
-    if (!basketCredentials) {
-      router.push(`/connect-basket/${slug}`);
-      return;
-    } else {
-      useBasket.connectBasketData.slug = slug;
-      useBasket.connectBasketData.password = basketCredentials.password;
-
-      /* Invalid credentials, password has changed */
-      if (!(await useBasket.connectToBasket())) {
+      /* If we don't have credentials */
+      if (!basketCredentials) {
         router.push(`/connect-basket/${slug}`);
         return;
+      } else {
+        useBasket.connectBasketData.slug = slug;
+        useBasket.connectBasketData.password = basketCredentials.password;
+
+        /* Invalid credentials, password has changed */
+        if (!(await useBasket.connectToBasket())) {
+          router.push(`/connect-basket/${slug}`);
+          return;
+        }
       }
     }
 

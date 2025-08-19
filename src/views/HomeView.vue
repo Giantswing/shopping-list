@@ -142,7 +142,7 @@ const handleConnectInput = () => {
       <p class="text-sm text-gray-500">{{ $t("connected-baskets") }}</p>
       <div class="flex flex-col gap-2">
         <CButton
-          v-for="basket in useBasket.connectedBaskets.filter(basket => basket.slug !== useBasket.currentBasket)"
+          v-for="basket in useBasket.connectedBaskets"
           :key="basket.slug"
           :buttonType="'secondary'"
           @click="connectToBasket(basket.slug)"
