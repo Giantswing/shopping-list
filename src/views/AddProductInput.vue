@@ -128,7 +128,10 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
         <h3 class="text-xs font-semibold text-blue-400 mt-[-20px] bg-white px-2 py-1">{{ $t("suggestions") }}</h3>
         <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center">
-          <button class="text-sm text-blue-600 py-2" @click="handleAddProduct(suggestion, true)">
+          <button
+            class="text-sm text-blue-600 py-2 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms]"
+            @click="handleAddProduct(suggestion, true)"
+          >
             <span class="font-bold">{{ suggestion.name }}</span>
           </button>
         </div>

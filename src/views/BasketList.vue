@@ -10,7 +10,7 @@ import ProductEntry from "./ProductEntry.vue";
     <div
       v-if="!useBasket.loading.basketProducts || useBasket.basketProducts?.length > 0"
       class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4"
-      v-auto-animate
+      v-auto-animate="{ duration: 75 }"
     >
       <ProductEntry v-for="entry in useBasket.basketProducts" :key="entry.id" :entry="entry" />
     </div>
