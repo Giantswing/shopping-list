@@ -8,6 +8,15 @@ const routes = [
       path: "/basket/:slug",
       name: "basket",
       component: BasketView,
+      beforeEnter: (to, from, next) => {
+         // If navigating from one basket to another, ensure proper cleanup
+         if (from.name === 'basket' && to.name === 'basket' && from.params.slug !== to.params.slug) {
+            // The component will handle the cleanup via the watch function
+            next();
+         } else {
+            next();
+         }
+      }
    },
 
    {

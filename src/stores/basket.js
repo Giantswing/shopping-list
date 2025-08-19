@@ -19,6 +19,7 @@ export const basket = defineStore("basket", {
     basketProducts: [],
     products: new Map(),
     refreshItemsInterval: null,
+    shouldAutoUpdate: true,
     loading: {
       basketProducts: false,
       checkIfBasketExists: false,
@@ -34,7 +35,7 @@ export const basket = defineStore("basket", {
   actions: {
     startRefreshItemsInterval() {
       this.refreshItemsInterval = setInterval(() => {
-        this.getBasketProducts();
+        this.getBasketProducts(true);
       }, 10000);
     },
 
@@ -130,6 +131,7 @@ export const basket = defineStore("basket", {
 
     async addProductToBasket(product) {
       try {
+        this.shouldAutoUpdate = false;
         console.log('addProductToBasket', product);
         this.loading.addProductToBasketNames.push(product);
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/add-product`, {
@@ -153,11 +155,13 @@ export const basket = defineStore("basket", {
         console.error(error);
       } finally {
         this.loading.addProductToBasketNames = this.loading.addProductToBasketNames.filter(name => name !== product);
+        this.shouldAutoUpdate = true;
       }
     },
 
     async removeProductFromBasket(productId) {
       try {
+        this.shouldAutoUpdate = false;
         this.loading.removeProductFromBasketIds.push(productId);
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product`, {
           product_id: productId,
@@ -177,6 +181,7 @@ export const basket = defineStore("basket", {
         useToast.error(i18n.global.t("internal-server-error"));
       } finally {
         this.loading.removeProductFromBasketIds = this.loading.removeProductFromBasketIds.filter(id => id !== productId);
+        this.shouldAutoUpdate = true;
       }
     },
 
@@ -201,9 +206,14 @@ export const basket = defineStore("basket", {
       }
     },
 
-    async getBasketProducts() {
+    async getBasketProducts(fromAutoUpdate = false) {
       try {
+        if (fromAutoUpdate && !this.shouldAutoUpdate) {
+          return;
+        }
+
         this.loading.basketProducts = true;
+
         const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
         this.basketProducts = response.data.basketProducts;
         this.products = new Map();

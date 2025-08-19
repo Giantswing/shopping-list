@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 import fuzzysort from "fuzzysort";
 
 import { basket } from "@/stores/basket";
@@ -85,7 +85,7 @@ onMounted(() => {
   inputRef.value.addEventListener("keydown", handleInputKeydown);
 });
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   inputRef.value.removeEventListener("keydown", handleInputKeydown);
 });
 
@@ -123,7 +123,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2">
+  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative">
     <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
         <h3 class="text-xs font-semibold text-blue-400 mt-[-20px] bg-white px-2 py-1">{{ $t("suggestions") }}</h3>
@@ -138,9 +138,10 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       <input
         @input="cleanUpInput"
         ref="inputRef"
+        :placeholder="useBasket.currentBasket"
         autofocus
         v-model="useBasket.newProductInput"
-        class="w-full border-b-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1"
+        class="w-full border-b-2 border-gray-300 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center"
       />
     </div>
 

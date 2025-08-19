@@ -123,7 +123,7 @@ onUnmounted(() => {
     :to="link"
     :disabled="isDisabled"
     :class="[
-      'px-6 py-1 transition-all duration-100 relative text-white whitespace-nowrap rounded-md overflow-hidden select-none group/button hover:brightness-[1.25] hover:saturate-[1.25] active:scale-x-[1.05] active:delay-[-50ms] hover:shadow-sm border-2',
+      'px-6 py-1 transition-all duration-100 relative text-white whitespace-nowrap rounded-full overflow-hidden select-none group/button hover:brightness-[1.25] hover:saturate-[1.25] active:scale-x-[1.05] active:delay-[-50ms] hover:shadow-sm border-2',
 
       buttonType == 'primary' ? '!bg-blue-600 border-blue-800' : '',
       buttonType == 'secondary' ? '!bg-transparent !text-gray-800 !border-gray-800' : '',

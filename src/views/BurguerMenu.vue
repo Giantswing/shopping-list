@@ -1,6 +1,27 @@
 <script setup>
+import { useRouter } from "vue-router";
+
 import { basket } from "@/stores/basket";
 const useBasket = basket();
+
+const router = useRouter();
+
+const connectToAnotherBasket = () => {
+  router.push("/");
+  useBasket.burguerMenuOpen = false;
+};
+
+const connectToBasket = async slug => {
+  if (await useBasket.checkIfBasketExists(slug)) {
+    router.push("/");
+    router.push(`/basket/${slug}`);
+    useBasket.burguerMenuOpen = false;
+  }
+};
+
+const removeRecentBasket = slug => {
+  useBasket.connectedBaskets = useBasket.connectedBaskets.filter(basket => basket.slug !== slug);
+};
 </script>
 
 <template>
@@ -32,9 +53,32 @@ const useBasket = basket();
       class="z-50 pointer-events-none absolute top-0 left-0 w-full h-full flex justify-center items-center overflow-y-auto transition-all duration-500 delay-[200ms]"
       :class="[useBasket.burguerMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full']"
     >
-      <div class="w-full h-full flex flex-col items-center justify-center">
+      <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto">
         <p class="text-sm text-white font-semibold">{{ $t("current-basket") }}</p>
         <h1 class="text-2xl font-bold">{{ useBasket.currentBasket }}</h1>
+
+        <CButton :buttonType="'secondary'" class="mt-4" @click="connectToAnotherBasket">{{
+          $t("connect-to-another-basket")
+        }}</CButton>
+
+        <div class="flex flex-col gap-3 mt-6" v-if="useBasket.connectedBaskets?.length > 0">
+          <p class="text-sm text-white font-semibold">{{ $t("connected-baskets") }}</p>
+
+          <div class="flex flex-col gap-3 items-center max-h-[250px] overflow-y-auto">
+            <div
+              v-for="basket in useBasket.connectedBaskets.filter(basket => basket.slug !== useBasket.currentBasket)"
+              :key="basket.slug"
+              class="flex flex-row gap-3 items-center"
+            >
+              <CButton :key="basket.slug" :buttonType="'secondary'" @click="connectToBasket(basket.slug)">
+                {{ basket.name }}
+              </CButton>
+              <button class="text-sm text-white font-semibold" @click="removeRecentBasket(basket.slug)">
+                <CIcon :icon="'line-md:close'" class="w-[16px] h-[16px]" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="absolute bottom-0 right-0 p-4">

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { onMounted, onBeforeUnmount, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { basket } from "@/stores/basket";
@@ -12,25 +12,25 @@ import BurguerMenu from "@/views/BurguerMenu.vue";
 const route = useRoute();
 const router = useRouter();
 
-onMounted(async () => {
-  document.title = "Shopping List";
-  let slug = route.params.slug;
-
+const connectToBasket = async slug => {
   if (slug) {
     if (!(await useBasket.checkIfBasketExists(slug))) {
       router.push("/");
+      return;
     }
 
     const basketCredentials = useBasket.getBasketCredentials(slug);
     /* If we don't have credentials */
     if (!basketCredentials) {
       router.push(`/connect-basket/${slug}`);
+      return;
     } else {
       useBasket.connectBasketData.password = basketCredentials.password;
 
       /* Invalid credentials, password has changed */
       if (!(await useBasket.connectToBasket())) {
         router.push(`/connect-basket/${slug}`);
+        return;
       }
     }
 
@@ -38,7 +38,24 @@ onMounted(async () => {
     useBasket.startRefreshItemsInterval();
     useBasket.getBasketProducts();
   }
+};
+
+onMounted(async () => {
+  document.title = "Shopping List";
+  await connectToBasket(route.params.slug);
 });
+
+// Watch for route parameter changes
+watch(
+  () => route.params.slug,
+  async (newSlug, oldSlug) => {
+    if (newSlug !== oldSlug) {
+      // Stop the current refresh interval before switching
+      useBasket.stopRefreshItemsInterval();
+      await connectToBasket(newSlug);
+    }
+  }
+);
 
 onBeforeUnmount(() => {
   useBasket.stopRefreshItemsInterval();
@@ -46,6 +63,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <!-- Alternative approach: You could also use :key="route.params.slug" to force component re-mounting -->
   <div class="flex flex-col w-full h-full relative">
     <BurguerMenu />
     <div class="flex-grow w-full overflow-y-auto overflow-x-hidden"><BasketList /></div>

@@ -26,6 +26,12 @@ onBeforeUnmount(() => {
   document.removeEventListener("keydown", handleEnterKey);
 });
 
+const connectToBasket = async slug => {
+  if (await useBasket.checkIfBasketExists(slug)) {
+    router.push(`/basket/${slug}`);
+  }
+};
+
 const doPasswordsMatch = computed(() => {
   return useBasket.newBasketData.password === useBasket.newBasketData.repeatPassword;
 });
@@ -68,7 +74,7 @@ const handleCreateBasket = async () => {
 </script>
 
 <template>
-  <div class="w-full max-w-md p-6 bg-white rounded-lg flex flex-col items-center gap-2">
+  <div class="w-full max-w-md p-6 bg-white rounded-3xl flex flex-col items-center gap-2 border-8 border-blue-50">
     <div
       :class="[
         'transition-all duration-500 overflow-hidden flex flex-col items-center',
@@ -112,6 +118,28 @@ const handleCreateBasket = async () => {
         {{ $t("go-back-to-connect") }}
       </span>
     </CButton>
+
+    <!-- Other connected baskets -->
+    <div
+      class="flex flex-col gap-2 overflow-hidden transition-all duration-500"
+      :class="[mode === 'connect' ? 'max-h-[200px] mt-2 opacity-100' : 'max-h-[0px] opacity-0']"
+      v-if="
+        useBasket.connectedBaskets?.length > 0 &&
+          useBasket.connectedBaskets.filter(basket => basket.slug !== useBasket.currentBasket).length > 0
+      "
+    >
+      <p class="text-sm text-gray-500">{{ $t("connected-baskets") }}</p>
+      <div class="flex flex-col gap-2">
+        <CButton
+          v-for="basket in useBasket.connectedBaskets.filter(basket => basket.slug !== useBasket.currentBasket)"
+          :key="basket.slug"
+          :buttonType="'secondary'"
+          @click="connectToBasket(basket.slug)"
+        >
+          {{ basket.name }}
+        </CButton>
+      </div>
+    </div>
 
     <!-- Create basket -->
     <div

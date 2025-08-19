@@ -18,5 +18,7 @@
    "current-basket": "Current basket",
    "suggestions": "Suggestions",
    "password": "Password",
-   "invalid-credentials": "Invalid credentials"
+   "invalid-credentials": "Invalid credentials",
+   "connect-to-another-basket": "Connect to another basket",
+   "connected-baskets": "Other connected baskets"
 }

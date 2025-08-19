@@ -1,19 +1,32 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const router = useRouter();
+const route = useRoute();
 
-onMounted(async () => {
+const checkBasketExists = async slug => {
   if (!useBasket.connectBasketData?.name || !useBasket.connectBasketData?.slug) {
-    const route = useRoute();
-    const slug = route.params.slug;
     await useBasket.checkIfBasketExists(slug);
   }
+};
+
+onMounted(async () => {
+  await checkBasketExists(route.params.slug);
 });
+
+// Watch for route parameter changes
+watch(
+  () => route.params.slug,
+  async (newSlug, oldSlug) => {
+    if (newSlug !== oldSlug) {
+      await checkBasketExists(newSlug);
+    }
+  }
+);
 
 const connectToBasket = async () => {
   if (await useBasket.connectToBasket()) {
