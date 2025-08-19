@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '0.0.4',
+    basketAppVersion: '0.1.0',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -221,6 +221,10 @@ export const basket = defineStore("basket", {
 
     async removeProductFromList(productId) {
       try {
+        if (this.offlineMode) {
+          return;
+        }
+
         this.shouldAutoUpdate = false;
 
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-from-list`, {
