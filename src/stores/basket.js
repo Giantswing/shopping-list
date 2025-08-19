@@ -195,12 +195,12 @@ export const basket = defineStore("basket", {
           this.newBasketData = {};
           return true;
         } else {
-          useToast.error(i18n.global.t("basket-already-exists"));
+          useToast.error(i18n.global.t(response.data.error));
           return false;
         }
       } catch (error) {
         console.error(error);
-        useToast.error(i18n.global.t("internal-server-error"));
+        useToast.error(error.response.data.error);
       } finally {
         this.loading.createBasket = false;
       }

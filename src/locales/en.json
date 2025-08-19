@@ -20,5 +20,7 @@
    "password": "Password",
    "invalid-credentials": "Invalid credentials",
    "connect-to-another-basket": "Connect to another basket",
-   "connected-baskets": "Other connected baskets"
+   "connected-baskets": "Other connected baskets",
+   "internal-server-error": "Internal server error",
+   "basket-already-exists": "Basket already exists"
 }

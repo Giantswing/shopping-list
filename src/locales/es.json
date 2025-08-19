@@ -20,5 +20,7 @@
    "password": "Contraseña",
    "invalid-credentials": "Credenciales inválidas",
    "connect-to-another-basket": "Conectar a otra cesta",
-   "connected-baskets": "Otras cestas conectadas"
+   "connected-baskets": "Otras cestas conectadas",
+   "internal-server-error": "Error interno del servidor",
+   "basket-already-exists": "La cesta ya existe"
 }
