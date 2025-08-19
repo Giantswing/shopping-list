@@ -8,7 +8,7 @@ import ProductEntry from "./ProductEntry.vue";
 <template>
   <div class="w-full flex flex-col items-center h-full" v-auto-animate>
     <div
-      v-if="!useBasket.loading.basketProducts"
+      v-if="!useBasket.loading.basketProducts || useBasket.basketProducts?.length > 0"
       class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4"
       v-auto-animate
     >
