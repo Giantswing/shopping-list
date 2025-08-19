@@ -98,6 +98,7 @@ onMounted(() => {
 
       <h2 class="text-xs font-semibold text-blue-600">{{ $t("new-buy-message") }}</h2>
       <input
+        @input="useBasket.newProductInput = useBasket.newProductInput.toLowerCase()"
         ref="inputRef"
         autofocus
         v-model="useBasket.newProductInput"

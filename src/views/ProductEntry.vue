@@ -12,7 +12,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="flex flex-row gap-2 items-center bg-blue-100 w-full rounded-md py-3 px-3 justify-between text-sm font-semibold text-blue-900"
+    class="flex flex-row gap-2 items-center bg-blue-100 w-full rounded-md py-3 px-3 justify-between text-sm font-semibold text-blue-900 select-none cursor-pointer"
     @click.stop="useBasket.removeProductFromBasket(props.entry.product_id)"
   >
     <span>{{ useBasket.products.get(props.entry.product_id).name }}</span>
