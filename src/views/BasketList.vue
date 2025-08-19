@@ -15,7 +15,10 @@ import ProductEntry from "./ProductEntry.vue";
       <ProductEntry v-for="entry in useBasket.basketProducts" :key="entry.id" :entry="entry" />
     </div>
 
-    <div v-else class="w-full flex flex-col items-center h-full justify-center">
+    <div
+      v-else-if="useBasket.loading.basketProducts && useBasket.basketProducts?.length === 0"
+      class="w-full flex flex-col items-center h-full justify-center"
+    >
       <CIcon :icon="'line-md:loading-twotone-loop'" class="w-[100px] h-[100px] text-gray-500" />
     </div>
   </div>
