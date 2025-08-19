@@ -21,7 +21,7 @@ const checkOnlineStatus = () => {
 };
 
 onMounted(() => {
-  toast.success("Test message");
+  // toast.success("Test message");
   checkOnlineStatus();
   window.addEventListener("online", checkOnlineStatus);
   window.addEventListener("offline", checkOnlineStatus);
