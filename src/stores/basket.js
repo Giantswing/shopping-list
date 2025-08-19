@@ -17,6 +17,7 @@ export const basket = defineStore("basket", {
     currentBasket: '',
     connectedBaskets: [],
     basketProducts: [],
+    offlineProductsToRemove: [],
     products: new Map(),
     refreshItemsInterval: null,
     shouldAutoUpdate: true,
@@ -151,11 +152,13 @@ export const basket = defineStore("basket", {
         await this.addProductToBasket(this.products.get(product.product_id).name);
       }
 
-      // const productsToRemove = this.basketProducts.filter(product => !product.offline && !this.products.has(product.name));
-      // console.log("Products to remove", productsToRemove);
-      // for (const product of productsToRemove) {
-      //   await this.removeProductFromBasket(product.name);
-      // }
+      const productsToRemove = this.offlineProductsToRemove.filter(productId => !this.basketProducts.some(p => p.product_id === productId));
+      console.log("Products to remove", productsToRemove);
+      for (const productId of productsToRemove) {
+        await this.removeProductFromBasket(productId);
+      }
+
+      this.offlineProductsToRemove = [];
     },
 
     async addProductToBasket(product) {
@@ -220,6 +223,8 @@ export const basket = defineStore("basket", {
         this.loading.removeProductFromBasketIds.push(productId);
 
         if (this.offlineMode) {
+          this.offlineProductsToRemove.push(productId);
+
           this.basketProducts = this.basketProducts.filter(p => p.product_id !== productId);
 
           return true;
