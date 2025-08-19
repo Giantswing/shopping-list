@@ -90,8 +90,9 @@ export const basket = defineStore("basket", {
     async checkIfBasketExists(slug) {
       try {
         if (this.offlineMode) {
-          if (this.connectedBaskets.find(basket => basket.slug === slug)) {
-            this.connectBasketData.name = this.connectedBaskets.find(basket => basket.slug === slug).name;
+          let basket = this.getBasketCredentials(slug);
+          if (basket) {
+            this.connectBasketData.name = basket.name;
             this.connectBasketData.slug = slug;
             return true;
           } else {
@@ -123,12 +124,14 @@ export const basket = defineStore("basket", {
     async connectToBasket() {
       try {
         if (this.offlineMode) {
-          if (this.connectedBaskets.find(basket => basket.slug === this.connectBasketData.slug)) {
-            this.currentBasket = this.connectBasketData.slug;
+          let basket = this.getBasketCredentials(this.connectBasketData.slug);
+          if (basket) {
             this.lastUsedBasket = this.connectBasketData.slug;
+            this.currentBasket = this.connectBasketData.slug;
             this.connectBasketData = {};
             return true;
           } else {
+            this.lastUsedBasket = '';
             this.currentBasket = '';
             return false;
           }
@@ -139,7 +142,6 @@ export const basket = defineStore("basket", {
         if (response.data.success) {
           this.addBasketCredentials(this.connectBasketData.name, this.connectBasketData.slug, this.connectBasketData.password);
           this.lastUsedBasket = this.connectBasketData.slug;
-
           this.currentBasket = this.connectBasketData.slug;
           this.connectBasketData = {};
           return true;
