@@ -1,7 +1,8 @@
-const CACHE_NAME = 'basketi-v3'; // Increment version when updating
+const CACHE_NAME = 'basketi-v4'; // Incremented to force update
 const urlsToCache = [
   '/',
   '/index.html',
+  '/offline.html', // Optional: Add if you create an offline fallback page
   '/favicon/favicon-96x96.png',
   '/favicon/apple-touch-icon.png',
   '/favicon/web-app-manifest-512x512.png',
@@ -35,11 +36,18 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - cache-first for assets, network-first for navigation
 self.addEventListener('fetch', (event) => {
+  // Skip caching for unsupported schemes (e.g., chrome-extension)
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.protocol !== 'http:' && requestUrl.protocol !== 'https:') {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   // Handle navigation requests
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
-        .catch(() => caches.match('/')) // Fallback to cached home page
+        .catch(() => caches.match('/index.html') || caches.match('/offline.html')) // Fallback to cached home or offline page
     );
   } else {
     // Handle asset requests (JS, CSS, images, etc.)
@@ -64,6 +72,7 @@ self.addEventListener('fetch', (event) => {
             })
             .catch(() => {
               // Optionally handle offline asset requests
+              // Example: return caches.match('/offline.html') for images
             });
         })
     );
@@ -73,4 +82,11 @@ self.addEventListener('fetch', (event) => {
 // Handle PWA installation prompt
 self.addEventListener('beforeinstallprompt', (event) => {
   self.deferredPrompt = event; // Store for manual triggering if needed
+});
+
+// Handle messages for skipping waiting
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
