@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2">
+  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2">
     <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
         <h3 class="text-sm font-semibold text-blue-600 mt-[-20px] bg-white px-2">{{ $t("suggestions") }}</h3>

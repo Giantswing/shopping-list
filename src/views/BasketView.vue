@@ -40,8 +40,6 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col items-center h-screen px-2">
-    <div class="flex-grow w-full overflow-y-auto"><BasketList /></div>
-    <AddProductInput />
-  </div>
+  <div class="flex-grow w-full overflow-y-auto"><BasketList /></div>
+  <AddProductInput />
 </template>
