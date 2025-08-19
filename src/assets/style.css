@@ -238,3 +238,56 @@ animations can be calculated correctly. */
     100% { transform: translateX(0); }
   }
 }
+
+/* Custom Toast Styles */
+.Vue-Toastification__toast {
+  @apply mx-auto rounded-full p-3 px-4 max-w-[70%] mt-4 outline outline-2 outline-white shadow-lg;
+}
+
+.Vue-Toastification__toast-body {
+  @apply flex items-center gap-2 text-base font-bold leading-snug;
+}
+
+.Vue-Toastification__toast--success {
+  @apply text-white bg-green-600;
+}
+
+.Vue-Toastification__toast--error {
+  @apply text-white bg-red-600;
+}
+
+.Vue-Toastification__toast--warning {
+  @apply text-white bg-yellow-600;
+}
+
+.Vue-Toastification__toast--info {
+  @apply text-white bg-blue-600;
+}
+
+.Vue-Toastification__close-button {
+  @apply text-white text-3xl opacity-70;
+}
+
+.Vue-Toastification__close-button:hover {
+  @apply text-white;
+}
+
+.Vue-Toastification__progress-bar {
+  @apply rounded-full h-[8px] bg-white/30;
+}
+
+.Vue-Toastification__progress-bar--success {
+  @apply bg-white/40;
+}
+
+.Vue-Toastification__progress-bar--error {
+  @apply bg-white/40;
+}
+
+.Vue-Toastification__progress-bar--warning {
+  @apply bg-white/40;
+}
+
+.Vue-Toastification__progress-bar--info {
+  @apply bg-white/40;
+}
