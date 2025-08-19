@@ -90,7 +90,13 @@ export const basket = defineStore("basket", {
     async checkIfBasketExists(slug) {
       try {
         if (this.offlineMode) {
-          return this.connectedBaskets.find(basket => basket.slug === slug);
+          if (this.connectedBaskets.find(basket => basket.slug === slug)) {
+            this.connectBasketData.name = this.connectedBaskets.find(basket => basket.slug === slug).name;
+            this.connectBasketData.slug = slug;
+            return true;
+          } else {
+            return false;
+          }
         }
 
         this.loading.checkIfBasketExists = true;
@@ -117,7 +123,15 @@ export const basket = defineStore("basket", {
     async connectToBasket() {
       try {
         if (this.offlineMode) {
-          return this.connectedBaskets.find(basket => basket.slug === this.connectBasketData.slug);
+          if (this.connectedBaskets.find(basket => basket.slug === this.connectBasketData.slug)) {
+            this.currentBasket = this.connectBasketData.slug;
+            this.lastUsedBasket = this.connectBasketData.slug;
+            this.connectBasketData = {};
+            return true;
+          } else {
+            this.currentBasket = '';
+            return false;
+          }
         }
 
         this.loading.connectToBasket = true;
