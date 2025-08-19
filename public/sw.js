@@ -1,7 +1,9 @@
 const CACHE_NAME = 'basketi-v1';
 const urlsToCache = [
   '/',
-  '/index.html'
+  '/index.html',
+  '/src/main.js',
+  '/src/assets/style.css',
 ];
 
 // Install event - cache resources
