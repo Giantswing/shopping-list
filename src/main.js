@@ -9,6 +9,27 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import { autoAnimatePlugin } from '@formkit/auto-animate/vue'
 
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
+const toastOptions = {
+  position: "top-right",
+  timeout: 8000,
+  closeOnClick: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: false,
+  closeButton: "button",
+  icon: true,
+  rtl: false,
+  containerStyle: {
+    zIndex: 10000
+  }
+};
+
 import 'tippy.js/dist/tippy.css';
 
 import "@/assets/style.css";
@@ -26,6 +47,8 @@ app.use(autoAnimatePlugin);
 app.use(VueTippy, {
   defaultProps: { placement: 'top', arrow: true, theme: 'dark', allowHTML: 'true', zIndex: 9999, size: 'large' },
 });
+
+app.use(Toast, toastOptions);
 
 
 router.isReady().then(() => {

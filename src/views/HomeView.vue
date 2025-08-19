@@ -9,8 +9,6 @@ const useBasket = basket();
 const router = useRouter();
 const basketSlug = ref("");
 
-import toast from "@/includes/toast";
-
 const mode = ref("connect");
 
 onMounted(() => {

@@ -29,5 +29,7 @@
    "no-products-in-basket": "No products in basket",
    "add-products-to-your-basket": "Why don't you add some products?",
    "share-basket": "Share basket",
-   "copied-to-clipboard": "Copied to clipboard"
+   "copied-to-clipboard": "Copied to clipboard",
+   "offline-mode-enabled": "Offline mode enabled",
+   "back-online": "Back online"
 }

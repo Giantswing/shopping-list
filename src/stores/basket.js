@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate  } from "pinia";
 
-import toast from "@/includes/toast";
-const useToast = toast();
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
 import i18n from "@/includes/i18n.js";
 import apiClient from "@/includes/api-client";
@@ -30,6 +30,7 @@ export const basket = defineStore("basket", {
     },
     newBasketData: {}, 
     connectBasketData: {},
+    offlineMode: false,
   }),
 
   actions: {
@@ -91,12 +92,12 @@ export const basket = defineStore("basket", {
           this.connectBasketData.slug = slug;
           return true;
         } else {
-          useToast.error(i18n.global.t("basket-not-found"));
+          toast.error(i18n.global.t("basket-not-found"));
           return false;
         }
       } catch (error) {
         console.error(error);
-        useToast.error(i18n.global.t("basket-not-found"));
+        toast.error(i18n.global.t("basket-not-found"));
         this.connectBasketData.slug = '';
         return false;
       } finally {
@@ -119,9 +120,9 @@ export const basket = defineStore("basket", {
         }
       } catch (error) {
         if (error.response.data.error === 'invalid-password') {
-          useToast.error(i18n.global.t("invalid-password"));
+          toast.error(i18n.global.t("invalid-password"));
         } else {
-          useToast.error(i18n.global.t("internal-server-error"));
+          toast.error(i18n.global.t("internal-server-error"));
         }
         console.error(error);
       } finally {
@@ -150,7 +151,7 @@ export const basket = defineStore("basket", {
           throw new Error(response.data.error);
         }
       } catch (error) {
-        useToast.error(i18n.global.t("internal-server-error"));
+        toast.error(i18n.global.t("internal-server-error"));
         console.error(error);
       } finally {
         this.loading.addProductToBasketNames = this.loading.addProductToBasketNames.filter(name => name !== product);
@@ -177,7 +178,7 @@ export const basket = defineStore("basket", {
         }
       } catch (error) {
         console.error(error);
-        useToast.error(i18n.global.t("internal-server-error"));
+        toast.error(i18n.global.t("internal-server-error"));
       } finally {
         this.loading.removeProductFromBasketIds = this.loading.removeProductFromBasketIds.filter(id => id !== productId);
         this.shouldAutoUpdate = true;
@@ -194,12 +195,12 @@ export const basket = defineStore("basket", {
           this.newBasketData = {};
           return true;
         } else {
-          useToast.error(i18n.global.t(response.data.error));
+          toast.error(i18n.global.t(response.data.error));
           return false;
         }
       } catch (error) {
         console.error(error);
-        useToast.error(error.response.data.error);
+        toast.error(error.response.data.error);
       } finally {
         this.loading.createBasket = false;
       }

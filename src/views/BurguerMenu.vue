@@ -3,8 +3,8 @@ import { ref } from "vue";
 
 import { useRouter } from "vue-router";
 
-import toast from "@/includes/toast";
-const useToast = toast();
+import { useToast } from "vue-toastification";
+const toast = useToast();
 
 import i18n from "@/includes/i18n.js";
 
@@ -45,7 +45,7 @@ const copyTextToClipboard = text => {
   }
 
   navigator.clipboard.writeText(text);
-  useToast.success(i18n.global.t("copied-to-clipboard"));
+  toast.success(i18n.global.t("copied-to-clipboard"));
 };
 </script>
 
@@ -91,6 +91,13 @@ const copyTextToClipboard = text => {
             :class="[useBasket.currentView === 'products' ? 'text-white' : 'text-gray-500']"
           />
         </button>
+      </div>
+
+      <div
+        class="w-[48px] h-[48px] flex items-center justify-center opacity-50"
+        @click="useBasket.offlineMode = !useBasket.offlineMode"
+      >
+        <CIcon :icon="'octicon:cloud-offline-16'" v-if="useBasket.offlineMode" class="w-[32px] h-[32px]" />
       </div>
     </div>
 

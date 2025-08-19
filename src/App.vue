@@ -1,7 +1,31 @@
 <script setup>
-import { ref, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { basket } from "@/stores/basket";
 const useBasket = basket();
+
+import { useToast } from "vue-toastification";
+const toast = useToast();
+
+import i18n from "@/includes/i18n.js";
+
+const checkOnlineStatus = () => {
+  const isOffline = !navigator.onLine;
+
+  if (isOffline && !useBasket.offlineMode) {
+    toast.warning(i18n.global.t("offline-mode-enabled"));
+    useBasket.offlineMode = true;
+  } else if (!isOffline && useBasket.offlineMode) {
+    toast.success(i18n.global.t("back-online"));
+    useBasket.offlineMode = false;
+  }
+};
+
+onMounted(() => {
+  // toast.success("Test message");
+  checkOnlineStatus();
+  window.addEventListener("online", checkOnlineStatus);
+  window.addEventListener("offline", checkOnlineStatus);
+});
 
 // Dynamic height for viewport, adjusting for keyboard
 const dynamicHeight = ref(window.innerHeight);
@@ -21,6 +45,9 @@ if (window.visualViewport) {
 
 // Cleanup event listeners on component unmount
 onUnmounted(() => {
+  window.removeEventListener("online", checkOnlineStatus);
+  window.removeEventListener("offline", checkOnlineStatus);
+
   if (window.visualViewport) {
     window.visualViewport.removeEventListener("resize", updateHeight);
   } else {
