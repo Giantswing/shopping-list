@@ -61,7 +61,13 @@ const removeRecentBasket = slug => {
           $t("connect-to-another-basket")
         }}</CButton>
 
-        <div class="flex flex-col gap-3 mt-6" v-if="useBasket.connectedBaskets?.length > 0">
+        <div
+          class="flex flex-col gap-3 mt-6"
+          v-if="
+            useBasket.connectedBaskets?.length > 0 &&
+              useBasket.connectedBaskets.filter(basket => basket.slug !== useBasket.currentBasket).length > 0
+          "
+        >
           <p class="text-sm text-white font-semibold">{{ $t("connected-baskets") }}</p>
 
           <div class="flex flex-col gap-3 items-center max-h-[250px] overflow-y-auto">
