@@ -1,4 +1,4 @@
-const CACHE_NAME = 'basketi-v2'; // Increment version when updating
+const CACHE_NAME = 'basketi-v3'; // Increment version when updating
 const urlsToCache = [
   '/',
   '/index.html',
