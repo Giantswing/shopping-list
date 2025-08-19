@@ -16,6 +16,7 @@ export const basket = defineStore("basket", {
     burguerMenuOpen: false,
     currentBasket: '',
     connectedBaskets: [],
+    lastUsedBasket: '',
     basketProducts: [],
     productDetailsId: null,
     offlineProductsToRemove: [],
@@ -106,6 +107,7 @@ export const basket = defineStore("basket", {
         console.error(error);
         toast.error(i18n.global.t("basket-not-found"));
         this.connectBasketData.slug = '';
+        this.lastUsedBasket = '';
         return false;
       } finally {
         this.loading.checkIfBasketExists = false;
@@ -122,6 +124,7 @@ export const basket = defineStore("basket", {
         const response = await apiClient.post(`/api/basket/connect`, this.connectBasketData);
         if (response.data.success) {
           this.addBasketCredentials(this.connectBasketData.name, this.connectBasketData.slug, this.connectBasketData.password);
+          this.lastUsedBasket = this.connectBasketData.slug;
 
           this.currentBasket = this.connectBasketData.slug;
           this.connectBasketData = {};
@@ -130,6 +133,8 @@ export const basket = defineStore("basket", {
           throw new Error(response.data.error);
         }
       } catch (error) {
+        this.lastUsedBasket = '';
+
         if (error.response.data.error === 'invalid-password') {
           toast.error(i18n.global.t("invalid-password"));
         } else {
@@ -291,6 +296,7 @@ export const basket = defineStore("basket", {
         const response = await apiClient.post(`/api/basket/create`, this.newBasketData);
         if (response.data.success) {
           this.addBasketCredentials(this.newBasketData.name, response.data.slug, this.newBasketData.password);
+          this.lastUsedBasket = response.data.slug;
           this.currentBasket = response.data.slug;
           this.newBasketData = {};
           return true;

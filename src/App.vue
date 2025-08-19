@@ -69,6 +69,12 @@ onUnmounted(() => {
         change: value => (useBasket.connectedBaskets = value)
       },
       {
+        key: 'lastUsedBasket',
+        value: useBasket.lastUsedBasket,
+        mode: 'local',
+        change: value => (useBasket.lastUsedBasket = value)
+      },
+      {
         key: 'basketProducts',
         value: useBasket.basketProducts,
         mode: 'local',

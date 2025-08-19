@@ -34,6 +34,19 @@ import 'tippy.js/dist/tippy.css';
 
 import "@/assets/style.css";
 
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('SW registered: ', registration);
+      })
+      .catch((registrationError) => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+
 const pinia = createPinia()
 const app = createApp(App);
 const env = import.meta.env.VITE_APP_ENV;

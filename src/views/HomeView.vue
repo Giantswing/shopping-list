@@ -8,7 +8,6 @@ const useBasket = basket();
 
 const router = useRouter();
 const basketSlug = ref("");
-
 const mode = ref("connect");
 
 onMounted(() => {
@@ -16,6 +15,11 @@ onMounted(() => {
 
   useBasket.resetNewBasketData();
   useBasket.resetConnectBasketData();
+
+  // Auto-redirect to last used basket if available
+  if (useBasket.lastUsedBasket && useBasket.connectedBaskets.some(basket => basket.slug === useBasket.lastUsedBasket)) {
+    router.push(`/basket/${useBasket.lastUsedBasket}`);
+  }
 
   document.addEventListener("keydown", event => {
     handleEnterKey(event);

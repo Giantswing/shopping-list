@@ -32,5 +32,7 @@
    "copied-to-clipboard": "Copied to clipboard",
    "offline-mode-enabled": "Offline mode enabled",
    "back-online": "Back online",
-   "remove": "Remove"
+   "remove": "Remove",
+   "redirecting-to": "Redirecting to",
+   "clear-default-basket": "Clear default basket"
 }
