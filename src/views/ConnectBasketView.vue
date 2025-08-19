@@ -38,10 +38,10 @@ const connectToBasket = async () => {
         autofocus
         type="password"
         v-model="useBasket.connectBasketData.password"
-        placeholder="Password"
+        :placeholder="$t('password')"
         class="border-b-2 border-gray-400 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center mb-4"
       />
-      <button type="submit">Connect</button>
+      <button class="bg-blue-400 text-white px-4 py-2 rounded-md" type="submit">{{ $t("connect") }}</button>
     </form>
   </div>
 </template>

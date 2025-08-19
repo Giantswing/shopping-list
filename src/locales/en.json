@@ -9,12 +9,14 @@
    "go-back-to-connect": "Go back to connect",
    "create-basket": "Create basket",
    "basket-not-found": "Basket not found",
-   "basket-name-placeholder": "Basket name",
+   "basket-name-placeholder": "Christmas shopping of John",
    "basket-password-placeholder": "Basket password",
    "basket-repeat-password-placeholder": "Repeat the password",
    "passwords-do-not-match": "Passwords do not match",
    "product-already-in-basket": "Already in the basket",
    "go-back": "Go back",
    "current-basket": "Current basket",
-   "suggestions": "Suggestions"
+   "suggestions": "Suggestions",
+   "password": "Password",
+   "invalid-credentials": "Invalid credentials"
 }

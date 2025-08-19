@@ -18,6 +18,7 @@ export const basket = defineStore("basket", {
     connectedBaskets: [],
     basketProducts: [],
     products: new Map(),
+    refreshItemsInterval: null,
     loading: {
       basketProducts: false,
       checkIfBasketExists: false,
@@ -31,6 +32,16 @@ export const basket = defineStore("basket", {
   }),
 
   actions: {
+    startRefreshItemsInterval() {
+      this.refreshItemsInterval = setInterval(() => {
+        this.getBasketProducts();
+      }, 10000);
+    },
+
+    stopRefreshItemsInterval() {
+      clearInterval(this.refreshItemsInterval);
+    },
+
     resetNewBasketData() {
       this.newBasketData = {
         name: '',

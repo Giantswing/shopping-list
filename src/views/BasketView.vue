@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { basket } from "@/stores/basket";
@@ -35,8 +35,13 @@ onMounted(async () => {
     }
 
     /* If we reach this point, we have valid credentials */
+    useBasket.startRefreshItemsInterval();
     useBasket.getBasketProducts();
   }
+});
+
+onBeforeUnmount(() => {
+  useBasket.stopRefreshItemsInterval();
 });
 </script>
 

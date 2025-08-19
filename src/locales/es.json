@@ -9,12 +9,14 @@
    "go-back-to-connect": "Volver a conectar",
    "create-basket": "Crear cesta",
    "basket-not-found": "Cesta no encontrada",
-   "basket-name-placeholder": "Nombre de la cesta",
+   "basket-name-placeholder": "Compras de Navidad de Juan",
    "basket-password-placeholder": "Contraseña de la cesta",
    "basket-repeat-password-placeholder": "Repite la contraseña",
    "product-already-in-basket": "Ya en la cesta",
    "passwords-do-not-match": "Las contraseñas no coinciden",
    "go-back": "Volver",
    "current-basket": "Cesta actual",
-   "suggestions": "Sugerencias"
+   "suggestions": "Sugerencias",
+   "password": "Contraseña",
+   "invalid-credentials": "Credenciales inválidas"
 }
