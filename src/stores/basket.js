@@ -17,6 +17,7 @@ export const basket = defineStore("basket", {
     currentBasket: '',
     connectedBaskets: [],
     basketProducts: [],
+    productDetailsId: null,
     offlineProductsToRemove: [],
     products: new Map(),
     refreshItemsInterval: null,
@@ -28,6 +29,7 @@ export const basket = defineStore("basket", {
       connectToBasket: false,
       addProductToBasketNames: [],
       removeProductFromBasketIds: [],
+      removeProductFromListIds: [],
     },
     newBasketData: {}, 
     connectBasketData: {},
@@ -217,6 +219,33 @@ export const basket = defineStore("basket", {
       }
     },
 
+    async removeProductFromList(productId) {
+      try {
+        this.shouldAutoUpdate = false;
+
+        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-from-list`, {
+          product_id: productId,
+        });
+        if (response.data.success) {
+          this.basketProducts = response.data.basketProducts;
+          this.products = new Map();
+          response.data.products.forEach(product => {
+            this.products.set(product.id, product);
+          });
+          this.productDetailsId = null;
+          return true;
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error(i18n.global.t("internal-server-error"));
+      } finally {
+        this.loading.removeProductFromListIds = this.loading.removeProductFromListIds.filter(id => id !== productId);
+        this.shouldAutoUpdate = true;
+      }
+    },
+
     async removeProductFromBasket(productId) {
       try {
         this.shouldAutoUpdate = false;
@@ -230,7 +259,7 @@ export const basket = defineStore("basket", {
           return true;
         }
 
-        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product`, {
+        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-from-basket`, {
           product_id: productId,
         });
         if (response.data.success) {
