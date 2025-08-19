@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '0.0.3',
+    basketAppVersion: '0.0.4',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -107,6 +107,7 @@ export const basket = defineStore("basket", {
     async connectToBasket() {
       try {
         this.loading.connectToBasket = true;
+        console.log("connectToBasket", this.connectBasketData);
         const response = await apiClient.post(`/api/basket/connect`, this.connectBasketData);
         if (response.data.success) {
           this.addBasketCredentials(this.connectBasketData.name, this.connectBasketData.slug, this.connectBasketData.password);

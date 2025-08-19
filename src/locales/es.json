@@ -27,5 +27,7 @@
    "add-item-placeholder": "Ej.: Manzanas, tomates, etc.",
    "last-added-at": "Última vez añadido",
    "no-products-in-basket": "No hay productos en la cesta",
-   "add-products-to-your-basket": "¿Por qué no añades algunos productos a tu cesta?"
+   "add-products-to-your-basket": "¿Por qué no añades algunos productos?",
+   "share-basket": "Compartir cesta",
+   "copied-to-clipboard": "Copiado al portapapeles"
 }

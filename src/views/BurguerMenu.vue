@@ -3,6 +3,11 @@ import { ref } from "vue";
 
 import { useRouter } from "vue-router";
 
+import toast from "@/includes/toast";
+const useToast = toast();
+
+import i18n from "@/includes/i18n.js";
+
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
@@ -32,6 +37,15 @@ const changeMode = mode => {
   setTimeout(() => {
     changingMode.value = false;
   }, 75);
+};
+
+const copyTextToClipboard = text => {
+  if (!text) {
+    text = window.location.href + "?pass=" + useBasket.getBasketCredentials(useBasket.currentBasket).password;
+  }
+
+  navigator.clipboard.writeText(text);
+  useToast.success(i18n.global.t("copied-to-clipboard"));
 };
 </script>
 
@@ -109,11 +123,16 @@ const changeMode = mode => {
     >
       <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto">
         <p class="text-sm text-white font-semibold">{{ $t("current-basket") }}</p>
-        <h1 class="text-2xl font-bold">{{ useBasket.currentBasket }}</h1>
+        <h1 class="text-2xl font-bold mb-4">{{ useBasket.currentBasket }}</h1>
 
-        <CButton :buttonType="'secondary'" class="mt-4" @click="connectToAnotherBasket">{{
-          $t("connect-to-another-basket")
-        }}</CButton>
+        <CButton :buttonType="'secondary'" @click="copyTextToClipboard()">
+          <CIcon :icon="'solar:copy-bold-duotone'" class="w-[16px] h-[16px]" />
+          {{ $t("share-basket") }}
+        </CButton>
+
+        <CButton :buttonType="'secondary'" class="mt-4" @click="connectToAnotherBasket"
+          >{{ $t("connect-to-another-basket") }}
+        </CButton>
 
         <div
           class="flex flex-col gap-3 mt-6"
