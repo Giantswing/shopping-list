@@ -61,8 +61,9 @@ const connectToBasket = async slug => {
 };
 
 onMounted(async () => {
+  document.title = "Loading...";
   await connectToBasket(route.params.slug);
-  document.title = "🧺 " + useBasket.currentBasket;
+  document.title = useBasket.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name;
 });
 
 // Watch for route parameter changes

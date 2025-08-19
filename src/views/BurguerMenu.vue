@@ -127,6 +127,12 @@ const copyTextToClipboard = text => {
       :class="[useBasket.burguerMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full']"
     >
       <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto">
+        <!-- LOGO IMAGE -->
+
+        <div class="w-[100px] h-[100px] rounded-full bg-white flex items-center justify-center mb-4">
+          <img src="/basketi-logo.svg" class="w-full h-full scale-[0.8]" />
+        </div>
+
         <p class="text-sm text-white font-semibold">{{ $t("current-basket") }}</p>
         <h1 class="text-2xl font-bold mb-4">
           {{ useBasket.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
