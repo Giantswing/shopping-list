@@ -36,6 +36,10 @@ const useBasket = basket();
         <p class="text-sm text-white font-semibold">{{ $t("current-basket") }}</p>
         <h1 class="text-2xl font-bold">{{ useBasket.currentBasket }}</h1>
       </div>
+
+      <div class="absolute bottom-0 right-0 p-4">
+        <p class="text-sm text-white font-semibold">v{{ useBasket.basketAppVersion }}</p>
+      </div>
     </div>
   </div>
 </template>
