@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import i18n from "../includes/i18n.js";
 
@@ -9,22 +9,62 @@ const useBasket = basket();
 const router = useRouter();
 const basketSlug = ref("");
 const mode = ref("connect");
+const hasAttemptedRedirect = ref(false);
 
-onMounted(() => {
+onMounted(async () => {
   document.title = "Basketi";
 
   useBasket.resetNewBasketData();
   useBasket.resetConnectBasketData();
 
-  // Auto-redirect to last used basket if available
-  if (useBasket.lastUsedBasket && useBasket.connectedBaskets.some(basket => basket.slug === useBasket.lastUsedBasket)) {
-    router.push(`/basket/${useBasket.lastUsedBasket}`);
-  }
+  // Wait for router to be ready
+  await router.isReady();
+
+  // Fallback: if no redirect happens within 2 seconds, ensure we're on home page
+  setTimeout(() => {
+    if (!hasAttemptedRedirect.value) {
+      console.log("No auto-redirect happened, staying on home page");
+    }
+  }, 2000);
 
   document.addEventListener("keydown", event => {
     handleEnterKey(event);
   });
 });
+
+// Watch for localStorage data to be loaded and attempt redirect
+watch(
+  () => useBasket.lastUsedBasket,
+  newValue => {
+    console.log("lastUsedBasket changed:", newValue);
+    console.log("connectedBaskets:", useBasket.connectedBaskets);
+    if (!hasAttemptedRedirect.value && newValue && useBasket.connectedBaskets.some(basket => basket.slug === newValue)) {
+      console.log("Attempting redirect to:", newValue);
+      hasAttemptedRedirect.value = true;
+      router.push(`/basket/${newValue}`);
+    }
+  },
+  { immediate: true }
+);
+
+// Also watch connectedBaskets in case it loads after lastUsedBasket
+watch(
+  () => useBasket.connectedBaskets,
+  newValue => {
+    console.log("connectedBaskets changed:", newValue);
+    console.log("lastUsedBasket:", useBasket.lastUsedBasket);
+    if (
+      !hasAttemptedRedirect.value &&
+      useBasket.lastUsedBasket &&
+      newValue.some(basket => basket.slug === useBasket.lastUsedBasket)
+    ) {
+      console.log("Attempting redirect to:", useBasket.lastUsedBasket);
+      hasAttemptedRedirect.value = true;
+      router.push(`/basket/${useBasket.lastUsedBasket}`);
+    }
+  },
+  { immediate: true }
+);
 
 onBeforeUnmount(() => {
   document.removeEventListener("keydown", handleEnterKey);
