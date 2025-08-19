@@ -21,7 +21,7 @@ export const basket = defineStore("basket", {
     refreshItemsInterval: null,
     shouldAutoUpdate: true,
     loading: {
-      basketProducts: false,
+      basketProducts: true,
       checkIfBasketExists: false,
       createBasket: false,
       connectToBasket: false,
@@ -212,7 +212,9 @@ export const basket = defineStore("basket", {
           return;
         }
 
-        this.loading.basketProducts = true;
+        if (!fromAutoUpdate) {
+          this.loading.basketProducts = true;
+        }
 
         const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
         this.basketProducts = response.data.basketProducts;
