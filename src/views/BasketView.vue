@@ -7,6 +7,7 @@ const useBasket = basket();
 
 import AddProductInput from "@/views/AddProductInput.vue";
 import BasketList from "@/views/BasketList.vue";
+import BurguerMenu from "@/views/BurguerMenu.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -40,6 +41,9 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex-grow w-full overflow-y-auto"><BasketList /></div>
-  <AddProductInput />
+  <div class="flex flex-col w-full h-full relative">
+    <BurguerMenu />
+    <div class="flex-grow w-full overflow-y-auto overflow-x-hidden"><BasketList /></div>
+    <AddProductInput />
+  </div>
 </template>

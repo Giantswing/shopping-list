@@ -13,6 +13,7 @@ export const basket = defineStore("basket", {
     basketAppVersion: '0.0.1',
     newProductInput: '',
     currentView: 'list',
+    burguerMenuOpen: false,
     currentBasket: '',
     connectedBaskets: [],
     basketProducts: [],
@@ -146,6 +147,7 @@ export const basket = defineStore("basket", {
 
     async removeProductFromBasket(productId) {
       try {
+        this.loading.removeProductFromBasketIds.push(productId);
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product`, {
           product_id: productId,
         });
@@ -162,6 +164,8 @@ export const basket = defineStore("basket", {
       } catch (error) {
         console.error(error);
         useToast.error(i18n.global.t("internal-server-error"));
+      } finally {
+        this.loading.removeProductFromBasketIds = this.loading.removeProductFromBasketIds.filter(id => id !== productId);
       }
     },
 

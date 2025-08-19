@@ -67,14 +67,16 @@ const suggestions = computed(() => {
   return result.slice(0, 3);
 });
 
-const handleAddProduct = product => {
+const handleAddProduct = (product, comesFromSuggestion = false) => {
   if (!product || product.name.length === 0) {
     return;
   }
 
   useBasket.addProductToBasket(product.name);
 
-  inputRef.value.focus();
+  if (!comesFromSuggestion) {
+    inputRef.value.focus();
+  }
 };
 
 const inputRef = ref(null);
@@ -126,7 +128,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
         <h3 class="text-xs font-semibold text-blue-400 mt-[-20px] bg-white px-2 py-1">{{ $t("suggestions") }}</h3>
         <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center">
-          <button class="text-sm text-blue-600 py-2" @click="handleAddProduct(suggestion)">
+          <button class="text-sm text-blue-600 py-2" @click="handleAddProduct(suggestion, true)">
             <span class="font-bold">{{ suggestion.name }}</span>
           </button>
         </div>
