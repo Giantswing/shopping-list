@@ -190,7 +190,11 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
         </CButton>
 
         <span
-          v-if="useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput)"
+          v-if="
+            useBasket.basketProducts.some(
+              p => useBasket.products.get(p.product_id).name.trim() === useBasket.newProductInput.trim()
+            )
+          "
           class="text-sm text-gray-500"
         >
           {{ $t("product-already-in-basket") }}
