@@ -130,14 +130,13 @@ const copyTextToClipboard = text => {
       class="z-50 pointer-events-none absolute top-0 left-0 w-full h-full flex justify-center items-center overflow-y-auto transition-all duration-[250ms] delay-[200ms]"
       :class="[useBasket.burguerMenuOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full']"
     >
-      <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto">
+      <div class="w-fit h-fit flex flex-col items-center justify-center pointer-events-auto mt-[-130px]">
         <!-- LOGO IMAGE -->
 
-        <div class="w-[100px] h-[100px] rounded-full bg-white flex items-center justify-center mb-4">
+        <div class="w-[80px] h-[80px] rounded-full bg-white flex items-center justify-center mb-4">
           <img src="/basketi-logo.svg" class="w-full h-full scale-[0.8]" />
         </div>
 
-        <p class="text-sm text-white font-semibold">{{ $t("current-basket") }}</p>
         <h1 class="text-2xl font-bold mb-4">
           {{ useBasket.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
         </h1>
@@ -177,8 +176,16 @@ const copyTextToClipboard = text => {
         </div>
       </div>
 
-      <div class="absolute bottom-0 right-0 p-4">
-        <p class="text-sm text-white font-semibold">v{{ useBasket.basketAppVersion }}</p>
+      <div class="absolute bottom-0 left-0 w-full flex justify-between py-3 px-6 pointer-events-auto items-center">
+        <!-- BUY ME A COFFEE ICON -->
+        <a class="text-white font-semibold translate-y-[-4px]" href="https://www.buymeacoffee.com/giantswing" target="_blank">
+          <img src="/bmc-brand-icon.svg" class="w-[180px] h-[40px]" />
+        </a>
+
+        <p class="flex flex-col items-center justify-center">
+          <span>Basketi</span>
+          <span class="text-sm text-white font-bold mt-[-10px] mr-[-10px]">v{{ useBasket.basketAppVersion }}</span>
+        </p>
       </div>
     </div>
   </div>
