@@ -38,7 +38,7 @@ html {
 
 .tr-bounce-enter-active,
 .tr-bounce-leave-active {
-  transition: all 0.1s ease;
+  transition: all 0.05s ease;
 }
 
 .tr-bounce-enter-from,
