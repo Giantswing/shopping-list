@@ -198,25 +198,26 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       <!-- If there are suggestions, show suggestion button(s) with default icon, and if input is not equal to first suggestion, show "new item" button with "new" icon -->
       <template v-else-if="suggestions?.length > 0 && useBasket.newProductInput.length > 0">
         <CButton
+          v-if="useBasket.newProductInput.trim() !== suggestions?.[0]?.name.trim()"
           :buttonType="'secondary'"
-          v-if="useBasket.newProductInput.trim() !== suggestions[0].name.trim()"
           :isDisabled="
-            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput.trim())
+            !(
+              useBasket.newProductInput.trim() !==
+              suggestions?.find(s => s.name.trim() === useBasket.newProductInput.trim())?.name.trim()
+            )
           "
-          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-4 !py-2'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
         >
           <CIcon :icon="'ic:round-fiber-new'" class="h-6 w-6 shrink-0" />
-          <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">
-            {{ useBasket.newProductInput }}
-          </p>
+          <p class="font-bold leading-none text-center w-full whitespace-pre-line">{{ useBasket.newProductInput }}</p>
         </CButton>
 
         <CButton
           v-for="(suggestion, idx) in suggestions.slice(0, 1)"
           :buttonType="'primary'"
           :key="suggestion.id"
-          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
+          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-4 !py-2'"
           @onClick="handleAddProduct(suggestion)"
         >
           <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
