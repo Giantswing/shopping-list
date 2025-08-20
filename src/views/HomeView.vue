@@ -102,6 +102,13 @@ const handleConnectInput = () => {
 
 <template>
   <div class="w-full max-w-md p-6 bg-white rounded-3xl flex flex-col items-center gap-2 border-8 border-blue-50">
+    <!-- LOGO IMAGE -->
+
+    <div class="w-[120px] h-[120px] rounded-full bg-white flex items-center justify-center mb-4">
+      <img src="/basketi-logo.svg" class="w-full h-full scale-[0.8]" />
+    </div>
+    <h1 class="text-2xl font-bold mb-4 mt-[-40px] text-blue-400">Basketi</h1>
+
     <div
       :class="[
         'transition-all duration-500 overflow-hidden flex flex-col items-center',
@@ -150,7 +157,7 @@ const handleConnectInput = () => {
     <!-- Other connected baskets -->
     <div
       class="flex flex-col gap-2 overflow-hidden transition-all duration-500"
-      :class="[mode === 'connect' ? 'max-h-[200px] mt-2 opacity-100' : 'max-h-[0px] opacity-0']"
+      :class="[mode === 'connect' ? 'max-h-[200px] mt-2 opacity-100 overflow-y-auto' : 'max-h-[0px] opacity-0']"
       v-if="
         useBasket.connectedBaskets?.length > 0 &&
           useBasket.connectedBaskets.filter(basket => basket.slug !== useBasket.currentBasket).length > 0
