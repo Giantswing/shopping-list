@@ -22,6 +22,11 @@ const props = defineProps({
     default: "#e28743"
   },
 
+  safetyConfirmationIcon: {
+    type: Boolean,
+    default: false
+  },
+
   safetyConfirmationTimeout: {
     type: Number,
     default: 8000
@@ -147,9 +152,14 @@ onUnmounted(() => {
       ]"
       :style="`background-color: ${props.safetyConfirmationColor}`"
     >
-      <p class="text-white text-center text-sm font-bold group-hover/button:brightness-[0.8] transition-all">
+      <p
+        class="text-white text-center text-sm font-bold group-hover/button:brightness-[0.8] transition-all"
+        v-if="!safetyConfirmationIcon"
+      >
         {{ $t("are-you-sure") }}
       </p>
+
+      <CIcon v-else :icon="'mingcute:finger-press-fill'" class="w-[32px] h-[32px] text-white" />
     </div>
 
     <div class="group-active/button:scale-[0.6] group-active/button:delay-[-100ms] transition-all">

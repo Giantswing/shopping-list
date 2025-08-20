@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '0.1.0',
+    basketAppVersion: '0.1.2',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -31,6 +31,7 @@ export const basket = defineStore("basket", {
       addProductToBasketNames: [],
       removeProductFromBasketIds: [],
       removeProductFromListIds: [],
+      removeAllProductsFromBasket: false,
     },
     newBasketData: {}, 
     connectBasketData: {},
@@ -236,6 +237,56 @@ export const basket = defineStore("basket", {
         console.error(error);
       } finally {
         this.loading.addProductToBasketNames = this.loading.addProductToBasketNames.filter(name => name !== product);
+        this.shouldAutoUpdate = true;
+      }
+    },
+
+    async editProductQuantity(productId, quantity) {
+      try {
+        this.shouldAutoUpdate = false;
+
+        const response = await apiClient.post(`/api/basket/${this.currentBasket}/edit-product-quantity`, {
+          product_id: productId,
+          quantity: quantity,
+        });
+        if (response.data.success) {
+          this.basketProducts.find(p => p.product_id === productId).quantity = quantity;
+
+          return true;
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error(i18n.global.t("internal-server-error"));
+      } finally {
+        this.shouldAutoUpdate = true;
+      }
+    },
+
+    async removeAllProductsFromBasket() {
+      try {
+        this.shouldAutoUpdate = false;
+        this.loading.removeAllProductsFromBasket = true;
+
+        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-all-products-from-basket`);
+
+        if (response.data.success) {
+          this.basketProducts = response.data.basketProducts;
+          this.products = new Map();
+          response.data.products.forEach(product => {
+            this.products.set(product.id, product);
+          });
+          return true;
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error(i18n.global.t(error.response.data.error));
+        return false;
+      } finally {
+        this.loading.removeAllProductsFromBasket = false;
         this.shouldAutoUpdate = true;
       }
     },

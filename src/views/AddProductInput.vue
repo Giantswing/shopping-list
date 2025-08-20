@@ -6,7 +6,7 @@ import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const suggestions = computed(() => {
-  const maxResults = 3;
+  const maxResults = 4;
   let result = Array.from(useBasket.products.values());
 
   if (!result || result.length === 0) {
@@ -125,12 +125,26 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
 
 <template>
   <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative">
+    <!-- DELETE ALL ITEMS BUTTON -->
+    <div class="w-full absolute flex flex-col -translate-y-full p-4 pb-5 gap-4">
+      <CButton
+        :addedClass="'w-[48px] h-[48px] !bg-red-400 !border-red-300 !p-0'"
+        @onClick="useBasket.removeAllProductsFromBasket()"
+        :loading="useBasket.loading.removeAllProductsFromBasket"
+        :isDisabled="useBasket.offlineMode || useBasket.basketProducts.length === 0"
+        :safetyConfirmation="true"
+        :safetyConfirmationIcon="true"
+      >
+        <CIcon :icon="'material-symbols:delete-sweep-outline-rounded'" class="w-[32px] h-[32px] text-white" />
+      </CButton>
+    </div>
+
     <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
-        <h3 class="text-xs font-semibold text-blue-400 mt-[-20px] bg-white px-2 py-1">{{ $t("suggestions") }}</h3>
-        <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center">
+        <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("suggestions") }}</h3>
+        <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center w-full">
           <button
-            class="text-sm text-blue-600 py-2 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms]"
+            class="text-sm text-blue-600 py-1 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms] bg-blue-50 px-4 rounded-full w-[80%] mx-auto"
             @click="handleAddProduct(suggestion, true)"
           >
             <span class="font-bold">{{ suggestion.name }}</span>
@@ -138,7 +152,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
         </div>
       </div>
 
-      <h2 class="text-xs font-semibold text-blue-600">{{ $t("new-buy-message") }}</h2>
+      <h2 class="text-xs font-semibold text-blue-600 mt-1">{{ $t("new-buy-message") }}</h2>
       <input
         @input="cleanUpInput"
         ref="inputRef"

@@ -86,7 +86,7 @@ onBeforeUnmount(() => {
 <template>
   <!-- Alternative approach: You could also use :key="route.params.slug" to force component re-mounting -->
   <div class="flex flex-col w-full h-full relative" v-auto-animate="{ duration: 75 }">
-    <h3 class="font-bold text-right text-blue-700 px-4 opacity-20 select-none mb-[-15px]">
+    <h3 class="font-bold text-right text-blue-700 px-4 opacity-30 select-none mb-[-15px] z-50 pointer-events-none">
       {{ useBasket?.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
     </h3>
     <BurguerMenu />
