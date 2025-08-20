@@ -20,6 +20,10 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+body {
+  @apply bg-blue-50;
+}
+
 
 /* Transition animations for <Transition> names, use names like "tr-translate" */
 

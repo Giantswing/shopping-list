@@ -123,7 +123,10 @@ onUnmounted(() => {
     ]"
   />
 
-  <div class="relative w-full flex flex-col items-center justify-center bg-blue-50" :style="{ height: dynamicHeight + 'px' }">
+  <div
+    class="relative w-full flex flex-col items-center justify-center bg-blue-50 max-w-xl mx-auto"
+    :style="{ height: dynamicHeight + 'px' }"
+  >
     <RouterView />
   </div>
 </template>
