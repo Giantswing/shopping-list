@@ -36,5 +36,9 @@
    "redirecting-to": "Redirigiendo a",
    "clear-default-basket": "Limpiar cesta por defecto",
    "adjust-quantity": "Ajustar cantidad",
-   "not-in-basket": "no está en tu cesta aún"
+   "not-in-basket": "no está en tu cesta aún",
+   "install-app": "Instalar App",
+   "install-app-description": "Instala Basketi para una mejor experiencia",
+   "app-installed": "¡App instalada exitosamente!",
+   "install-failed": "Error al instalar la app"
 }

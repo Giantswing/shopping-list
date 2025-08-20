@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 import { useRouter } from "vue-router";
 
@@ -10,6 +10,8 @@ import i18n from "@/includes/i18n.js";
 
 import { basket } from "@/stores/basket";
 const useBasket = basket();
+
+import pwaManager from "@/includes/pwa.js";
 
 const router = useRouter();
 const changingMode = ref(false);
@@ -48,6 +50,25 @@ const copyTextToClipboard = text => {
   navigator.clipboard.writeText(text);
   toast.success(i18n.global.t("copied-to-clipboard"));
 };
+
+// PWA installation
+const showInstallButton = computed(() => {
+  return pwaManager.shouldShowInstallPrompt();
+});
+
+const installApp = async () => {
+  try {
+    const success = await pwaManager.installApp();
+    if (success) {
+      toast.success(i18n.global.t("app-installed"));
+    }
+  } catch (error) {
+    toast.error(i18n.global.t("install-failed"));
+  }
+};
+
+// Debug PWA status (for development)
+const pwaStatus = computed(() => pwaManager.getInstallationStatus());
 </script>
 
 <template>
@@ -97,6 +118,18 @@ const copyTextToClipboard = text => {
       <div class="w-[48px] h-[48px] flex flex-col items-center justify-center opacity-50" v-if="useBasket.offlineMode">
         <p class="text-center font-semibold text-xs text-gray-600">Offline</p>
         <CIcon :icon="'octicon:cloud-offline-16'" class="w-[32px] h-[32px]" />
+      </div>
+
+      <!-- PWA Install Button -->
+      <div v-if="showInstallButton" class="w-[48px] h-[48px] flex flex-col items-center justify-center">
+        <button
+          class="w-[48px] h-[48px] rounded-full bg-green-500 flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors duration-200"
+          @click="installApp"
+          :title="$t('install-app-description')"
+        >
+          <CIcon :icon="'material-symbols:download'" class="w-[24px] h-[24px] text-white" />
+        </button>
+        <p class="text-center font-semibold text-xs text-gray-600 mt-1">Install</p>
       </div>
     </div>
 
@@ -149,6 +182,22 @@ const copyTextToClipboard = text => {
         <CButton :buttonType="'secondary'" class="mt-4" @click="connectToAnotherBasket"
           >{{ $t("connect-to-another-basket") }}
         </CButton>
+
+        <!-- PWA Install Button in main menu -->
+        <CButton v-if="showInstallButton" :buttonType="'primary'" class="mt-4" @click="installApp">
+          <CIcon :icon="'material-symbols:download'" class="w-[16px] h-[16px] mr-2" />
+          {{ $t("install-app") }}
+        </CButton>
+
+        <!-- Debug PWA Status (development only) -->
+        <div v-if="false" class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white">
+          <p><strong>PWA Debug:</strong></p>
+          <p>Mobile: {{ pwaStatus.isMobile }}</p>
+          <p>Standalone: {{ pwaStatus.isStandalone }}</p>
+          <p>Can Install: {{ pwaStatus.canInstall }}</p>
+          <p>Has Prompt: {{ pwaStatus.hasPrompt }}</p>
+          <p>Show Button: {{ showInstallButton }}</p>
+        </div>
 
         <div
           class="flex flex-col gap-3 mt-6"

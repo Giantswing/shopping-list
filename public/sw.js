@@ -1,4 +1,4 @@
-const CACHE_NAME = 'basketi-v6'; // Incremented to force update
+const CACHE_NAME = 'basketi-v7'; // Incremented to force update
 const urlsToCache = [
   '/',
   '/index.html',
@@ -81,7 +81,18 @@ self.addEventListener('fetch', (event) => {
 
 // Handle PWA installation prompt
 self.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
   self.deferredPrompt = event; // Store for manual triggering if needed
+  
+  // Notify all clients about the install prompt availability
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'INSTALL_PROMPT_AVAILABLE',
+        data: { hasPrompt: true }
+      });
+    });
+  });
 });
 
 // Handle messages for skipping waiting
