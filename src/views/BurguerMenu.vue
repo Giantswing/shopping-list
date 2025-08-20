@@ -69,6 +69,10 @@ const installApp = async () => {
 
 // Debug PWA status (for development)
 const pwaStatus = computed(() => pwaManager.getInstallationStatus());
+
+const forceCheckPWA = async () => {
+  await pwaManager.forceCheck();
+};
 </script>
 
 <template>
@@ -185,9 +189,12 @@ const pwaStatus = computed(() => pwaManager.getInstallationStatus());
           <p><strong>PWA Debug:</strong></p>
           <p>Mobile: {{ pwaStatus?.isMobile }}</p>
           <p>Standalone: {{ pwaStatus?.isStandalone }}</p>
+          <p>Valid Manifest: {{ pwaStatus?.hasValidManifest }}</p>
+          <p>Service Worker: {{ pwaStatus?.hasServiceWorker }}</p>
           <p>Can Install: {{ pwaStatus?.canInstall }}</p>
           <p>Has Prompt: {{ pwaStatus?.hasPrompt }}</p>
           <p>Show Button: {{ showInstallButton }}</p>
+          <button @click="forceCheckPWA" class="mt-2 px-2 py-1 bg-blue-500 rounded text-xs">Force Check</button>
         </div>
 
         <div
