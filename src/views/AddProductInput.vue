@@ -29,7 +29,8 @@ const suggestions = computed(() => {
   if (search.length > 0) {
     let found = fuzzysort.go(search, result, {
       key: "name",
-      threshold: -10000
+      threshold: 0.5,
+      limit: 0
     });
 
     // Add scoring boosts (optional)
