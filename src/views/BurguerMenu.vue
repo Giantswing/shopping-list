@@ -119,18 +119,6 @@ const pwaStatus = computed(() => pwaManager.getInstallationStatus());
         <p class="text-center font-semibold text-xs text-gray-600">Offline</p>
         <CIcon :icon="'octicon:cloud-offline-16'" class="w-[32px] h-[32px]" />
       </div>
-
-      <!-- PWA Install Button -->
-      <div v-if="showInstallButton" class="w-[48px] h-[48px] flex flex-col items-center justify-center">
-        <button
-          class="w-[48px] h-[48px] rounded-full bg-green-500 flex items-center justify-center shadow-lg hover:bg-green-600 transition-colors duration-200"
-          @click="installApp"
-          :title="$t('install-app-description')"
-        >
-          <CIcon :icon="'material-symbols:download'" class="w-[24px] h-[24px] text-white" />
-        </button>
-        <p class="text-center font-semibold text-xs text-gray-600 mt-1">Install</p>
-      </div>
     </div>
 
     <!-- Animated expanding background, centered on the button -->
