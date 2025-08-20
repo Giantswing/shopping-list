@@ -5,6 +5,7 @@ import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 import BasketEntry from "./BasketEntry.vue";
+import pwaManager from "@/includes/pwa";
 
 const filteredBasketEntires = computed(() => {
   let result = useBasket?.basketProducts || [];
@@ -18,6 +19,14 @@ const filteredBasketEntires = computed(() => {
   }
   return result;
 });
+
+const showInstallButton = computed(() => {
+  return pwaManager.shouldShowInstallPrompt();
+});
+
+const installApp = async () => {
+  await pwaManager.installApp();
+};
 </script>
 
 <template>
@@ -53,6 +62,14 @@ const filteredBasketEntires = computed(() => {
       <CIcon :icon="'streamline-color:happy-face-flat'" class="w-[100px] h-[100px] text-gray-500" />
       <p class="text-gray-500 font-bold">{{ $t("no-products-in-basket") }}</p>
       <p class="text-gray-500 text-center">{{ $t("add-products-to-your-basket") }}</p>
+
+      <div class="flex flex-col gap-1 border-2 border-gray-300 rounded-2xl p-4" v-if="showInstallButton">
+        <p class="text-gray-500 text-center">{{ $t("install-app-description") }}</p>
+        <CButton :buttonType="'primary'" class="mt-4" @click="installApp">
+          <CIcon :icon="'material-symbols:download'" class="w-[16px] h-[16px] mr-2" />
+          {{ $t("install-app") }}
+        </CButton>
+      </div>
     </div>
   </div>
 </template>

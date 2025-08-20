@@ -196,7 +196,7 @@ setInterval(updatePWAStatus, 1000);
         <!-- Debug PWA Status (only if the basket is called cesta) -->
         <div
           v-if="useBasket.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name === 'cesta'"
-          class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white"
+          class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white max-h-[100px] overflow-y-auto"
         >
           <p><strong>PWA Debug:</strong></p>
           <p>Mobile: {{ pwaStatus?.isMobile }}</p>
