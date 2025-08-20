@@ -1,8 +1,23 @@
 <script setup>
+import { computed } from "vue";
+
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 import BasketEntry from "./BasketEntry.vue";
+
+const filteredBasketEntires = computed(() => {
+  let result = useBasket?.basketProducts || [];
+  if (useBasket?.newProductInput?.trim()?.length > 0) {
+    result = result.filter(entry =>
+      useBasket?.products
+        .get(entry.product_id)
+        ?.name.toLowerCase()
+        .includes(useBasket?.newProductInput?.toLowerCase())
+    );
+  }
+  return result;
+});
 </script>
 
 <template>
@@ -15,7 +30,7 @@ import BasketEntry from "./BasketEntry.vue";
       class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4"
       v-auto-animate="{ duration: 75 }"
     >
-      <BasketEntry v-for="entry in useBasket.basketProducts" :key="entry.product_id" :entry="entry" />
+      <BasketEntry v-for="entry in filteredBasketEntires" :key="entry.product_id" :entry="entry" />
     </div>
 
     <div v-else-if="useBasket.loading.basketProducts" class="w-full flex flex-col items-center h-full justify-center">
