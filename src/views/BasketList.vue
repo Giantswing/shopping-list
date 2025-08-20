@@ -13,7 +13,7 @@ const filteredBasketEntires = computed(() => {
       useBasket?.products
         .get(entry.product_id)
         ?.name.toLowerCase()
-        .includes(useBasket?.newProductInput?.toLowerCase())
+        .includes(useBasket?.newProductInput?.trim()?.toLowerCase())
     );
   }
   return result;

@@ -171,17 +171,19 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       ]"
     >
       <!-- If there are no suggestions and input is non-empty, show "new item" button with "new" icon -->
-      <template v-if="suggestions?.length === 0 && useBasket.newProductInput.length > 0">
+      <template v-if="suggestions?.length === 0 && useBasket.newProductInput.trim().length > 0">
         <CButton
           :buttonType="'primary'"
-          :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2 disabled:opacity-50 disabled:saturate-0'"
+          :addedClass="
+            '!bg-blue-600 text-sm !rounded-full !px-8 !py-2 disabled:opacity-50 disabled:saturate-0 disabled:cursor-not-allowed'
+          "
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
-          :disabled="
-            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput)
+          :isDisabled="
+            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput.trim())
           "
         >
-          <CIcon :icon="'qlementine-icons:new-16'" />
-          <span class="font-bold">{{ useBasket.newProductInput }}</span>
+          <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
+          <span class="font-bold leading-none">{{ useBasket.newProductInput }}</span>
         </CButton>
 
         <span
@@ -195,15 +197,15 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       <template v-else-if="suggestions?.length > 0 && useBasket.newProductInput.length > 0">
         <CButton
           :buttonType="'secondary'"
-          v-if="useBasket.newProductInput !== suggestions[0].name"
+          v-if="useBasket.newProductInput.trim() !== suggestions[0].name.trim()"
           :isDisabled="
             useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput.trim())
           "
           :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
         >
-          <CIcon :icon="'ic:round-fiber-new'" class="h-6 w-6" />
-          <span class="font-bold">{{ useBasket.newProductInput }}</span>
+          <CIcon :icon="'ic:round-fiber-new'" class="h-6 w-6 shrink-0" />
+          <span class="font-bold leading-none">{{ useBasket.newProductInput }}</span>
         </CButton>
 
         <CButton
@@ -213,8 +215,8 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
           :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
           @onClick="handleAddProduct(suggestion)"
         >
-          <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6" />
-          <span class="font-bold">{{ suggestion.name }}</span>
+          <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
+          <span class="font-bold leading-none">{{ suggestion.name }}</span>
         </CButton>
       </template>
     </div>
