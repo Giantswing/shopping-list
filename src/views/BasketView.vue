@@ -90,10 +90,20 @@ onBeforeUnmount(() => {
       {{ useBasket?.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
     </h3>
     <BurguerMenu />
-    <div class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]" v-if="useBasket.currentView === 'list'">
+    <div
+      v-if="useBasket.currentView === 'list'"
+      class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]"
+      :class="[useBasket.burguerMenuOpen ? 'pointer-events-none' : '']"
+    >
       <BasketList />
     </div>
-    <div class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]" v-else><BasketProducts /></div>
+    <div
+      v-else
+      class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]"
+      :class="[useBasket.burguerMenuOpen ? 'pointer-events-none' : '']"
+    >
+      <BasketProducts />
+    </div>
 
     <AddProductInput v-if="useBasket.currentView === 'list'" />
   </div>
