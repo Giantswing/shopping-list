@@ -66,11 +66,7 @@ const closeEditQuantityModal = async () => {
     <!-- EDIT QUANTITY MODAL -->
     <Teleport to="body">
       <div class="z-[9999]" v-auto-animate="{ duration: 75 }">
-        <div
-          v-if="editQuantityModal"
-          class="fixed inset-0 bg-blue-800/70 z-50 backdrop-blur-sm"
-          @click="closeEditQuantityModal"
-        />
+        <div v-if="editQuantityModal" class="fixed inset-0 bg-blue-800/70 z-50" @click="closeEditQuantityModal" />
 
         <div v-if="editQuantityModal" class="fixed inset-0 flex flex-col justify-center items-center z-50 pointer-events-none">
           <p
@@ -82,7 +78,7 @@ const closeEditQuantityModal = async () => {
           </p>
 
           <div
-            class="flex flex-col items-center gap-2 bg-gray-200 rounded-full p-4 pointer-events-auto w-fit px-8 py-8 shadow-2xl shadow-black transition-all duration-100 border-b-[8px] border-x-4 border-b-black border-x-black border-opacity-20 border-t-4 border-t-gray-700"
+            class="flex flex-col items-center gap-2 bg-gray-200 rounded-full p-4 pointer-events-auto w-fit px-8 py-8 transition-all duration-100 border-b-[8px] border-x-4 border-b-black border-x-black border-opacity-20 border-t-4 border-t-gray-700"
             :class="[
               openingEditQuantityModal ? 'scale-[1] opacity-100 translate-y-0' : 'scale-[1.2] opacity-0 translate-y-[300px]'
             ]"
