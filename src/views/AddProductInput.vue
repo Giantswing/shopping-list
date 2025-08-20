@@ -196,6 +196,9 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
         <CButton
           :buttonType="'secondary'"
           v-if="useBasket.newProductInput !== suggestions[0].name"
+          :isDisabled="
+            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput)
+          "
           :addedClass="'!bg-blue-600 text-sm !rounded-full !px-8 !py-2'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
         >
