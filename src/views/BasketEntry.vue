@@ -57,7 +57,7 @@ const closeEditQuantityModal = async () => {
       </div>
 
       <div
-        class="flex justify-center items-center w-full h-full gap-2 bg-blue-100 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.3)] z-10 px-1"
+        class="flex justify-center items-center w-full h-full gap-2 bg-blue-100 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.2)] z-10 px-1"
       >
         <p v-if="props.entry.offline" class="text-center font-semibold text-xs text-gray-600">Offline</p>
         <p class="text-center leading-none">{{ useBasket.products.get(props.entry.product_id)?.name }}</p>
