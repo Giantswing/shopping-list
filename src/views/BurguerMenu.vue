@@ -177,13 +177,16 @@ const pwaStatus = computed(() => pwaManager.getInstallationStatus());
           {{ $t("install-app") }}
         </CButton>
 
-        <!-- Debug PWA Status (development only) -->
-        <div v-if="true" class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white">
+        <!-- Debug PWA Status (only if the basket is called cesta) -->
+        <div
+          v-if="useBasket.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name === 'cesta'"
+          class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white"
+        >
           <p><strong>PWA Debug:</strong></p>
-          <p>Mobile: {{ pwaStatus.isMobile }}</p>
-          <p>Standalone: {{ pwaStatus.isStandalone }}</p>
-          <p>Can Install: {{ pwaStatus.canInstall }}</p>
-          <p>Has Prompt: {{ pwaStatus.hasPrompt }}</p>
+          <p>Mobile: {{ pwaStatus?.isMobile }}</p>
+          <p>Standalone: {{ pwaStatus?.isStandalone }}</p>
+          <p>Can Install: {{ pwaStatus?.canInstall }}</p>
+          <p>Has Prompt: {{ pwaStatus?.hasPrompt }}</p>
           <p>Show Button: {{ showInstallButton }}</p>
         </div>
 
