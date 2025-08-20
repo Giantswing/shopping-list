@@ -8,7 +8,7 @@ const toast = useToast();
 
 import i18n from "@/includes/i18n.js";
 
-// Browser back functionality for burger menu
+// Browser back functionality for burger menu and view state
 let isHandlingPopState = false;
 
 const handlePopState = event => {
@@ -16,9 +16,15 @@ const handlePopState = event => {
 
   isHandlingPopState = true;
 
+  // First priority: close burger menu if open
   if (useBasket.burguerMenuOpen) {
     useBasket.burguerMenuOpen = false;
   }
+  // Second priority: go back from products to list view
+  else if (useBasket.currentView === "products") {
+    useBasket.currentView = "list";
+  }
+  // If already in list view, prevent going back (do nothing)
 
   // Reset flag after a short delay to prevent double handling
   setTimeout(() => {
@@ -26,6 +32,7 @@ const handlePopState = event => {
   }, 100);
 };
 
+// Watch for burger menu state changes and update browser history
 watch(
   () => useBasket.burguerMenuOpen,
   isOpen => {
@@ -33,6 +40,19 @@ watch(
 
     if (isOpen) {
       window.history.pushState({ menuOpen: true }, "", window.location.href);
+    }
+  },
+  { immediate: false }
+);
+
+// Watch for view state changes and update browser history
+watch(
+  () => useBasket.currentView,
+  newView => {
+    if (isHandlingPopState) return;
+
+    if (newView === "products") {
+      window.history.pushState({ view: "products" }, "", window.location.href);
     }
   },
   { immediate: false }
