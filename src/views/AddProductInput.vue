@@ -204,7 +204,10 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
             !(
               useBasket.newProductInput.trim() !==
               suggestions?.find(s => s.name.trim() === useBasket.newProductInput.trim())?.name.trim()
-            )
+            ) ||
+              useBasket.basketProducts.some(
+                p => useBasket.products.get(p.product_id).name.trim() === useBasket.newProductInput.trim()
+              )
           "
           :addedClass="'!bg-blue-600 text-sm !rounded-full !px-4 !py-2'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
