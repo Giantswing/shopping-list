@@ -37,7 +37,7 @@ const changeMode = mode => {
   changingMode.value = true;
   setTimeout(() => {
     changingMode.value = false;
-  }, 75);
+  }, 150);
 };
 
 const copyTextToClipboard = text => {
@@ -60,7 +60,7 @@ const copyTextToClipboard = text => {
       >
         <!-- Animated background indicator -->
         <div
-          class="absolute left-1/2 -translate-x-1/2 transition-all duration-100 rounded-full bg-green-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
+          class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 rounded-full bg-green-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
           :class="[
             useBasket.currentView === 'list' ? 'shadow-[0_2px_10px_rgba(0,0,0,0.1)]' : 'shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
             changingMode ? 'scale-y-[1.8] delay-[-15ms]' : 'scale-y-[1]'
@@ -114,7 +114,10 @@ const copyTextToClipboard = text => {
 
     <!-- Burguer Button always on top -->
     <div class="m-3 absolute left-0 top-0 z-20">
-      <button class="rounded-full p-6 pointer-events-auto" @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen">
+      <button
+        class="rounded-full p-6 pointer-events-auto active:scale-[0.8] transition-all duration-100 active:delay-[-50ms]"
+        @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen"
+      >
         <CIcon
           :icon="useBasket.burguerMenuOpen ? 'line-md:close' : 'line-md:menu'"
           class="w-[32px] h-[32px] text-white absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"

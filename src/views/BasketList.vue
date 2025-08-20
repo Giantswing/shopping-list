@@ -36,7 +36,7 @@ const filteredBasketEntires = computed(() => {
 
     <div
       v-if="useBasket.basketProducts?.length > 0 && !useBasket.loading.basketProducts"
-      class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4"
+      class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4 pb-8"
       v-auto-animate="{ duration: 75 }"
     >
       <BasketEntry v-for="entry in filteredBasketEntires" :key="entry.product_id" :entry="entry" />

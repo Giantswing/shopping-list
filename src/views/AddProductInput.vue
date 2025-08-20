@@ -129,7 +129,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
     <!-- DELETE ALL ITEMS BUTTON -->
     <div class="w-full absolute flex flex-col -translate-y-full p-4 pb-5 gap-4">
       <CButton
-        :addedClass="'w-[48px] h-[48px] !bg-red-400 !border-red-300 !p-0'"
+        :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
         @onClick="useBasket.removeAllProductsFromBasket()"
         :loading="useBasket.loading.removeAllProductsFromBasket"
         :isDisabled="useBasket.offlineMode || useBasket.basketProducts.length === 0"
