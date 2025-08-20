@@ -53,7 +53,10 @@ const copyTextToClipboard = text => {
 
 // PWA installation
 const showInstallButton = computed(() => {
-  return pwaManager.shouldShowInstallPrompt();
+  // Use the reactive pwaStatus instead of calling the method directly
+  const status = pwaStatus.value;
+  const result = status.isMobile && !status.isStandalone && status.hasPrompt;
+  return result;
 });
 
 const installApp = async () => {
@@ -68,11 +71,20 @@ const installApp = async () => {
 };
 
 // Debug PWA status (for development)
-const pwaStatus = computed(() => pwaManager.getInstallationStatus());
+const pwaStatus = ref(pwaManager.getInstallationStatus());
 
 const forceCheckPWA = async () => {
-  await pwaManager.forceCheck();
+  const status = await pwaManager.forceCheck();
+  pwaStatus.value = status;
 };
+
+// Update PWA status periodically
+const updatePWAStatus = () => {
+  pwaStatus.value = pwaManager.getInstallationStatus();
+};
+
+// Update status every second for debugging
+setInterval(updatePWAStatus, 1000);
 </script>
 
 <template>

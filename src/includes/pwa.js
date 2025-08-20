@@ -197,8 +197,8 @@ class PWAManager {
     // Show install button if:
     // 1. It's a mobile device
     // 2. Not already in standalone mode
-    // 3. Either has a deferred prompt OR meets PWA criteria
-    const shouldShow = this.isMobile && !this.isStandalone && (this.deferredPrompt !== null || this.canInstall);
+    // 3. Has a deferred prompt (this is the key requirement)
+    const shouldShow = this.isMobile && !this.isStandalone && this.deferredPrompt !== null;
     
     console.log('PWA: shouldShowInstallPrompt check:', {
       isMobile: this.isMobile,
