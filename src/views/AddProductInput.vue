@@ -183,7 +183,9 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
           "
         >
           <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
-          <span class="font-bold leading-none">{{ useBasket.newProductInput }}</span>
+          <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">
+            {{ useBasket.newProductInput }}
+          </p>
         </CButton>
 
         <span
@@ -205,7 +207,9 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
         >
           <CIcon :icon="'ic:round-fiber-new'" class="h-6 w-6 shrink-0" />
-          <span class="font-bold leading-none">{{ useBasket.newProductInput }}</span>
+          <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">
+            {{ useBasket.newProductInput }}
+          </p>
         </CButton>
 
         <CButton
@@ -216,7 +220,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
           @onClick="handleAddProduct(suggestion)"
         >
           <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
-          <span class="font-bold leading-none">{{ suggestion.name }}</span>
+          <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">{{ suggestion.name }}</p>
         </CButton>
       </template>
     </div>
