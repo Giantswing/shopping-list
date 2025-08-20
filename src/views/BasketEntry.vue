@@ -90,7 +90,7 @@ const closeEditQuantityModal = async () => {
               <CIcon :icon="'bxs:up-arrow'" class="w-[48px] h-[48px] text-blue-600" />
             </button>
 
-            <p class="text-center font-semibold text-sm text-gray-600 !text-4xl">{{ quantity }}</p>
+            <p class="text-center font-semibold text-sm text-gray-600 !text-4xl shrink-0">{{ quantity }}</p>
 
             <button
               :disabled="quantity === 1"
