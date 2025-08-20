@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watch } from "vue";
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
@@ -7,6 +7,36 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 import i18n from "@/includes/i18n.js";
+
+// Browser back functionality for burger menu
+let isHandlingPopState = false;
+
+const handlePopState = event => {
+  if (isHandlingPopState) return;
+
+  isHandlingPopState = true;
+
+  if (useBasket.burguerMenuOpen) {
+    useBasket.burguerMenuOpen = false;
+  }
+
+  // Reset flag after a short delay to prevent double handling
+  setTimeout(() => {
+    isHandlingPopState = false;
+  }, 100);
+};
+
+watch(
+  () => useBasket.burguerMenuOpen,
+  isOpen => {
+    if (isHandlingPopState) return;
+
+    if (isOpen) {
+      window.history.pushState({ menuOpen: true }, "", window.location.href);
+    }
+  },
+  { immediate: false }
+);
 
 const checkOnlineStatus = () => {
   const isOffline = !navigator.onLine;
@@ -27,6 +57,9 @@ onMounted(() => {
   checkOnlineStatus();
   window.addEventListener("online", checkOnlineStatus);
   window.addEventListener("offline", checkOnlineStatus);
+
+  // Add popstate listener for browser back functionality
+  window.addEventListener("popstate", handlePopState);
 });
 
 // Dynamic height for viewport, adjusting for keyboard
@@ -49,6 +82,7 @@ if (window.visualViewport) {
 onUnmounted(() => {
   window.removeEventListener("online", checkOnlineStatus);
   window.removeEventListener("offline", checkOnlineStatus);
+  window.removeEventListener("popstate", handlePopState);
 
   if (window.visualViewport) {
     window.visualViewport.removeEventListener("resize", updateHeight);
