@@ -178,7 +178,7 @@ const pwaStatus = computed(() => pwaManager.getInstallationStatus());
         </CButton>
 
         <!-- Debug PWA Status (development only) -->
-        <div v-if="false" class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white">
+        <div v-if="true" class="mt-4 p-3 bg-white bg-opacity-10 rounded-lg text-xs text-white">
           <p><strong>PWA Debug:</strong></p>
           <p>Mobile: {{ pwaStatus.isMobile }}</p>
           <p>Standalone: {{ pwaStatus.isStandalone }}</p>
