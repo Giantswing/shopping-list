@@ -35,5 +35,6 @@
    "remove": "Remove",
    "redirecting-to": "Redirecting to",
    "clear-default-basket": "Clear default basket",
-   "adjust-quantity": "Adjust quantity"
+   "adjust-quantity": "Adjust quantity",
+   "not-in-basket": "is not in your basket yet"
 }

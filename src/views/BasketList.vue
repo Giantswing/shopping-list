@@ -26,6 +26,15 @@ const filteredBasketEntires = computed(() => {
     :class="[!useBasket.loading.basketProducts && useBasket.basketProducts?.length === 0 ? 'translate-x-[-30px]' : '']"
   >
     <div
+      v-if="useBasket.newProductInput.trim().length > 0 && filteredBasketEntires.length === 0"
+      class="w-full flex flex-col h-full gap-4 mt-8 text-center max-w-[250px]"
+    >
+      <p class="text-gray-500 flex flex-col">
+        <span class="font-semibold text-gray-700">{{ useBasket.newProductInput }}</span> <span>{{ $t("not-in-basket") }}</span>
+      </p>
+    </div>
+
+    <div
       v-if="useBasket.basketProducts?.length > 0 && !useBasket.loading.basketProducts"
       class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4"
       v-auto-animate="{ duration: 75 }"
