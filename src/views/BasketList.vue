@@ -12,6 +12,7 @@ const filteredBasketEntries = computed(() => {
 
   if (result.length > 0 && useBasket.currentView === "list") {
     result = result.filter(entry => entry?.is_added);
+    result = result.sort((b, a) => new Date(b.last_added_at) - new Date(a.last_added_at));
   } else if (result.length > 0 && useBasket.currentView === "grid") {
     if (useBasket.filters.showOnlyAdded) {
       result = result.filter(entry => entry?.is_added);

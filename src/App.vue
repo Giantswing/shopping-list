@@ -105,6 +105,12 @@ onUnmounted(() => {
         change: value => (useBasket.connectedBaskets = value)
       },
       {
+        key: 'showOnlyAdded',
+        value: useBasket.filters.showOnlyAdded,
+        mode: 'local',
+        change: value => (useBasket.filters.showOnlyAdded = value)
+      },
+      {
         key: 'currentView',
         value: useBasket.currentView,
         mode: 'local',
