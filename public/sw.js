@@ -1,4 +1,4 @@
-const CACHE_NAME = 'basketi-v7'; // Incremented to force update
+const CACHE_NAME = 'basketi-v8'; // Incremented to force update
 const urlsToCache = [
   '/',
   '/index.html',

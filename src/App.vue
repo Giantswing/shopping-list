@@ -96,7 +96,7 @@ onUnmounted(() => {
 
 <template>
   <CSaveLoad
-    :localStoragePrefix="'shopping_list_v1_'"
+    :localStoragePrefix="'shopping_list_v2_'"
     :values="[
       {
         key: 'connectedBaskets',
@@ -123,16 +123,10 @@ onUnmounted(() => {
         change: value => (useBasket.lastUsedBasket = value)
       },
       {
-        key: 'basketProducts',
-        value: useBasket.basketProducts,
-        mode: 'local',
-        change: value => (useBasket.basketProducts = value)
-      },
-      {
         key: 'products',
-        value: Array.from(useBasket.products.entries()),
+        value: useBasket.products,
         mode: 'local',
-        change: value => (useBasket.products = new Map(value))
+        change: value => (useBasket.products = value)
       }
     ]"
   />
