@@ -47,10 +47,17 @@ const props = defineProps({
   <!-- GRID VIEW -->
   <div
     v-else-if="useBasket.currentView === 'grid'"
-    class="w-full py-1 flex flex-col justify-between items-center transition-all duration-100 rounded-[20px] h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms] px-1"
+    class="w-full py-1 flex flex-col justify-between items-center transition-all duration-100 rounded-[20px] h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms] px-[5px] active:z-50"
+    @click.stop="
+      () => {
+        if (props.entry.is_added == false) {
+          useBasket.addProductToBasket(props.entry.name);
+        }
+      }
+    "
     :class="[
       entry.is_added
-        ? 'bg-blue-50 text-blue-800 border-blue-500 shadow-md outline outline-2 outline-white'
+        ? 'bg-blue-50 text-blue-800 border-blue-500/50 shadow-md outline outline-2 outline-white'
         : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300'
     ]"
   >
@@ -72,6 +79,7 @@ const props = defineProps({
 
       <!-- ADD TO BASKET BUTTON -->
       <button
+        v-if="props.entry.is_added"
         class="cursor-pointer rounded-full p-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms] flex justify-center items-center "
         :class="[
           props.entry.is_added ? 'bg-rose-400 rounded-r-[18px] rounded-l-md w-[50%]' : 'bg-emerald-500 w-[100%] rounded-[18px]'
