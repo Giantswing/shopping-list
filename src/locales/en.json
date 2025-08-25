@@ -43,5 +43,6 @@
    "install-failed": "Failed to install app",
    "filters": "Filters",
    "showing-added-only": "Only added",
-   "show-all-products": "Show all"
+   "show-all-products": "Show all",
+   "delete-permanently": "Delete permanently"
 }

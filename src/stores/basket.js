@@ -210,6 +210,7 @@ export const basket = defineStore("basket", {
           let prod = this.products.find(p => p.id === productId);
           prod.quantity++;
           prod.is_added = true;
+          prod.last_added_at = new Date().toISOString();
 
           return true;
         }
@@ -258,6 +259,10 @@ export const basket = defineStore("basket", {
 
     async removeAllProductsFromBasket() {
       try {
+        if (this.offlineMode) {
+          return;
+        }
+
         this.shouldAutoUpdate = false;
         this.loading.removeAllProductsFromBasket = true;
 
@@ -291,6 +296,8 @@ export const basket = defineStore("basket", {
           product_id: productId,
         });
         if (response.data.success) {
+          this.editQuantityModal = false;
+          this.productDetailsId = null;
           this.products = this.products.filter(p => p.id !== productId);
           this.productDetailsId = null;
           return true;

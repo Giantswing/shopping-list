@@ -41,7 +41,7 @@ watch(
 <template>
   <Teleport to="body">
     <div class="z-[9999]" v-auto-animate="{ duration: 75 }">
-      <div v-if="useBasket.editQuantityModal" class="fixed inset-0 bg-blue-700/80 z-50" @click="handleClose" />
+      <div v-if="useBasket.editQuantityModal" class="fixed inset-0 bg-blue-700/90 z-50" @click="handleClose" />
 
       <div
         v-if="useBasket.editQuantityModal"
@@ -86,6 +86,16 @@ watch(
             <CIcon :icon="'bxs:down-arrow'" class="w-[48px] h-[48px] text-blue-600" />
           </button>
         </div>
+
+        <!-- DELETE PERMANENTLY BUTTON -->
+        <CButton
+          :safetyConfirmation="true"
+          @onClick="useBasket.removeProductPermanently(product.id)"
+          class="pointer-events-auto mt-24"
+          :class="[showModal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[80px]']"
+        >
+          {{ $t("delete-permanently") }}
+        </CButton>
       </div>
     </div>
   </Teleport>

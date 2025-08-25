@@ -43,5 +43,6 @@
    "install-failed": "Error al instalar la app",
    "filters": "Filtros",
    "showing-added-only": "Solo añadidos",
-   "show-all-products": "Mostrar todos"
+   "show-all-products": "Mostrar todos",
+   "delete-permanently": "Eliminar permanentemente"
 }

@@ -54,8 +54,8 @@ const installApp = async () => {
 
     <div
       v-if="filteredBasketEntries?.length > 0 && !useBasket.loading.basketProducts"
-      class="w-full gap-3 items-center p-3 pt-4 pb-8"
-      :class="[useBasket.currentView === 'grid' ? 'grid grid-cols-2' : 'flex flex-col-reverse gap-3']"
+      class="w-full items-center p-3 pt-4 pb-8"
+      :class="[useBasket.currentView === 'grid' ? 'grid grid-cols-2 gap-2' : 'flex flex-col-reverse gap-3']"
       v-auto-animate="{ duration: 75 }"
     >
       <BasketEntry v-for="entry in filteredBasketEntries" :key="entry.id" :entry="entry" />

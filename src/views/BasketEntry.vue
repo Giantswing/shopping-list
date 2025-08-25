@@ -47,20 +47,22 @@ const props = defineProps({
   <!-- GRID VIEW -->
   <div
     v-else-if="useBasket.currentView === 'grid'"
-    class="w-full py-2 flex flex-col justify-between items-center gap-2 transition-all duration-100 rounded-lg h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms]"
+    class="w-full py-1 flex flex-col justify-between items-center transition-all duration-100 rounded-[20px] h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms] px-1"
     :class="[
       entry.is_added
-        ? 'bg-blue-50 text-blue-700 border-blue-500 scale-[1.05]'
-        : 'bg-gray-100 opacity-70 text-gray-700 border-gray-300'
+        ? 'bg-blue-50 text-blue-800 border-blue-500 shadow-md outline outline-2 outline-white'
+        : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300'
     ]"
   >
-    <p class="text-sm text-center leading-none font-semibold px-2">{{ props.entry.name }}</p>
+    <p class="text-sm text-center leading-none font-semibold px-2 h-full flex items-center justify-center pb-2">
+      {{ props.entry.name }}
+    </p>
 
-    <div class="flex flex-row gap-1 items-center" v-auto-animate="{ duration: 100 }">
+    <div class="flex flex-row gap-1 items-center w-full" v-auto-animate="{ duration: 45 }">
       <!-- QUANTITY BUTTON -->
       <div
         v-if="props.entry.is_added"
-        class="flex justify-center items-center min-w-[56px] h-full bg-blue-300 gap-2 rounded-full rounded-r-none"
+        class="flex justify-center items-center w-[50%] h-full bg-blue-300 gap-2 rounded-l-[18px] rounded-r-md"
         @click.stop="useBasket.openEditQuantityModal(props.entry.id)"
       >
         <p class="text-center font-semibold text-sm text-blue-900">
@@ -70,8 +72,10 @@ const props = defineProps({
 
       <!-- ADD TO BASKET BUTTON -->
       <button
-        class="cursor-pointer rounded-full p-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms]"
-        :class="[props.entry.is_added ? 'bg-rose-400 rounded-l-none' : 'bg-emerald-500']"
+        class="cursor-pointer rounded-full p-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms] flex justify-center items-center "
+        :class="[
+          props.entry.is_added ? 'bg-rose-400 rounded-r-[18px] rounded-l-md w-[50%]' : 'bg-emerald-500 w-[100%] rounded-[18px]'
+        ]"
         @click="
           () => {
             if (props.entry.is_added) {
