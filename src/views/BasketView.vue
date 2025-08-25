@@ -9,6 +9,7 @@ import AddProductInput from "@/views/AddProductInput.vue";
 import BasketList from "@/views/BasketList.vue";
 import BasketProducts from "@/views/BasketProducts.vue";
 import BurguerMenu from "@/views/BurguerMenu.vue";
+import EntryEditQuantityModal from "@/views/EntryEditQuantityModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -106,5 +107,10 @@ onBeforeUnmount(() => {
     </div>
 
     <AddProductInput v-if="useBasket.currentView === 'list'" />
+
+    <EntryEditQuantityModal
+      v-if="useBasket.editQuantityModal"
+      :product="useBasket.products.find(p => p.id === useBasket.productDetailsId)"
+    />
   </div>
 </template>

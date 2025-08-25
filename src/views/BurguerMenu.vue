@@ -121,12 +121,12 @@ setInterval(updatePWAStatus, 1000);
 
         <button
           class="relative z-10 rounded-full w-[48px] h-[48px] flex items-center justify-center"
-          @click="changeMode('products')"
+          @click="changeMode('grid')"
         >
           <CIcon
             :icon="'fluent:grid-24-filled'"
             class="w-[28px] h-[28px] transition-all duration-100"
-            :class="[useBasket.currentView === 'products' ? 'text-white' : 'text-gray-500']"
+            :class="[useBasket.currentView === 'grid' ? 'text-white' : 'text-gray-500']"
           />
         </button>
       </div>

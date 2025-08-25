@@ -22,6 +22,7 @@ export const basket = defineStore("basket", {
     products: [],
     refreshItemsInterval: null,
     shouldAutoUpdate: true,
+    editQuantityModal: false,
     loading: {
       basketProducts: true,
       checkIfBasketExists: false,
@@ -382,7 +383,28 @@ export const basket = defineStore("basket", {
       } finally {
         this.loading.basketProducts = false;
       }
-    }
+    },
+
+    openEditQuantityModal(productId) {
+      if (this.offlineMode) {
+        return;
+      }
+
+      this.productDetailsId = productId;
+      this.editQuantityModal = true;
+      console.log("Product details id", this.products.find(p => p.id === productId));
+      console.log("Opening edit quantity modal", this.productDetailsId);
+    },
+
+    async closeEditQuantityModal(newQuantity) {
+      this.editQuantityModal = false;
+      let product = this.products.find(p => p.id === this.productDetailsId);
+
+      if (product) {
+        await this.editProductQuantity(this.productDetailsId, newQuantity);
+        this.productDetailsId = null;
+      }
+    },
   },
 });
 
