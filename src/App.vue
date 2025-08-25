@@ -96,7 +96,7 @@ onUnmounted(() => {
 
 <template>
   <CSaveLoad
-    :localStoragePrefix="'shopping_list_v2_'"
+    :localStoragePrefix="'shopping_list_v1_'"
     :values="[
       {
         key: 'connectedBaskets',
