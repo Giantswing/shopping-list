@@ -13,7 +13,9 @@ const suggestions = computed(() => {
     return [];
   }
 
-  const alreadyAddedIds = useBasket.basketProducts.map(p => p.product_id);
+  const alreadyAddedIds = Array.from(useBasket.products.values())
+    .filter(p => p.is_added)
+    .map(p => p.id);
   result = result.filter(p => !alreadyAddedIds.includes(p.id));
 
   const search = useBasket.newProductInput.toLowerCase();
@@ -125,14 +127,18 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative">
+  <div
+    class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative shadow-[0_0_40px_rgba(0,0,0,0.05)]"
+    v-auto-animate="{ duration: 100 }"
+  >
     <!-- DELETE ALL ITEMS BUTTON -->
-    <div class="w-full absolute flex flex-col -translate-y-full p-4 pb-5 gap-4">
+    <div class="w-full absolute flex flex-col -translate-y-full p-4 pb-5 gap-4 pointer-events-none">
       <CButton
+        class="pointer-events-auto"
         :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
         @onClick="useBasket.removeAllProductsFromBasket()"
         :loading="useBasket.loading.removeAllProductsFromBasket"
-        :isDisabled="useBasket.offlineMode || useBasket.basketProducts.length === 0"
+        :isDisabled="useBasket.offlineMode || Array.from(useBasket.products.values()).filter(p => p.is_added).length === 0"
         :safetyConfirmation="true"
         :safetyConfirmationIcon="true"
       >
@@ -140,7 +146,11 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       </CButton>
     </div>
 
-    <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
+    <!-- LIST VIEW -->
+    <div
+      v-if="useBasket.currentView === 'list'"
+      class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl"
+    >
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
         <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("suggestions") }}</h3>
         <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center w-full">
@@ -166,6 +176,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
     </div>
 
     <div
+      v-if="useBasket.currentView === 'list'"
       :class="[
         'transition-all duration-100 overflow-hidden flex gap-2 items-center',
         useBasket.newProductInput.length > 0 ? 'max-h-[100px] mt-2' : 'max-h-[0px]'
@@ -179,9 +190,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
             '!bg-blue-600 text-sm !rounded-full !px-8 !py-2 disabled:opacity-50 disabled:saturate-0 disabled:cursor-not-allowed'
           "
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
-          :isDisabled="
-            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput.trim())
-          "
+          :isDisabled="Array.from(useBasket.products.values()).some(p => p.name === useBasket.newProductInput.trim())"
         >
           <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
           <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">
@@ -190,11 +199,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
         </CButton>
 
         <span
-          v-if="
-            useBasket.basketProducts.some(
-              p => useBasket.products.get(p.product_id).name.trim() === useBasket.newProductInput.trim()
-            )
-          "
+          v-if="Array.from(useBasket.products.values()).some(p => p.name.trim() === useBasket.newProductInput.trim())"
           class="text-sm text-gray-500"
         >
           {{ $t("product-already-in-basket") }}
@@ -209,10 +214,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
             !(
               useBasket.newProductInput.trim() !==
               suggestions?.find(s => s.name.trim() === useBasket.newProductInput.trim())?.name.trim()
-            ) ||
-              useBasket.basketProducts.some(
-                p => useBasket.products.get(p.product_id).name.trim() === useBasket.newProductInput.trim()
-              )
+            ) || Array.from(useBasket.products.values()).some(p => p.name.trim() === useBasket.newProductInput.trim())
           "
           :addedClass="'!bg-blue-600 text-sm !rounded-full !px-4 !py-2'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
@@ -232,6 +234,34 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
           <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">{{ suggestion.name }}</p>
         </CButton>
       </template>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div
+      v-if="useBasket.currentView === 'grid'"
+      class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl"
+    >
+      <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("filters") }}</h3>
+
+      <div class="w-full flex flex-row gap-2 items-center justify-center">
+        <button
+          v-for="(filter, idx) in [
+            { key: true, label: $t('showing-added-only') },
+            { key: false, label: $t('show-all-products') }
+          ]"
+          :key="filter.key"
+          class="flex flex-row gap-2 items-center justify-center px-6 py-2 text-sm active:scale-[0.8] transition-all duration-100 font-semibold  rounded-md"
+          :class="[
+            useBasket.filters.showOnlyAdded === filter.key
+              ? 'opacity-100 bg-blue-300 w-[40%] text-blue-900'
+              : 'opacity-60 bg-gray-300 w-[35%] text-gray-700',
+            idx === 0 ? 'rounded-l-[50px]' : 'rounded-r-[50px]'
+          ]"
+          @click="useBasket.filters.showOnlyAdded = filter.key"
+        >
+          <span class="whitespace-nowrap">{{ filter.label }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>

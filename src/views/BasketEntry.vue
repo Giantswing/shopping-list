@@ -1,6 +1,4 @@
 <script setup>
-import { ref } from "vue";
-
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
@@ -10,40 +8,15 @@ const props = defineProps({
     required: true
   }
 });
-
-const editQuantityModal = ref(false);
-const openingEditQuantityModal = ref(false);
-const quantity = ref(props.entry.quantity);
-
-const openEditQuantityModal = () => {
-  if (useBasket.offlineMode) {
-    return;
-  }
-
-  editQuantityModal.value = true;
-  setTimeout(() => {
-    openingEditQuantityModal.value = true;
-  }, 100);
-};
-
-const closeEditQuantityModal = async () => {
-  openingEditQuantityModal.value = false;
-
-  setTimeout(() => {
-    editQuantityModal.value = false;
-  }, 100);
-
-  await useBasket.editProductQuantity(props.entry.product_id, quantity.value);
-
-  quantity.value = props.entry.quantity;
-};
 </script>
 
 <template>
+  <!-- LIST VIEW -->
   <div
+    v-if="useBasket.currentView === 'list'"
     class="flex flex-row gap-2 items-center bg-transparent w-full rounded-full justify-between text-sm font-semibold text-blue-900 select-none overflow-hidden transition-all duration-300 h-[42px] shrink-0 border-2 border-blue-900/20"
     :class="[
-      useBasket.loading.removeProductFromBasketIds.includes(props.entry.product_id)
+      useBasket.loading.removeProductFromBasketIds.includes(props.entry.id)
         ? 'opacity-50 saturate-0 cursor-not-allowed pointer-events-none'
         : ''
     ]"
@@ -51,73 +24,81 @@ const closeEditQuantityModal = async () => {
     <div class="flex justify-between items-center w-full h-full">
       <div
         class="flex justify-center items-center min-w-[56px] h-full bg-blue-300 gap-2 mr-[-14px] pr-2"
-        @click.stop="openEditQuantityModal"
+        @click.stop="useBasket.openEditQuantityModal(props.entry.id)"
       >
-        <p class="text-center font-semibold text-sm text-blue-900">{{ props.entry.quantity }}</p>
+        <p class="text-center font-semibold text-sm text-blue-900">
+          {{ useBasket.products.find(p => p.id === props.entry.id)?.quantity }}
+        </p>
       </div>
 
       <div
         class="flex justify-center items-center w-full h-full gap-2 bg-blue-100 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.2)] z-10 px-1"
       >
         <p v-if="props.entry.offline" class="text-center font-semibold text-xs text-gray-600">Offline</p>
-        <p class="text-center leading-none">{{ useBasket.products.get(props.entry.product_id)?.name }}</p>
+        <p class="text-center leading-none">{{ useBasket.products.find(p => p.id === props.entry.id)?.name }}</p>
       </div>
 
-      <button
-        class="bg-rose-400 px-4 h-full ml-[-14px] pl-5"
-        @click.stop="useBasket.removeProductFromBasket(props.entry.product_id)"
-      >
+      <button class="bg-rose-400 px-4 h-full ml-[-14px] pl-5" @click.stop="useBasket.removeProductFromBasket(props.entry.id)">
         <CIcon :icon="'jam:delete-f'" class="w-[24px] h-[24px] text-gray-500 text-white" />
       </button>
     </div>
+  </div>
 
-    <!-- EDIT QUANTITY MODAL -->
-    <Teleport to="body">
-      <div class="z-[9999]" v-auto-animate="{ duration: 75 }">
-        <div v-if="editQuantityModal" class="fixed inset-0 bg-blue-800/70 z-50" @click="closeEditQuantityModal" />
+  <!-- GRID VIEW -->
+  <div
+    v-else-if="useBasket.currentView === 'grid'"
+    class="w-full py-1 flex flex-col justify-between items-center transition-all duration-100 rounded-[20px] h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms] px-[5px] active:z-50"
+    @click.stop="
+      () => {
+        if (props.entry.is_added == false) {
+          useBasket.addProductToBasket(props.entry.name);
+        }
+      }
+    "
+    :class="[
+      entry.is_added
+        ? 'bg-blue-50 text-blue-800 border-blue-500/50 shadow-md outline outline-2 outline-white'
+        : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300'
+    ]"
+  >
+    <p class="text-sm text-center leading-none font-semibold px-2 h-full flex items-center justify-center pb-2">
+      {{ props.entry.name }}
+    </p>
 
-        <div v-if="editQuantityModal" class="fixed inset-0 flex flex-col justify-center items-center z-50 pointer-events-none">
-          <p
-            class="text-center font-semibold text-sm text-white text-xl mb-4 max-w-[250px] leading-none select-none transition-all duration-100 flex flex-col items-center justify-center gap-2"
-            :class="[openingEditQuantityModal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[-10px]']"
-          >
-            <span class="text-sm opacity-70">{{ $t("adjust-quantity") }}</span>
-            <span class="text-3xl font-bold">{{ useBasket.products.get(props.entry.product_id)?.name }}</span>
-          </p>
-
-          <div
-            class="flex flex-col items-center gap-2 bg-gray-200 rounded-full p-4 pointer-events-auto w-fit px-8 py-8 transition-all duration-100 border-b-[8px] border-x-4 border-b-black border-x-black border-opacity-20 border-t-4 border-t-gray-700"
-            :class="[
-              openingEditQuantityModal ? 'scale-[1] opacity-100 translate-y-0' : 'scale-[1.2] opacity-0 translate-y-[300px]'
-            ]"
-          >
-            <button
-              class="flex flex-col items-center gap-2 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms]"
-              @click="quantity++"
-            >
-              <CIcon :icon="'bxs:up-arrow'" class="w-[48px] h-[48px] text-blue-600" />
-            </button>
-
-            <Transition name="tr-bounce" mode="out-in">
-              <p class="text-center font-bold text-sm text-gray-600 !text-4xl shrink-0" :key="quantity">{{ quantity }}</p>
-            </Transition>
-
-            <button
-              :disabled="quantity === 1"
-              class="flex flex-col items-center gap-2 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms] disabled:opacity-50 disabled:cursor-not-allowed"
-              @click="
-                () => {
-                  if (quantity > 1) {
-                    quantity--;
-                  }
-                }
-              "
-            >
-              <CIcon :icon="'bxs:down-arrow'" class="w-[48px] h-[48px] text-blue-600" />
-            </button>
-          </div>
-        </div>
+    <div class="flex flex-row gap-1 items-center w-full" v-auto-animate="{ duration: 45 }">
+      <!-- QUANTITY BUTTON -->
+      <div
+        v-if="props.entry.is_added"
+        class="flex justify-center items-center w-[50%] h-full bg-blue-300 gap-2 rounded-l-[18px] rounded-r-md"
+        @click.stop="useBasket.openEditQuantityModal(props.entry.id)"
+      >
+        <p class="text-center font-semibold text-sm text-blue-900">
+          {{ useBasket.products.find(p => p.id === props.entry.id)?.quantity }}
+        </p>
       </div>
-    </Teleport>
+
+      <!-- ADD TO BASKET BUTTON -->
+      <button
+        v-if="props.entry.is_added"
+        class="cursor-pointer rounded-full p-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms] flex justify-center items-center "
+        :class="[
+          props.entry.is_added ? 'bg-rose-400 rounded-r-[18px] rounded-l-md w-[50%]' : 'bg-emerald-500 w-[100%] rounded-[18px]'
+        ]"
+        @click="
+          () => {
+            if (props.entry.is_added) {
+              useBasket.removeProductFromBasket(props.entry.id);
+            } else {
+              useBasket.addProductToBasket(props.entry.name);
+            }
+          }
+        "
+      >
+        <CIcon
+          :icon="props.entry.is_added ? 'jam:delete-f' : 'material-symbols:add-shopping-cart'"
+          class="transition-all duration-100 text-xl group-active/button:scale-[1.8] transition-all duration-100 group-active/button:delay-[-50ms]"
+        />
+      </button>
+    </div>
   </div>
 </template>

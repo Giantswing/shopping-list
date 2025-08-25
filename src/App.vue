@@ -20,11 +20,6 @@ const handlePopState = event => {
   if (useBasket.burguerMenuOpen) {
     useBasket.burguerMenuOpen = false;
   }
-  // Second priority: go back from products to list view
-  else if (useBasket.currentView === "products") {
-    useBasket.currentView = "list";
-  }
-  // If already in list view, prevent going back (do nothing)
 
   // Reset flag after a short delay to prevent double handling
   setTimeout(() => {
@@ -40,19 +35,6 @@ watch(
 
     if (isOpen) {
       window.history.pushState({ menuOpen: true }, "", window.location.href);
-    }
-  },
-  { immediate: false }
-);
-
-// Watch for view state changes and update browser history
-watch(
-  () => useBasket.currentView,
-  newView => {
-    if (isHandlingPopState) return;
-
-    if (newView === "products") {
-      window.history.pushState({ view: "products" }, "", window.location.href);
     }
   },
   { immediate: false }
@@ -121,6 +103,18 @@ onUnmounted(() => {
         value: useBasket.connectedBaskets,
         mode: 'local',
         change: value => (useBasket.connectedBaskets = value)
+      },
+      {
+        key: 'showOnlyAdded',
+        value: useBasket.filters.showOnlyAdded,
+        mode: 'local',
+        change: value => (useBasket.filters.showOnlyAdded = value)
+      },
+      {
+        key: 'currentView',
+        value: useBasket.currentView,
+        mode: 'local',
+        change: value => (useBasket.currentView = value)
       },
       {
         key: 'lastUsedBasket',

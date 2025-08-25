@@ -7,8 +7,8 @@ const useBasket = basket();
 
 import AddProductInput from "@/views/AddProductInput.vue";
 import BasketList from "@/views/BasketList.vue";
-import BasketProducts from "@/views/BasketProducts.vue";
 import BurguerMenu from "@/views/BurguerMenu.vue";
+import EntryEditQuantityModal from "@/views/EntryEditQuantityModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -85,26 +85,24 @@ onBeforeUnmount(() => {
 
 <template>
   <!-- Alternative approach: You could also use :key="route.params.slug" to force component re-mounting -->
-  <div class="flex flex-col w-full h-full relative" v-auto-animate="{ duration: 75 }">
+  <div class="flex flex-col w-full h-full relative">
     <h3 class="font-bold text-right text-blue-700 px-4 opacity-30 select-none mb-[-15px] z-50 pointer-events-none">
       {{ useBasket?.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
     </h3>
     <BurguerMenu />
+
     <div
-      v-if="useBasket.currentView === 'list'"
       class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]"
       :class="[useBasket.burguerMenuOpen ? 'pointer-events-none' : '']"
     >
       <BasketList />
     </div>
-    <div
-      v-else
-      class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]"
-      :class="[useBasket.burguerMenuOpen ? 'pointer-events-none' : '']"
-    >
-      <BasketProducts />
-    </div>
 
-    <AddProductInput v-if="useBasket.currentView === 'list'" />
+    <AddProductInput />
+
+    <EntryEditQuantityModal
+      v-if="useBasket.productDetailsId"
+      :product="useBasket.products.find(p => p.id === useBasket.productDetailsId) || {}"
+    />
   </div>
 </template>

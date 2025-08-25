@@ -97,7 +97,7 @@ setInterval(updatePWAStatus, 1000);
       >
         <!-- Animated background indicator -->
         <div
-          class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 rounded-full bg-green-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
+          class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 rounded-full bg-emerald-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
           :class="[
             useBasket.currentView === 'list' ? 'shadow-[0_2px_10px_rgba(0,0,0,0.1)]' : 'shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
             changingMode ? 'scale-y-[1.8] delay-[-15ms]' : 'scale-y-[1]'
@@ -113,20 +113,20 @@ setInterval(updatePWAStatus, 1000);
           @click="changeMode('list')"
         >
           <CIcon
-            :icon="'mingcute:basket-fill'"
-            class="w-[32px] h-[32px] transition-all duration-100"
+            :icon="'typcn:th-list'"
+            class="w-[28px] h-[28px] transition-all duration-100"
             :class="[useBasket.currentView === 'list' ? 'text-white' : 'text-gray-500']"
           />
         </button>
 
         <button
           class="relative z-10 rounded-full w-[48px] h-[48px] flex items-center justify-center"
-          @click="changeMode('products')"
+          @click="changeMode('grid')"
         >
           <CIcon
-            :icon="'material-symbols:list-alt-rounded'"
-            class="w-[32px] h-[32px] transition-all duration-100"
-            :class="[useBasket.currentView === 'products' ? 'text-white' : 'text-gray-500']"
+            :icon="'fluent:grid-24-filled'"
+            class="w-[28px] h-[28px] transition-all duration-100"
+            :class="[useBasket.currentView === 'grid' ? 'text-white' : 'text-gray-500']"
           />
         </button>
       </div>

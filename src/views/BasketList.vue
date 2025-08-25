@@ -7,15 +7,23 @@ const useBasket = basket();
 import BasketEntry from "./BasketEntry.vue";
 import pwaManager from "@/includes/pwa";
 
-const filteredBasketEntires = computed(() => {
-  let result = useBasket?.basketProducts || [];
-  if (useBasket?.newProductInput?.trim()?.length > 0) {
-    result = result.filter(entry =>
-      useBasket?.products
-        .get(entry.product_id)
-        ?.name.toLowerCase()
-        .includes(useBasket?.newProductInput?.trim()?.toLowerCase())
-    );
+const filteredBasketEntries = computed(() => {
+  let result = useBasket?.products || [];
+
+  if (result.length > 0 && useBasket.currentView === "list") {
+    result = result.filter(entry => entry?.is_added);
+    result = result.sort((b, a) => new Date(b.last_added_at) - new Date(a.last_added_at));
+  } else if (result.length > 0 && useBasket.currentView === "grid") {
+    if (useBasket.filters.showOnlyAdded) {
+      result = result.filter(entry => entry?.is_added);
+    }
+    result = result.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  let input = (useBasket?.newProductInput || "").trim().toLowerCase();
+
+  if (input.length > 0) {
+    result = result.filter(entry => (entry?.name || "").toLowerCase().includes(input));
   }
   return result;
 });
@@ -32,23 +40,25 @@ const installApp = async () => {
 <template>
   <div
     class="w-full flex flex-col items-center h-full transition-all duration-75"
-    :class="[!useBasket.loading.basketProducts && useBasket.basketProducts?.length === 0 ? 'translate-x-[-30px]' : '']"
+    :class="[!useBasket.loading.basketProducts && filteredBasketEntries?.length === 0 ? 'translate-x-[-30px]' : '']"
   >
     <div
-      v-if="useBasket.newProductInput.trim().length > 0 && filteredBasketEntires.length === 0"
+      v-if="useBasket.newProductInput.trim().length > 0 && filteredBasketEntries.length === 0"
       class="w-full flex flex-col h-full gap-4 mt-8 text-center max-w-[250px]"
     >
       <p class="text-gray-500 flex flex-col">
-        <span class="font-semibold text-gray-700">{{ useBasket.newProductInput }}</span> <span>{{ $t("not-in-basket") }}</span>
+        <span class="font-semibold text-gray-700">{{ useBasket.newProductInput.trim() }}</span>
+        <span>{{ $t("not-in-basket") }}</span>
       </p>
     </div>
 
     <div
-      v-if="useBasket.basketProducts?.length > 0 && !useBasket.loading.basketProducts"
-      class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4 pb-8"
+      v-if="filteredBasketEntries?.length > 0 && !useBasket.loading.basketProducts"
+      class="w-full items-center p-3 pt-4 pb-8"
+      :class="[useBasket.currentView === 'grid' ? 'grid grid-cols-2 gap-2' : 'flex flex-col-reverse gap-3']"
       v-auto-animate="{ duration: 75 }"
     >
-      <BasketEntry v-for="entry in filteredBasketEntires" :key="entry.product_id" :entry="entry" />
+      <BasketEntry v-for="entry in filteredBasketEntries" :key="entry.id" :entry="entry" />
     </div>
 
     <div v-else-if="useBasket.loading.basketProducts" class="w-full flex flex-col items-center h-full justify-center">
@@ -56,7 +66,7 @@ const installApp = async () => {
     </div>
 
     <div
-      v-else-if="!useBasket.loading.basketProducts && useBasket.basketProducts?.length === 0"
+      v-else-if="!useBasket.loading.basketProducts && filteredBasketEntries?.length === 0"
       class="w-full flex flex-col items-center h-full justify-center gap-4"
     >
       <CIcon :icon="'streamline-color:happy-face-flat'" class="w-[100px] h-[100px] text-gray-500" />
