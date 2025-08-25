@@ -101,8 +101,8 @@ onBeforeUnmount(() => {
     <AddProductInput />
 
     <EntryEditQuantityModal
-      v-if="useBasket.editQuantityModal"
-      :product="useBasket.products.find(p => p.id === useBasket.productDetailsId)"
+      v-if="useBasket.productDetailsId"
+      :product="useBasket.products.find(p => p.id === useBasket.productDetailsId) || {}"
     />
   </div>
 </template>

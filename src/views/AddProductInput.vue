@@ -128,7 +128,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
 
 <template>
   <div
-    class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative"
+    class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative shadow-[0_0_40px_rgba(0,0,0,0.05)]"
     v-auto-animate="{ duration: 100 }"
   >
     <!-- DELETE ALL ITEMS BUTTON -->
@@ -242,6 +242,26 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl"
     >
       <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("filters") }}</h3>
+
+      <div class="w-full flex flex-row gap-2 items-center justify-center">
+        <button
+          v-for="(filter, idx) in [
+            { key: true, label: $t('showing-added-only') },
+            { key: false, label: $t('show-all-products') }
+          ]"
+          :key="filter.key"
+          class="flex flex-row gap-2 items-center justify-center px-6 py-2 text-sm active:scale-[0.8] transition-all duration-100 font-semibold  rounded-md"
+          :class="[
+            useBasket.filters.showOnlyAdded === filter.key
+              ? 'opacity-100 bg-blue-300 w-[40%] text-blue-900'
+              : 'opacity-60 bg-gray-300 w-[35%] text-gray-700',
+            idx === 0 ? 'rounded-l-[50px]' : 'rounded-r-[50px]'
+          ]"
+          @click="useBasket.filters.showOnlyAdded = filter.key"
+        >
+          <span class="whitespace-nowrap">{{ filter.label }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>

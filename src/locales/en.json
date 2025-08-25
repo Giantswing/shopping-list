@@ -41,5 +41,7 @@
    "install-app-description": "Install Basketi for a better experience",
    "app-installed": "App installed successfully!",
    "install-failed": "Failed to install app",
-   "filters": "Filters"
+   "filters": "Filters",
+   "showing-added-only": "Only added",
+   "show-all-products": "Show all"
 }

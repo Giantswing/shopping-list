@@ -97,7 +97,7 @@ setInterval(updatePWAStatus, 1000);
       >
         <!-- Animated background indicator -->
         <div
-          class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 rounded-full bg-green-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
+          class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 rounded-full bg-emerald-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
           :class="[
             useBasket.currentView === 'list' ? 'shadow-[0_2px_10px_rgba(0,0,0,0.1)]' : 'shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
             changingMode ? 'scale-y-[1.8] delay-[-15ms]' : 'scale-y-[1]'

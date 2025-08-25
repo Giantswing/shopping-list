@@ -395,18 +395,24 @@ export const basket = defineStore("basket", {
 
       this.productDetailsId = productId;
       this.editQuantityModal = true;
-      console.log("Product details id", this.products.find(p => p.id === productId));
-      console.log("Opening edit quantity modal", this.productDetailsId);
     },
 
     async closeEditQuantityModal(newQuantity) {
+
       this.editQuantityModal = false;
+
       let product = this.products.find(p => p.id === this.productDetailsId);
+
+      if (newQuantity === product.quantity) {
+        this.productDetailsId = null;
+        return;
+      }
 
       if (product) {
         await this.editProductQuantity(this.productDetailsId, newQuantity);
-        this.productDetailsId = null;
       }
+
+      this.productDetailsId = null;
     },
   },
 });
