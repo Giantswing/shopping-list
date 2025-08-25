@@ -13,7 +13,9 @@ const suggestions = computed(() => {
     return [];
   }
 
-  const alreadyAddedIds = useBasket.basketProducts.map(p => p.product_id);
+  const alreadyAddedIds = Array.from(useBasket.products.values())
+    .filter(p => p.is_added)
+    .map(p => p.id);
   result = result.filter(p => !alreadyAddedIds.includes(p.id));
 
   const search = useBasket.newProductInput.toLowerCase();
@@ -132,7 +134,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
         :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
         @onClick="useBasket.removeAllProductsFromBasket()"
         :loading="useBasket.loading.removeAllProductsFromBasket"
-        :isDisabled="useBasket.offlineMode || useBasket.basketProducts.length === 0"
+        :isDisabled="useBasket.offlineMode || Array.from(useBasket.products.values()).filter(p => p.is_added).length === 0"
         :safetyConfirmation="true"
         :safetyConfirmationIcon="true"
       >
@@ -179,9 +181,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
             '!bg-blue-600 text-sm !rounded-full !px-8 !py-2 disabled:opacity-50 disabled:saturate-0 disabled:cursor-not-allowed'
           "
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"
-          :isDisabled="
-            useBasket.basketProducts.some(p => useBasket.products.get(p.product_id).name === useBasket.newProductInput.trim())
-          "
+          :isDisabled="Array.from(useBasket.products.values()).some(p => p.name === useBasket.newProductInput.trim())"
         >
           <CIcon :icon="'qlementine-icons:new-16'" class="h-6 w-6 shrink-0" />
           <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">
@@ -190,11 +190,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
         </CButton>
 
         <span
-          v-if="
-            useBasket.basketProducts.some(
-              p => useBasket.products.get(p.product_id).name.trim() === useBasket.newProductInput.trim()
-            )
-          "
+          v-if="Array.from(useBasket.products.values()).some(p => p.name.trim() === useBasket.newProductInput.trim())"
           class="text-sm text-gray-500"
         >
           {{ $t("product-already-in-basket") }}
@@ -209,10 +205,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
             !(
               useBasket.newProductInput.trim() !==
               suggestions?.find(s => s.name.trim() === useBasket.newProductInput.trim())?.name.trim()
-            ) ||
-              useBasket.basketProducts.some(
-                p => useBasket.products.get(p.product_id).name.trim() === useBasket.newProductInput.trim()
-              )
+            ) || Array.from(useBasket.products.values()).some(p => p.name.trim() === useBasket.newProductInput.trim())
           "
           :addedClass="'!bg-blue-600 text-sm !rounded-full !px-4 !py-2'"
           @onClick="handleAddProduct({ name: useBasket.newProductInput })"

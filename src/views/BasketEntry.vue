@@ -33,7 +33,7 @@ const closeEditQuantityModal = async () => {
     editQuantityModal.value = false;
   }, 100);
 
-  await useBasket.editProductQuantity(props.entry.product_id, quantity.value);
+  await useBasket.editProductQuantity(props.entry.id, quantity.value);
 
   quantity.value = props.entry.quantity;
 };
@@ -43,7 +43,7 @@ const closeEditQuantityModal = async () => {
   <div
     class="flex flex-row gap-2 items-center bg-transparent w-full rounded-full justify-between text-sm font-semibold text-blue-900 select-none overflow-hidden transition-all duration-300 h-[42px] shrink-0 border-2 border-blue-900/20"
     :class="[
-      useBasket.loading.removeProductFromBasketIds.includes(props.entry.product_id)
+      useBasket.loading.removeProductFromBasketIds.includes(props.entry.id)
         ? 'opacity-50 saturate-0 cursor-not-allowed pointer-events-none'
         : ''
     ]"
@@ -60,13 +60,10 @@ const closeEditQuantityModal = async () => {
         class="flex justify-center items-center w-full h-full gap-2 bg-blue-100 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.2)] z-10 px-1"
       >
         <p v-if="props.entry.offline" class="text-center font-semibold text-xs text-gray-600">Offline</p>
-        <p class="text-center leading-none">{{ useBasket.products.get(props.entry.product_id)?.name }}</p>
+        <p class="text-center leading-none">{{ useBasket.products.find(p => p.id === props.entry.id)?.name }}</p>
       </div>
 
-      <button
-        class="bg-rose-400 px-4 h-full ml-[-14px] pl-5"
-        @click.stop="useBasket.removeProductFromBasket(props.entry.product_id)"
-      >
+      <button class="bg-rose-400 px-4 h-full ml-[-14px] pl-5" @click.stop="useBasket.removeProductFromBasket(props.entry.id)">
         <CIcon :icon="'jam:delete-f'" class="w-[24px] h-[24px] text-gray-500 text-white" />
       </button>
     </div>
@@ -82,7 +79,7 @@ const closeEditQuantityModal = async () => {
             :class="[openingEditQuantityModal ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-[-10px]']"
           >
             <span class="text-sm opacity-70">{{ $t("adjust-quantity") }}</span>
-            <span class="text-3xl font-bold">{{ useBasket.products.get(props.entry.product_id)?.name }}</span>
+            <span class="text-3xl font-bold">{{ useBasket.products.find(p => p.id === props.entry.id)?.name }}</span>
           </p>
 
           <div

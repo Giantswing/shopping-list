@@ -7,22 +7,18 @@ const useBasket = basket();
 import ProductEntry from "./ProductEntry.vue";
 
 const products = computed(() => {
-  let results = useBasket.products.values();
-  results = Array.from(results).sort((a, b) => a.name.localeCompare(b.name));
+  let results = useBasket.products;
+  results = results.sort((a, b) => a.name.localeCompare(b.name));
 
   return results;
 });
 
 const notAddedProducts = computed(() => {
-  return products.value.filter(
-    product => !useBasket.basketProducts.some(basketProduct => basketProduct.product_id === product.id)
-  );
+  return products.value.filter(product => !product.is_added);
 });
 
 const addedProducts = computed(() => {
-  return products.value.filter(product =>
-    useBasket.basketProducts.some(basketProduct => basketProduct.product_id === product.id)
-  );
+  return products.value.filter(product => product.is_added);
 });
 </script>
 

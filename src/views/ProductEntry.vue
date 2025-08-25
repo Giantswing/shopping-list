@@ -55,9 +55,9 @@ const isInBasket = computed(() => {
   <div class="w-full flex justify-center mb-3" v-if="useBasket.productDetailsId === props.entry.id">
     <CButton
       class="w-fit"
-      @onClick="useBasket.removeProductFromList(props.entry.id)"
+      @onClick="useBasket.removeProductPermanently(props.entry.id)"
       :safetyConfirmation="true"
-      :isLoading="useBasket.loading.removeProductFromListIds.includes(props.entry.id)"
+      :isLoading="useBasket.loading.removeProductPermanentlyIds.includes(props.entry.id)"
     >
       <CIcon :icon="'material-symbols:delete'" />
       {{ $t("remove") }}

@@ -17,10 +17,9 @@ export const basket = defineStore("basket", {
     currentBasket: '',
     connectedBaskets: [],
     lastUsedBasket: '',
-    basketProducts: [],
     productDetailsId: null,
     offlineProductsToRemove: [],
-    products: new Map(),
+    products: [],
     refreshItemsInterval: null,
     shouldAutoUpdate: true,
     loading: {
@@ -30,7 +29,7 @@ export const basket = defineStore("basket", {
       connectToBasket: false,
       addProductToBasketNames: [],
       removeProductFromBasketIds: [],
-      removeProductFromListIds: [],
+      removeProductPermanentlyIds: [],
       removeAllProductsFromBasket: false,
     },
     newBasketData: {}, 
@@ -170,13 +169,13 @@ export const basket = defineStore("basket", {
       */
 
       console.warn("Syncing basket state");
-      const productsToCreate = this.basketProducts.filter(product => product.offline);
+      const productsToCreate = this.products.filter(product => product.offline);
       console.log("Products to create", productsToCreate);
       for (const product of productsToCreate) {
-        await this.addProductToBasket(this.products.get(product.product_id).name);
+        await this.addProductToBasket(product.name);
       }
 
-      const productsToRemove = this.offlineProductsToRemove.filter(productId => !this.basketProducts.some(p => p.product_id === productId));
+      const productsToRemove = this.products.filter(product => product.offline).map(product => product.id);
       console.log("Products to remove", productsToRemove);
       for (const productId of productsToRemove) {
         await this.removeProductFromBasket(productId);
@@ -191,27 +190,22 @@ export const basket = defineStore("basket", {
         this.loading.addProductToBasketNames.push(product);
 
         if (this.offlineMode) {
-          let productId = null;
+          let existingProduct = this.products.find(p => p.name === product);
+          let productId = existingProduct ? existingProduct.id : Math.floor(Math.random() * 10000);
 
-          let existingProduct = Array.from(this.products.values()).find(p => p.name === product);
-
-          if (existingProduct) {
-            productId = existingProduct.id;
-          } else {
-            productId = Math.floor(Math.random() * 10000);
-            this.products.set(productId, {
+          if (!existingProduct) {
+            this.products.push({
               name: product,
               id: productId,
               offline: true,
+              quantity: 0,
+              is_added: false,
             });
           }
 
-          this.basketProducts.push({
-            product_id: productId,
-            offline: true,
-          });
-
-          console.log("Basket products", this.basketProducts);
+          let prod = this.products.find(p => p.id === productId);
+          prod.quantity++;
+          prod.is_added = true;
 
           return true;
         }
@@ -220,14 +214,8 @@ export const basket = defineStore("basket", {
           product: product,
         });
         if (response.data.success) {
-          this.basketProducts = response.data.basketProducts;
-
-          this.products = new Map();
-          response.data.products.forEach(product => {
-            this.products.set(product.id, product);
-          });
-
           this.newProductInput = "";
+          this.products = response.data.products;
           return true;
         } else {
           throw new Error(response.data.error);
@@ -250,7 +238,7 @@ export const basket = defineStore("basket", {
           quantity: quantity,
         });
         if (response.data.success) {
-          this.basketProducts.find(p => p.product_id === productId).quantity = quantity;
+          this.products = this.products.map(p => (p.id === productId ? { ...p, quantity: quantity } : p));
 
           return true;
         } else {
@@ -272,11 +260,7 @@ export const basket = defineStore("basket", {
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-all-products-from-basket`);
 
         if (response.data.success) {
-          this.basketProducts = response.data.basketProducts;
-          this.products = new Map();
-          response.data.products.forEach(product => {
-            this.products.set(product.id, product);
-          });
+          this.products.forEach(p => (p.is_added = false));
           return true;
         } else {
           throw new Error(response.data.error);
@@ -291,7 +275,7 @@ export const basket = defineStore("basket", {
       }
     },
 
-    async removeProductFromList(productId) {
+    async removeProductPermanently(productId) {
       try {
         if (this.offlineMode) {
           return;
@@ -299,15 +283,11 @@ export const basket = defineStore("basket", {
 
         this.shouldAutoUpdate = false;
 
-        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-from-list`, {
+        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-permanently`, {
           product_id: productId,
         });
         if (response.data.success) {
-          this.basketProducts = response.data.basketProducts;
-          this.products = new Map();
-          response.data.products.forEach(product => {
-            this.products.set(product.id, product);
-          });
+          this.products = this.products.filter(p => p.id !== productId);
           this.productDetailsId = null;
           return true;
         } else {
@@ -317,7 +297,7 @@ export const basket = defineStore("basket", {
         console.error(error);
         toast.error(i18n.global.t("internal-server-error"));
       } finally {
-        this.loading.removeProductFromListIds = this.loading.removeProductFromListIds.filter(id => id !== productId);
+        this.loading.removeProductPermanentlyIds = this.loading.removeProductPermanentlyIds.filter(id => id !== productId);
         this.shouldAutoUpdate = true;
       }
     },
@@ -330,7 +310,8 @@ export const basket = defineStore("basket", {
         if (this.offlineMode) {
           this.offlineProductsToRemove.push(productId);
 
-          this.basketProducts = this.basketProducts.filter(p => p.product_id !== productId);
+          let prod = this.products.find(p => p.id === productId);
+          prod.is_added = false;
 
           return true;
         }
@@ -339,11 +320,8 @@ export const basket = defineStore("basket", {
           product_id: productId,
         });
         if (response.data.success) {
-          this.basketProducts = response.data.basketProducts;
-          this.products = new Map();
-          response.data.products.forEach(product => {
-            this.products.set(product.id, product);
-          });
+          this.products = response.data.products;
+
           return true;
         } else {
           throw new Error(response.data.error);
@@ -395,9 +373,9 @@ export const basket = defineStore("basket", {
 
         const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
         this.basketProducts = response.data.basketProducts;
-        this.products = new Map();
+        this.products = [];
         response.data.products.forEach(product => {
-          this.products.set(product.id, product);
+          this.products.push(product);
         });
       } catch (error) {
         console.error(error);
