@@ -28,6 +28,30 @@ const filteredBasketEntries = computed(() => {
   return result;
 });
 
+const groups = computed(() => {
+  if (useBasket.filters.groupBy === "none") {
+    return [];
+  }
+
+  /* Group by name (groups A, B, C, etc.) */
+  let groups = [];
+  let currentGroup = "";
+
+  filteredBasketEntries.value.forEach(entry => {
+    if (entry.name.charAt(0) !== currentGroup) {
+      currentGroup = entry.name.charAt(0);
+      groups.push({ name: currentGroup, entries: [] });
+    }
+    groups[groups.length - 1].entries.push(entry);
+  });
+
+  groups.forEach(group => {
+    group.entries.sort((a, b) => b.is_added - a.is_added);
+  });
+
+  return groups;
+});
+
 const showInstallButton = computed(() => {
   return pwaManager.shouldShowInstallPrompt();
 });
@@ -39,8 +63,8 @@ const installApp = async () => {
 
 <template>
   <div
-    class="w-full flex flex-col items-center h-full transition-all duration-75"
-    :class="[!useBasket.loading.basketProducts && filteredBasketEntries?.length === 0 ? 'translate-x-[-30px]' : '']"
+    class="w-full flex flex-col items-center h-full transition-all duration-75 rounded-t-[25px] relative pt-[90px]"
+    v-auto-animate="{ duration: 75 }"
   >
     <div
       v-if="useBasket.newProductInput.trim().length > 0 && filteredBasketEntries.length === 0"
@@ -52,13 +76,34 @@ const installApp = async () => {
       </p>
     </div>
 
+    <!-- LIST AND GRID (NORMAL) VIEW -->
     <div
-      v-if="filteredBasketEntries?.length > 0 && !useBasket.loading.basketProducts"
-      class="w-full items-center p-3 pt-4 pb-8"
+      v-if="
+        filteredBasketEntries?.length > 0 &&
+          !useBasket.loading.basketProducts &&
+          (useBasket.currentView === 'list' || (useBasket.currentView === 'grid' && useBasket.filters.groupBy === 'none'))
+      "
+      class="w-full items-center p-3 pt-1 pb-8"
       :class="[useBasket.currentView === 'grid' ? 'grid grid-cols-2 gap-2' : 'flex flex-col-reverse gap-3']"
       v-auto-animate="{ duration: 75 }"
     >
       <BasketEntry v-for="entry in filteredBasketEntries" :key="entry.id" :entry="entry" />
+    </div>
+
+    <!-- GRID (GROUPED) VIEW -->
+    <div
+      v-if="useBasket.currentView === 'grid' && useBasket.filters.groupBy === 'name' && groups.length > 0"
+      v-auto-animate="{ duration: 75 }"
+      class="w-full items-center p-3 pb-8"
+    >
+      <div v-for="group in groups" :key="group.name" class="w-full flex flex-col items-center mb-4 mt-[-10px]">
+        <h3 class="text-sm font-semibold text-gray-800 uppercase mb-3 px-3 pb-1 w-full border-b-2 border-gray-300">
+          {{ group.name }}
+        </h3>
+        <div class="flex flex-row gap-2 overflow-x-auto w-full pb-3">
+          <BasketEntry v-for="entry in group.entries" :key="entry.id" :entry="entry" />
+        </div>
+      </div>
     </div>
 
     <div v-else-if="useBasket.loading.basketProducts" class="w-full flex flex-col items-center h-full justify-center">
@@ -66,7 +111,11 @@ const installApp = async () => {
     </div>
 
     <div
-      v-else-if="!useBasket.loading.basketProducts && filteredBasketEntries?.length === 0"
+      v-else-if="
+        !useBasket.loading.basketProducts &&
+          filteredBasketEntries?.length === 0 &&
+          useBasket.newProductInput.trim().length === 0
+      "
       class="w-full flex flex-col items-center h-full justify-center gap-4"
     >
       <CIcon :icon="'streamline-color:happy-face-flat'" class="w-[100px] h-[100px] text-gray-500" />

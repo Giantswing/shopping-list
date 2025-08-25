@@ -58,10 +58,13 @@ const props = defineProps({
     :class="[
       entry.is_added
         ? 'bg-blue-50 text-blue-800 border-blue-500/50 shadow-md outline outline-2 outline-white'
-        : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300'
+        : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300',
+      useBasket.filters.groupBy != 'none' && useBasket.currentView === 'grid' ? 'min-w-[120px] max-w-[120px]' : ''
     ]"
   >
-    <p class="text-sm text-center leading-none font-semibold px-2 h-full flex items-center justify-center pb-2">
+    <p
+      class="text-sm text-center leading-none font-semibold px-2 h-full flex items-center justify-center pb-2 line-clamp-2 text-ellipsis"
+    >
       {{ props.entry.name }}
     </p>
 

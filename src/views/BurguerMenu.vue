@@ -89,21 +89,45 @@ setInterval(updatePWAStatus, 1000);
 
 <template>
   <div class="absolute top-0 left-0 z-50 w-full h-full overflow-hidden pointer-events-none">
-    <!-- Other options -->
-    <div class="m-4 mt-6 absolute left-0 top-16 z-10 flex flex-col gap-3 pointer-events-auto">
+    <!-- Top horizontal bar with all items -->
+    <div
+      class="w-full flex flex-row items-start justify-between px-4 pt-3 z-30 pointer-events-none relative bg-gradient-to-b from-white from-70% to-transparent h-[90px]"
+    >
+      <!-- Animated expanding background, centered on the button -->
+      <div class="pointer-events-auto z-[70] absolute left-4 top-3">
+        <div
+          class="rounded-full"
+          :class="[
+            'transition-all duration-[550ms]',
+            useBasket.burguerMenuOpen ? 'scale-[80] opacity-[0.95] bg-blue-500' : 'scale-[1] opacity-100 bg-blue-400'
+          ]"
+          style="width:48px; height:48px;"
+        ></div>
+      </div>
+
+      <!-- Burguer Button always on top -->
+      <div class="z-[80] relative">
+        <button
+          class="rounded-full p-6 pointer-events-auto active:scale-[0.5] transition-all duration-100 active:delay-[-50ms]"
+          @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen"
+        >
+          <CIcon
+            :icon="useBasket.burguerMenuOpen ? 'line-md:close' : 'gg:options'"
+            class="w-[28px] h-[28px] text-white absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          />
+        </button>
+      </div>
+
       <!-- Mode select -->
       <div
-        class="relative flex-col gap-2 outline outline-4 outline-white rounded-full bg-gray-200 flex items-center overflow-hidden"
+        class="relative flex flex-row gap-2 outline outline-4 outline-white rounded-full bg-gray-200 items-center overflow-hidden shadow-[0px_0_8px_rgba(0,0,0,0.8)] pointer-events-auto"
       >
         <!-- Animated background indicator -->
         <div
-          class="absolute left-1/2 -translate-x-1/2 transition-all duration-200 rounded-full bg-emerald-500 z-0 border-t-2 border-b-2 border-t-white border-b-black border-opacity-20"
-          :class="[
-            useBasket.currentView === 'list' ? 'shadow-[0_2px_10px_rgba(0,0,0,0.1)]' : 'shadow-[0_-2px_10px_rgba(0,0,0,0.1)]',
-            changingMode ? 'scale-y-[1.8] delay-[-15ms]' : 'scale-y-[1]'
-          ]"
+          class="absolute top-1/2 -translate-y-1/2 transition-all duration-200 rounded-full bg-emerald-500 z-0 border-l-2 border-r-2 border-l-white border-r-black border-opacity-20 shadow-[0px_0_20px_rgba(0,0,0,0.4)]"
+          :class="[changingMode ? 'scale-x-[1.8] delay-[-15ms]' : 'scale-x-[1]']"
           :style="{
-            top: useBasket.currentView === 'list' ? '0%' : 'calc(50% + 3px)',
+            left: useBasket.currentView === 'list' ? '0%' : 'calc(50% + 3px)',
             width: '48px',
             height: '48px'
           }"
@@ -131,35 +155,18 @@ setInterval(updatePWAStatus, 1000);
         </button>
       </div>
 
-      <div class="w-[48px] h-[48px] flex flex-col items-center justify-center opacity-50" v-if="useBasket.offlineMode">
-        <p class="text-center font-semibold text-xs text-gray-600">Offline</p>
-        <CIcon :icon="'octicon:cloud-offline-16'" class="w-[32px] h-[32px]" />
-      </div>
-    </div>
-
-    <!-- Animated expanding background, centered on the button -->
-    <div class="pointer-events-none z-10 absolute left-0 top-0 m-4 mt-6">
-      <div
-        class="rounded-full"
-        :class="[
-          'transition-all duration-[550ms]',
-          useBasket.burguerMenuOpen ? 'scale-[80] opacity-[0.95] bg-blue-500' : 'scale-[1] opacity-100 bg-blue-400'
-        ]"
-        style="width:48px; height:48px;"
-      ></div>
-    </div>
-
-    <!-- Burguer Button always on top -->
-    <div class="m-4 mt-6 absolute left-0 top-0 z-20">
-      <button
-        class="rounded-full p-6 pointer-events-auto active:scale-[0.8] transition-all duration-100 active:delay-[-50ms]"
-        @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen"
+      <!-- DELETE ALL ITEMS BUTTON -->
+      <CButton
+        class="pointer-events-auto"
+        :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
+        @onClick="useBasket.removeAllProductsFromBasket()"
+        :loading="useBasket.loading.removeAllProductsFromBasket"
+        :isDisabled="useBasket.offlineMode || useBasket.products.filter(p => p.is_added).length === 0"
+        :safetyConfirmation="true"
+        :safetyConfirmationIcon="true"
       >
-        <CIcon
-          :icon="useBasket.burguerMenuOpen ? 'line-md:close' : 'gg:options'"
-          class="w-[28px] h-[28px] text-white absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        />
-      </button>
+        <CIcon :icon="'material-symbols:delete-sweep-outline-rounded'" class="w-[32px] h-[32px] text-white" />
+      </CButton>
     </div>
 
     <!-- BURGUER MENU -->

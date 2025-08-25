@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '1.1.0',
+    basketAppVersion: '1.2.0a',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -25,6 +25,7 @@ export const basket = defineStore("basket", {
     editQuantityModal: false,
     filters: {
       showOnlyAdded: false,
+      groupBy: 'none',
     },
     loading: {
       basketProducts: true,

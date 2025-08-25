@@ -111,6 +111,12 @@ onUnmounted(() => {
         change: value => (useBasket.filters.showOnlyAdded = value)
       },
       {
+        key: 'groupBy',
+        value: useBasket.filters.groupBy,
+        mode: 'local',
+        change: value => (useBasket.filters.groupBy = value)
+      },
+      {
         key: 'currentView',
         value: useBasket.currentView,
         mode: 'local',

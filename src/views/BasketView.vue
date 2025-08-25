@@ -84,15 +84,18 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <!-- Alternative approach: You could also use :key="route.params.slug" to force component re-mounting -->
   <div class="flex flex-col w-full h-full relative">
-    <h3 class="font-bold text-right text-blue-700 px-4 opacity-30 select-none mb-[-15px] z-50 pointer-events-none">
-      {{ useBasket?.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name }}
+    <h3
+      class="absolute top-0 left-0 w-full font-bold text-center text-blue-700 px-4 select-none z-[60] pointer-events-none mt-[64px] transition-all duration-500"
+      :class="[useBasket.burguerMenuOpen ? 'opacity-0' : 'opacity-40']"
+    >
+      {{ useBasket?.connectedBaskets?.find(basket => basket.slug === useBasket.currentBasket)?.name || "Loading..." }}
     </h3>
+
     <BurguerMenu />
 
     <div
-      class="flex-grow w-full overflow-y-auto overflow-x-hidden pl-[70px]"
+      class="flex-grow w-full overflow-y-auto overflow-x-hidden"
       :class="[useBasket.burguerMenuOpen ? 'pointer-events-none' : '']"
     >
       <BasketList />

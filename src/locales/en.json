@@ -44,5 +44,8 @@
    "filters": "Filters",
    "showing-added-only": "Only added",
    "show-all-products": "Show all",
-   "delete-permanently": "Delete permanently"
+   "delete-permanently": "Delete permanently",
+   "group-by": "Group by",
+   "group-by-none": "None",
+   "group-by-name": "Name"
 }
