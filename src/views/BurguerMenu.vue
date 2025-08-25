@@ -156,7 +156,7 @@ setInterval(updatePWAStatus, 1000);
         @click="useBasket.burguerMenuOpen = !useBasket.burguerMenuOpen"
       >
         <CIcon
-          :icon="useBasket.burguerMenuOpen ? 'line-md:close' : 'line-md:menu'"
+          :icon="useBasket.burguerMenuOpen ? 'line-md:close' : 'gg:options'"
           class="w-[28px] h-[28px] text-white absolute inset-0 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
         />
       </button>
