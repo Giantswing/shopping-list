@@ -127,10 +127,14 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative">
+  <div
+    class="w-full flex flex-col gap-2 items-center bg-white z-20 p-1 pb-2 rounded-t-2xl px-4 pt-2 relative"
+    v-auto-animate="{ duration: 100 }"
+  >
     <!-- DELETE ALL ITEMS BUTTON -->
-    <div class="w-full absolute flex flex-col -translate-y-full p-4 pb-5 gap-4">
+    <div class="w-full absolute flex flex-col -translate-y-full p-4 pb-5 gap-4 pointer-events-none">
       <CButton
+        class="pointer-events-auto"
         :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
         @onClick="useBasket.removeAllProductsFromBasket()"
         :loading="useBasket.loading.removeAllProductsFromBasket"
@@ -142,7 +146,11 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       </CButton>
     </div>
 
-    <div class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl">
+    <!-- LIST VIEW -->
+    <div
+      v-if="useBasket.currentView === 'list'"
+      class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl"
+    >
       <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
         <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("suggestions") }}</h3>
         <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center w-full">
@@ -168,6 +176,7 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
     </div>
 
     <div
+      v-if="useBasket.currentView === 'list'"
       :class="[
         'transition-all duration-100 overflow-hidden flex gap-2 items-center',
         useBasket.newProductInput.length > 0 ? 'max-h-[100px] mt-2' : 'max-h-[0px]'
@@ -225,6 +234,14 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
           <p class="font-bold leading-none break-words text-center w-full whitespace-pre-line">{{ suggestion.name }}</p>
         </CButton>
       </template>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div
+      v-if="useBasket.currentView === 'grid'"
+      class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl"
+    >
+      <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("filters") }}</h3>
     </div>
   </div>
 </template>

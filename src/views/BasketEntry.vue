@@ -11,7 +11,9 @@ const props = defineProps({
 </script>
 
 <template>
+  <!-- LIST VIEW -->
   <div
+    v-if="useBasket.currentView === 'list'"
     class="flex flex-row gap-2 items-center bg-transparent w-full rounded-full justify-between text-sm font-semibold text-blue-900 select-none overflow-hidden transition-all duration-300 h-[42px] shrink-0 border-2 border-blue-900/20"
     :class="[
       useBasket.loading.removeProductFromBasketIds.includes(props.entry.id)
@@ -38,6 +40,52 @@ const props = defineProps({
 
       <button class="bg-rose-400 px-4 h-full ml-[-14px] pl-5" @click.stop="useBasket.removeProductFromBasket(props.entry.id)">
         <CIcon :icon="'jam:delete-f'" class="w-[24px] h-[24px] text-gray-500 text-white" />
+      </button>
+    </div>
+  </div>
+
+  <!-- GRID VIEW -->
+  <div
+    v-else-if="useBasket.currentView === 'grid'"
+    class="w-full py-2 flex flex-col justify-between items-center gap-2 transition-all duration-100 rounded-lg h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms]"
+    :class="[
+      entry.is_added
+        ? 'bg-blue-50 text-blue-700 border-blue-500 scale-[1.05]'
+        : 'bg-gray-100 opacity-70 text-gray-700 border-gray-300'
+    ]"
+  >
+    <p class="text-sm text-center leading-none font-semibold px-2">{{ props.entry.name }}</p>
+
+    <div class="flex flex-row gap-1 items-center" v-auto-animate="{ duration: 100 }">
+      <!-- QUANTITY BUTTON -->
+      <div
+        v-if="props.entry.is_added"
+        class="flex justify-center items-center min-w-[56px] h-full bg-blue-300 gap-2 rounded-full rounded-r-none"
+        @click.stop="useBasket.openEditQuantityModal(props.entry.id)"
+      >
+        <p class="text-center font-semibold text-sm text-blue-900">
+          {{ useBasket.products.find(p => p.id === props.entry.id)?.quantity }}
+        </p>
+      </div>
+
+      <!-- ADD TO BASKET BUTTON -->
+      <button
+        class="cursor-pointer rounded-full p-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms]"
+        :class="[props.entry.is_added ? 'bg-rose-400 rounded-l-none' : 'bg-emerald-500']"
+        @click="
+          () => {
+            if (props.entry.is_added) {
+              useBasket.removeProductFromBasket(props.entry.id);
+            } else {
+              useBasket.addProductToBasket(props.entry.name);
+            }
+          }
+        "
+      >
+        <CIcon
+          :icon="props.entry.is_added ? 'jam:delete-f' : 'material-symbols:add-shopping-cart'"
+          class="transition-all duration-100 text-xl group-active/button:scale-[1.8] transition-all duration-100 group-active/button:delay-[-50ms]"
+        />
       </button>
     </div>
   </div>

@@ -23,6 +23,9 @@ export const basket = defineStore("basket", {
     refreshItemsInterval: null,
     shouldAutoUpdate: true,
     editQuantityModal: false,
+    filters: {
+      showOnlyAdded: false,
+    },
     loading: {
       basketProducts: true,
       checkIfBasketExists: false,

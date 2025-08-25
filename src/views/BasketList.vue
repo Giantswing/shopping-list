@@ -9,8 +9,11 @@ import pwaManager from "@/includes/pwa";
 
 const filteredBasketEntries = computed(() => {
   let result = useBasket?.products || [];
-  if (result.length > 0) {
+
+  if (result.length > 0 && useBasket.currentView === "list") {
     result = result.filter(entry => entry?.is_added);
+  } else if (result.length > 0 && useBasket.currentView === "grid") {
+    result = result.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   let input = (useBasket?.newProductInput || "").trim().toLowerCase();
@@ -47,7 +50,8 @@ const installApp = async () => {
 
     <div
       v-if="filteredBasketEntries?.length > 0 && !useBasket.loading.basketProducts"
-      class="w-full flex flex-col-reverse gap-3 items-center p-3 pt-4 pb-8"
+      class="w-full gap-3 items-center p-3 pt-4 pb-8"
+      :class="[useBasket.currentView === 'grid' ? 'grid grid-cols-2' : 'flex flex-col-reverse gap-3']"
       v-auto-animate="{ duration: 75 }"
     >
       <BasketEntry v-for="entry in filteredBasketEntries" :key="entry.id" :entry="entry" />
