@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '1.2.0a',
+    basketAppVersion: '1.3.0',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -362,7 +362,6 @@ export const basket = defineStore("basket", {
       try {
         const response = await apiClient.get(`/api/ai/get-product-type/${productId}`);
         if (response.data.type) {
-          console.log("Product type", response.data.type);
           let product = this.products.find(p => p.id === productId);
           if (product) {
             product.type = response.data?.type || 'uncategorized';
