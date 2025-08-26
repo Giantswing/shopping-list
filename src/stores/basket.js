@@ -40,6 +40,115 @@ export const basket = defineStore("basket", {
     newBasketData: {}, 
     connectBasketData: {},
     offlineMode: false,
+
+    types: [
+      {
+        value: 'oils_spices_sauces',
+        emoji: '🌶️',
+        color: '#d97706',
+      },
+      {
+        value: 'water_and_soft_drinks',
+        emoji: '🥤',
+        color: '#3bb4e5',
+      },
+      {
+        value: 'snacks_and_sweets',
+        emoji: '🍬',
+        color: '#e75480',
+      },
+      {
+        value: 'rice_pulses_pasta',
+        emoji: '🍚',
+        color: '#f5e6b2',
+      },
+      {
+        value: 'baby',
+        emoji: '🍼',
+        color: '#f7b2d9',
+      },
+      {
+        value: 'alcohol',
+        emoji: '🍷',
+        color: '#a8324a',
+      },
+      {
+        value: 'coffee_and_tea',
+        emoji: '☕',
+        color: '#b08968',
+      },
+      {
+        value: 'meat',
+        emoji: '🥩',
+        color: '#e57373',
+      },
+      {
+        value: 'deli_and_cheese',
+        emoji: '🧀',
+        color: '#ffe066',
+      },
+      {
+        value: 'frozen',
+        emoji: '❄️',
+        color: '#7fd8f5',
+      },
+      {
+        value: 'canned_and_soups',
+        emoji: '🥫',
+        color: '#b0b0b0',
+      },
+      {
+        value: 'personal_care',
+        emoji: '🧴',
+        color: '#f7cac9',
+      },
+      {
+        value: 'pharmacy',
+        emoji: '💊',
+        color: '#b388ff',
+      },
+      {
+        value: 'fruit_and_vegetables',
+        emoji: '🥦',
+        color: '#7ed957',
+      },
+      {
+        value: 'dairy_and_eggs',
+        emoji: '🥚',
+        color: '#fff7d6',
+      },
+      {
+        value: 'cleaning_and_home',
+        emoji: '🧽',
+        color: '#b2dfdb',
+      },
+      {
+        value: 'seafood_and_fish',
+        emoji: '🐟',
+        color: '#4fc3f7',
+      },
+      {
+        value: 'pets',
+        emoji: '🐾',
+        color: '#a1887f',
+      },
+      {
+        value: 'bakery_and_pastry',
+        emoji: '🥐',
+        color: '#f6c177',
+      },
+      {
+        value: 'prepared_food',
+        emoji: '🍱',
+        color: '#b2bec3',
+      },
+      {
+        value: 'uncategorized',
+        emoji: '❓',
+        color: '#bdbdbd',
+      },
+    ]
+
   }),
 
   actions: {
@@ -194,6 +303,14 @@ export const basket = defineStore("basket", {
         this.shouldAutoUpdate = false;
         this.loading.addProductToBasketNames.push(product);
 
+        let parsedProductName = product.trim().toLowerCase();
+        parsedProductName = parsedProductName.replace(/[^a-z0-9\s]/g, '');
+
+        const existingProduct = this.products.find(p => p.name.toLowerCase() === parsedProductName);
+        if (existingProduct && existingProduct.is_added) {
+          return true;
+        }
+
         if (this.offlineMode) {
           let existingProduct = this.products.find(p => p.name === product);
           let productId = existingProduct ? existingProduct.id : Math.floor(Math.random() * 10000);
@@ -222,6 +339,12 @@ export const basket = defineStore("basket", {
         if (response.data.success) {
           this.newProductInput = "";
           this.products = response.data.products;
+
+          let addedProduct = this.products.find(p => p.name === product);
+          if (!addedProduct?.type) {
+            this.getProductType(addedProduct.id);
+          }
+
           return true;
         } else {
           throw new Error(response.data.error);
@@ -232,6 +355,23 @@ export const basket = defineStore("basket", {
       } finally {
         this.loading.addProductToBasketNames = this.loading.addProductToBasketNames.filter(name => name !== product);
         this.shouldAutoUpdate = true;
+      }
+    },
+
+    async getProductType(productId) {
+      try {
+        const response = await apiClient.get(`/api/ai/get-product-type/${productId}`);
+        if (response.data.type) {
+          console.log("Product type", response.data.type);
+          let product = this.products.find(p => p.id === productId);
+          if (product) {
+            product.type = response.data?.type || 'uncategorized';
+          }
+        } else {
+          throw new Error(response.data.error);
+        }
+      } catch (error) {
+        console.error(error);
       }
     },
 

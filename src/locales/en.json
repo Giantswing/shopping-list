@@ -47,5 +47,30 @@
    "delete-permanently": "Delete permanently",
    "group-by": "Group by",
    "group-by-none": "None",
-   "group-by-name": "Name"
+   "group-by-name": "Name",
+   "group-by-type": "Type",
+
+   "types": {
+      "oils_spices_sauces": "Oils, spices and sauces",
+      "water_and_soft_drinks": "Water and soft drinks",
+      "snacks_and_sweets": "Snacks and sweets",
+      "rice_pulses_pasta": "Rice, pulses and pasta",
+      "baby": "Baby",
+      "alcohol": "Alcohol",
+      "coffee_and_tea": "Coffee and tea",
+      "meat": "Meat",
+      "deli_and_cheese": "Deli and cheese",
+      "frozen": "Frozen",
+      "canned_and_soups": "Canned and soups",
+      "personal_care": "Personal care",
+      "pharmacy": "Pharmacy",
+      "fruit_and_vegetables": "Fruit and vegetables",
+      "dairy_and_eggs": "Dairy and eggs",
+      "cleaning_and_home": "Cleaning and home",
+      "seafood_and_fish": "Seafood and fish",
+      "pets": "Pets",
+      "bakery_and_pastry": "Bakery and pastry",
+      "prepared_food": "Prepared food",
+      "uncategorized": "Other"
+   }
 }

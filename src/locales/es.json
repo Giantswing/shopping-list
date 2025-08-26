@@ -47,5 +47,30 @@
    "delete-permanently": "Eliminar permanentemente",
    "group-by": "Agrupar por",
    "group-by-none": "Ninguno",
-   "group-by-name": "Nombre"
+   "group-by-name": "Nombre",
+   "group-by-type": "Tipo",
+
+   "types": {
+      "oils_spices_sauces": "Especias y salsas",
+      "water_and_soft_drinks": "Agua y refrescos",
+      "snacks_and_sweets": "Snacks y dulces",
+      "rice_pulses_pasta": "Arroz, legumbres y pasta",
+      "baby": "Bebé",
+      "alcohol": "Bodega",
+      "coffee_and_tea": "Cacao, café e infusiones",
+      "meat": "Carne",
+      "deli_and_cheese": "Charcutería y queso",
+      "frozen": "Congelados",
+      "canned_and_soups": "Conservas, caldos y cremas",
+      "personal_care": "Cuidado personal",
+      "pharmacy": "Farmacia",
+      "fruit_and_vegetables": "Fruta y verdura",
+      "dairy_and_eggs": "Leche, huevos y mantequilla",
+      "cleaning_and_home": "Limpieza y hogar",
+      "seafood_and_fish": "Marisco y pescado",
+      "pets": "Mascotas",
+      "bakery_and_pastry": "Panadería y pastelería",
+      "prepared_food": "Pizzas y platos preparados",
+      "uncategorized": "Otro"
+   }
 }

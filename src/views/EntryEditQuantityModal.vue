@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, nextTick } from "vue";
+import { ref, watch, nextTick, computed } from "vue";
 
 import { basket } from "@/stores/basket";
 const useBasket = basket();
@@ -22,6 +22,10 @@ const handleClose = async () => {
   }, 120);
 };
 
+const type = computed(() => {
+  return useBasket.types.find(t => t.value === props.product.type);
+});
+
 watch(
   () => useBasket.editQuantityModal,
   async val => {
@@ -41,7 +45,12 @@ watch(
 <template>
   <Teleport to="body">
     <div class="z-[9999]" v-auto-animate="{ duration: 75 }">
-      <div v-if="useBasket.editQuantityModal" class="fixed inset-0 bg-blue-700/90 z-50" @click="handleClose" />
+      <div
+        v-if="useBasket.editQuantityModal"
+        class="fixed inset-0 bg-blue-700 z-50 brightness-[0.4] opacity-90"
+        @click="handleClose"
+        :style="{ backgroundColor: type?.color }"
+      />
 
       <div
         v-if="useBasket.editQuantityModal"

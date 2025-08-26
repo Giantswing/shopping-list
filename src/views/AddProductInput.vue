@@ -254,14 +254,14 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
 
       <div class="w-full flex flex-row gap-2 items-center justify-center mb-2">
         <button
-          v-for="(groupBy, idx) in ['none', 'name']"
+          v-for="(groupBy, idx) in ['none', 'name', 'type']"
           :key="groupBy"
           class="flex flex-row gap-2 items-center justify-center px-6 py-2 text-sm active:scale-[0.8] transition-all duration-100 font-semibold  rounded-md"
           :class="[
             useBasket.filters.groupBy === groupBy
               ? 'opacity-100 bg-blue-300 w-[40%] text-blue-900'
               : 'opacity-60 bg-gray-300 w-[40%] text-gray-700',
-            idx === 0 ? 'rounded-l-[50px]' : 'rounded-r-[50px]'
+            idx === 0 ? 'rounded-l-[50px]' : idx === 2 ? 'rounded-r-[50px]' : ''
           ]"
           @click="useBasket.filters.groupBy = groupBy"
         >
