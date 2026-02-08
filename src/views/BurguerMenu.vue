@@ -160,7 +160,7 @@ setInterval(updatePWAStatus, 1000);
         class="pointer-events-auto"
         :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
         @onClick="useBasket.removeAllProductsFromBasket()"
-        :loading="useBasket.loading.removeAllProductsFromBasket"
+        :isLoading="useBasket.loading.removeAllProductsFromBasket"
         :isDisabled="useBasket.offlineMode || useBasket.products.filter(p => p.is_added).length === 0"
         :safetyConfirmation="true"
         :safetyConfirmationIcon="true"
@@ -231,7 +231,7 @@ setInterval(updatePWAStatus, 1000);
               :key="basket.slug"
               class="flex flex-row gap-3 items-center"
             >
-              <CButton :key="basket.slug" :buttonType="'secondary'" @click="connectToBasket(basket.slug)">
+              <CButton :key="basket.slug" :buttonType="'secondary'" @click="connectToBasket(basket.slug)" :isLoading="useBasket.loading.checkIfBasketExists">
                 {{ basket.name }}
               </CButton>
               <button class="text-sm text-white font-semibold" @click="removeRecentBasket(basket.slug)">

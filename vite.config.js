@@ -35,7 +35,6 @@ export default defineConfig({
       'Document-Policy': 'js-profiling'
     },
     hmr: {
-      host: 'localhost',
       overlay: true,
     },
   },

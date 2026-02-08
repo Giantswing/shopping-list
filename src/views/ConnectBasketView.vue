@@ -54,7 +54,7 @@ const connectToBasket = async () => {
         :placeholder="$t('password')"
         class="border-b-2 border-gray-400 rounded-md focus:outline-none focus:border-gray-500 px-2 py-1 text-center mb-6"
       />
-      <CButton :buttonType="'secondary'" @click="connectToBasket">{{ $t("connect") }}</CButton>
+      <CButton :buttonType="'secondary'" @click="connectToBasket" :isLoading="useBasket.loading.connectToBasket">{{ $t("connect") }}</CButton>
     </form>
   </div>
 </template>

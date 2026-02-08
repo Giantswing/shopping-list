@@ -103,7 +103,6 @@ const handleConnectInput = () => {
 <template>
   <div class="w-full max-w-md p-6 bg-white rounded-3xl flex flex-col items-center gap-2 border-8 border-blue-50">
     <!-- LOGO IMAGE -->
-
     <div class="w-[120px] h-[120px] rounded-full bg-white flex items-center justify-center mb-4">
       <img src="/basketi-logo.svg" class="w-full h-full scale-[0.8]" />
     </div>
@@ -130,6 +129,7 @@ const handleConnectInput = () => {
     <CButton
       class="my-4 mt-6"
       :buttonType="'secondary'"
+      :isLoading="useBasket.loading.checkIfBasketExists"
       @onClick="
         async () => {
           if (basketSlug?.length > 0) {
@@ -170,6 +170,7 @@ const handleConnectInput = () => {
           :key="basket.slug"
           :buttonType="'secondary'"
           @click="connectToBasket(basket.slug)"
+          :isLoading="useBasket.loading.checkIfBasketExists"
         >
           {{ basket.name }}
         </CButton>
@@ -216,6 +217,7 @@ const handleConnectInput = () => {
             useBasket.newBasketData?.repeatPassword?.length === 0
         "
         @onClick="handleCreateBasket"
+        :isLoading="useBasket.loading.createBasket"
       >
         {{ $t("create-basket") }}
       </CButton>

@@ -34,8 +34,8 @@ import 'tippy.js/dist/tippy.css';
 
 import "@/assets/style.css";
 
-// Register service worker for PWA
-if ('serviceWorker' in navigator) {
+// Register service worker for PWA (skip in dev so HMR works)
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
@@ -45,8 +45,11 @@ if ('serviceWorker' in navigator) {
         console.error('SW registration failed: ', registrationError);
       });
   });
-} else {
-  console.log('Service Worker not supported');
+} else if ('serviceWorker' in navigator && import.meta.env.DEV) {
+  // Unregister any existing SW in dev to avoid stale cache blocking HMR
+  navigator.serviceWorker.getRegistrations?.().then((regs) => {
+    regs.forEach((reg) => reg.unregister());
+  });
 }
 
 const pinia = createPinia()
