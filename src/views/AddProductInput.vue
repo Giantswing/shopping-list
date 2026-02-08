@@ -119,8 +119,8 @@ const cleanUpInput = () => {
   result = result.replace(/ó/g, "o");
   result = result.replace(/ú/g, "u");
 
-  /* remove any character that is not a-z, space */
-  result = result.replace(/[^a-z ]/g, "");
+  /* remove any character that is not a-z, ñ, space */
+  result = result.replace(/[^a-zñ ]/g, "");
 
   useBasket.newProductInput = result;
 };

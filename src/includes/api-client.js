@@ -1,8 +1,11 @@
 import axios from "axios";
 import { basket as useBasketStore } from "@/stores/basket";
 
+// Ensure base URL has no trailing /api (paths in code already include /api)
+const baseURL = (import.meta.env.VITE_API_URL || "").replace(/\/api\/?$/, "");
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL,
   withCredentials: true,
 });
 

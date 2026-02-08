@@ -304,7 +304,7 @@ export const basket = defineStore("basket", {
         this.loading.addProductToBasketNames.push(product);
 
         let parsedProductName = product.trim().toLowerCase();
-        parsedProductName = parsedProductName.replace(/[^a-z0-9\s]/g, '');
+        parsedProductName = parsedProductName.replace(/[^a-z0-9\sñ]/g, '');
 
         const existingProduct = this.products.find(p => p.name.toLowerCase() === parsedProductName);
         if (existingProduct && existingProduct.is_added) {
