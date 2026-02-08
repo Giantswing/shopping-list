@@ -6,7 +6,7 @@ import { basket } from "@/stores/basket";
 const useBasket = basket();
 
 const suggestions = computed(() => {
-  const maxResults = 4;
+  const maxResults = 16;
   let result = useBasket.products;
 
   if (useBasket.currentView === "grid") {
@@ -138,16 +138,15 @@ defineExpose({ handleInputKeydown }); // In case parent wants to use it
       v-if="useBasket.currentView === 'list'"
       class="w-full flex flex-col gap-2 items-center border-t-2 border-blue-100 pt-2 rounded-t-xl"
     >
-      <div v-if="suggestions.length > 0" class="w-full flex flex-col gap-2 items-center">
-        <h3 class="text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-2 py-1 rounded-full">{{ $t("suggestions") }}</h3>
-        <div v-for="suggestion in suggestions" :key="suggestion.id" class="flex flex-row gap-2 items-center w-full">
+    <h3 v-if="suggestions.length > 0" class="absolute top-5 border-t border-blue-100 text-xs font-semibold text-blue-400 mt-[-25px] bg-white px-3 pt-1 rounded-full left-1/2 -translate-x-1/2 pointer-events-none">{{ $t("suggestions") }}</h3>
+      <div v-if="suggestions.length > 0" class="w-full grid grid-cols-2 gap-2 items-center relative px-2 max-h-[120px] overflow-y-auto mb-2 mt-1">
           <button
-            class="text-sm text-blue-600 py-1 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms] bg-blue-50 px-4 rounded-full w-[80%] mx-auto"
+            v-for="suggestion in suggestions" :key="suggestion.id"
+            class="text-xs text-blue-600 py-1 active:scale-[0.8] transition-all duration-100 active:delay-[-50ms] bg-blue-50 px-4 rounded-full w-full leading-none h-[32px] border border-blue-100"
             @click="handleAddProduct(suggestion, true)"
           >
             <span class="font-bold">{{ suggestion.name }}</span>
           </button>
-        </div>
       </div>
 
       <h2 class="text-xs font-semibold text-blue-600 mt-1" v-if="false">{{ $t("new-buy-message") }}</h2>
