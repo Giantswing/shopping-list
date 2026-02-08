@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate  } from "pinia";
+import { defineStore, acceptHMRUpdate } from "pinia";
 
 import { useToast } from "vue-toastification";
 const toast = useToast();
@@ -10,7 +10,7 @@ const env = import.meta.env.VITE_APP_ENV;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '1.3.0',
+    basketAppVersion: '1.4.0',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -37,7 +37,7 @@ export const basket = defineStore("basket", {
       removeProductPermanentlyIds: [],
       removeAllProductsFromBasket: false,
     },
-    newBasketData: {}, 
+    newBasketData: {},
     connectBasketData: {},
     offlineMode: false,
 
