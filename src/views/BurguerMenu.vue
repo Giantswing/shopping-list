@@ -160,8 +160,7 @@ setInterval(updatePWAStatus, 1000);
         class="pointer-events-auto"
         :addedClass="'w-[48px] h-[48px] !bg-rose-400 !border-red-300 !p-0'"
         @onClick="useBasket.removeAllProductsFromBasket()"
-        :isLoading="useBasket.loading.removeAllProductsFromBasket"
-        :isDisabled="useBasket.offlineMode || useBasket.products.filter(p => p.is_added).length === 0"
+        :isDisabled="useBasket.products.filter(p => p.is_added).length === 0"
         :safetyConfirmation="true"
         :safetyConfirmationIcon="true"
       >

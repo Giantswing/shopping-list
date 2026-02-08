@@ -106,7 +106,6 @@ const installApp = async () => {
     <div
       v-if="
         filteredBasketEntries?.length > 0 &&
-          !useBasket.loading.basketProducts &&
           (useBasket.currentView === 'list' || (useBasket.currentView === 'grid' && useBasket.filters.groupBy === 'none'))
       "
       class="w-full items-center p-3 pt-1 pb-8"
@@ -137,14 +136,9 @@ const installApp = async () => {
       </div>
     </div>
 
-    <div v-else-if="useBasket.loading.basketProducts" class="w-full flex flex-col items-center h-full justify-center">
-      <CIcon :icon="'line-md:loading-twotone-loop'" class="w-[100px] h-[100px] text-gray-500" />
-    </div>
-
     <div
       v-else-if="
-        !useBasket.loading.basketProducts &&
-          filteredBasketEntries?.length === 0 &&
+        filteredBasketEntries?.length === 0 &&
           useBasket.newProductInput.trim().length === 0
       "
       class="w-full flex flex-col items-center h-full justify-center gap-4"

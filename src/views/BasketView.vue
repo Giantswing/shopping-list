@@ -55,10 +55,14 @@ const connectToBasket = async slug => {
     }
 
     /* If we reach this point, we have valid credentials */
-    useBasket.startRefreshItemsInterval();
     useBasket.getBasketProducts();
+    useBasket.startRefreshItemsInterval();
   }
 };
+
+onBeforeUnmount(() => {
+  useBasket.stopRefreshItemsInterval();
+});
 
 onMounted(async () => {
   document.title = "Loading...";
@@ -71,16 +75,11 @@ watch(
   () => route.params.slug,
   async (newSlug, oldSlug) => {
     if (newSlug !== oldSlug) {
-      // Stop the current refresh interval before switching
       useBasket.stopRefreshItemsInterval();
       await connectToBasket(newSlug);
     }
   }
 );
-
-onBeforeUnmount(() => {
-  useBasket.stopRefreshItemsInterval();
-});
 </script>
 
 <template>
@@ -102,6 +101,30 @@ onBeforeUnmount(() => {
     </div>
 
     <AddProductInput />
+
+    <!-- Small non-blocking sync indicator: bottom left -->
+    <div
+      class="fixed bottom-4 left-4 z-40 flex items-center justify-center w-8 h-8 rounded-full bg-white/20 shadow-md border border-gray-200 pointer-events-none transition-all duration-[150ms]"
+      :class="[useBasket.syncStatus !== 'idle' ? 'opacity-100 translate-y-0' : 'opacity-0 translate-x-[-100px]']"
+      aria-hidden="true"
+      v-auto-animate="{ duration: 75 }"
+    >
+      <CIcon
+        v-if="useBasket.syncStatus === 'syncing'"
+        :icon="'line-md:loading-twotone-loop'"
+        class="w-5 h-5 text-blue-500"
+      />
+      <CIcon
+        v-else-if="useBasket.syncStatus === 'success'"
+        :icon="'material-symbols:check-circle'"
+        class="w-5 h-5 text-green-500"
+      />
+      <CIcon
+        v-else-if="useBasket.syncStatus === 'error'"
+        :icon="'material-symbols:error'"
+        class="w-5 h-5 text-red-500"
+      />
+    </div>
 
     <EntryEditQuantityModal
       v-if="useBasket.productDetailsId"

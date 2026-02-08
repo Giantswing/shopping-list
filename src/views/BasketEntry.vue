@@ -20,12 +20,7 @@ const type = computed(() => {
   <div
     v-if="useBasket.currentView === 'list'"
     class="flex flex-row gap-2 items-center bg-transparent w-full rounded-full justify-between text-sm font-semibold text-blue-900 select-none overflow-hidden transition-all duration-300 h-[42px] shrink-0 border-2 border-blue-900/40"
-    :class="[
-      useBasket.loading.removeProductFromBasketIds.includes(props.entry.id)
-        ? 'opacity-50 saturate-0 cursor-not-allowed pointer-events-none'
-        : ''
-    ]"
-  >
+    >
     <div class="flex justify-between items-center w-full h-full">
       <div
         class="flex justify-center items-center min-w-[56px] h-full bg-blue-300 gap-2 mr-[-14px] pr-2"
@@ -48,7 +43,6 @@ const type = computed(() => {
           }}</span>
         </div>
 
-        <p v-if="props.entry.offline" class="text-center font-semibold text-xs text-gray-600 z-10">Offline</p>
         <p class="text-center leading-none z-10">{{ props.entry?.name }}</p>
       </div>
 

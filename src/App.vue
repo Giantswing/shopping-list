@@ -3,11 +3,6 @@ import { ref, onMounted, onUnmounted, watch } from "vue";
 import { basket } from "@/stores/basket";
 const useBasket = basket();
 
-import { useToast } from "vue-toastification";
-const toast = useToast();
-
-import i18n from "@/includes/i18n.js";
-
 // Browser back functionality for burger menu and view state
 let isHandlingPopState = false;
 
@@ -40,26 +35,7 @@ watch(
   { immediate: false }
 );
 
-const checkOnlineStatus = () => {
-  const isOffline = !navigator.onLine;
-  // const isOffline = true;
-
-  if (isOffline && !useBasket.offlineMode) {
-    toast.warning(i18n.global.t("offline-mode-enabled"));
-    useBasket.offlineMode = true;
-  } else if (!isOffline && useBasket.offlineMode) {
-    toast.success(i18n.global.t("back-online"));
-    useBasket.offlineMode = false;
-    useBasket.syncBasketState();
-  }
-};
-
 onMounted(() => {
-  // toast.success("Test message");
-  checkOnlineStatus();
-  window.addEventListener("online", checkOnlineStatus);
-  window.addEventListener("offline", checkOnlineStatus);
-
   // Add popstate listener for browser back functionality
   window.addEventListener("popstate", handlePopState);
 
@@ -117,8 +93,6 @@ if (window.visualViewport) {
 
 // Cleanup event listeners on component unmount
 onUnmounted(() => {
-  window.removeEventListener("online", checkOnlineStatus);
-  window.removeEventListener("offline", checkOnlineStatus);
   window.removeEventListener("popstate", handlePopState);
 
   window.removeEventListener("focusin", onInputFocusForViewport);
@@ -164,18 +138,12 @@ onUnmounted(() => {
         value: useBasket.lastUsedBasket,
         mode: 'local',
         change: value => (useBasket.lastUsedBasket = value)
-      },
-      {
-        key: 'products',
-        value: useBasket.products,
-        mode: 'local',
-        change: value => (useBasket.products = value)
       }
     ]"
   />
 
   <div
-    class="app-viewport-wrapper relative w-full flex flex-col items-center justify-center max-w-xl mx-auto overflow-hidden min-h-0"
+    class="app-viewport-wrapper flex flex-col overflow-hidden min-h-0"
     :style="{
       position: 'fixed',
       top: viewportRect.top + 'px',
@@ -185,7 +153,10 @@ onUnmounted(() => {
       maxHeight: viewportRect.height + 'px'
     }"
   >
-    <div class="flex-1 min-h-0 w-full flex flex-col">
+    <div
+      class="flex-1 min-h-0 flex flex-col"
+      style="width: min(100%, 36rem); margin-left: auto; margin-right: auto;"
+    >
       <RouterView />
     </div>
   </div>

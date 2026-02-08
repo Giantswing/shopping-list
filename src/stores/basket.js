@@ -7,10 +7,12 @@ import i18n from "@/includes/i18n.js";
 import apiClient from "@/includes/api-client";
 
 const env = import.meta.env.VITE_APP_ENV;
+const LOCAL_STORAGE_PREFIX = 'shopping_list_v1_';
+const SYNC_STATUS_SHOW_MS = 2000;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '1.4.0b',
+    basketAppVersion: '2.0.0',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,
@@ -18,28 +20,24 @@ export const basket = defineStore("basket", {
     connectedBaskets: [],
     lastUsedBasket: '',
     productDetailsId: null,
-    offlineProductsToRemove: [],
     products: [],
-    refreshItemsInterval: null,
-    shouldAutoUpdate: true,
     editQuantityModal: false,
     filters: {
       showOnlyAdded: false,
       groupBy: 'none',
     },
     loading: {
-      basketProducts: true,
       checkIfBasketExists: false,
       createBasket: false,
       connectToBasket: false,
-      addProductToBasketNames: [],
-      removeProductFromBasketIds: [],
-      removeProductPermanentlyIds: [],
-      removeAllProductsFromBasket: false,
     },
     newBasketData: {},
     connectBasketData: {},
-    offlineMode: false,
+    /** 'idle' | 'syncing' | 'success' | 'error' - drives bottom-left sync indicator */
+    syncStatus: 'idle',
+    refreshItemsInterval: null,
+    /** Incremented when updateBasket starts; getBasketProducts only applies response if generation unchanged (avoids stale fetch overwriting optimistic state) */
+    updateGeneration: 0,
 
     types: [
       {
@@ -152,14 +150,98 @@ export const basket = defineStore("basket", {
   }),
 
   actions: {
+    _setSyncStatus(status) {
+      this.syncStatus = status;
+      if (status === 'success' || status === 'error') {
+        setTimeout(() => {
+          if (this.syncStatus === status) this.syncStatus = 'idle';
+        }, SYNC_STATUS_SHOW_MS);
+      }
+    },
+
     startRefreshItemsInterval() {
       this.refreshItemsInterval = setInterval(() => {
+        if (this.syncStatus === 'syncing') return;
         this.getBasketProducts(true);
       }, 10000);
     },
 
     stopRefreshItemsInterval() {
-      clearInterval(this.refreshItemsInterval);
+      if (this.refreshItemsInterval) {
+        clearInterval(this.refreshItemsInterval);
+        this.refreshItemsInterval = null;
+      }
+    },
+
+    _productsStorageKey(slug) {
+      return `${LOCAL_STORAGE_PREFIX}products_${slug || this.currentBasket}`;
+    },
+
+    hydrateProductsFromLocalStorage(slug) {
+      const key = this._productsStorageKey(slug);
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length >= 0) {
+            this.products = parsed;
+            return true;
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to hydrate products from localStorage', e);
+      }
+      return false;
+    },
+
+    persistProductsToLocalStorage() {
+      const key = this._productsStorageKey(this.currentBasket);
+      if (!key.includes('undefined')) {
+        try {
+          localStorage.setItem(key, JSON.stringify(this.products));
+        } catch (e) {
+          console.warn('Failed to persist products to localStorage', e);
+        }
+      }
+    },
+
+    /** Optimistic update: set products in state, persist to localStorage, sync to API in background */
+    async updateBasket(products) {
+      this.updateGeneration++;
+      const generationForThisUpdate = this.updateGeneration;
+      const payload = products.map(p => ({
+        id: p.id || undefined,
+        name: p.name,
+        is_added: !!p.is_added,
+        quantity: Math.max(1, parseInt(p.quantity, 10) || 1),
+      }));
+      const previous = [...this.products];
+      this.products = products;
+      this.persistProductsToLocalStorage();
+      if (this.newProductInput) this.newProductInput = '';
+
+      this._setSyncStatus('syncing');
+      try {
+        const response = await apiClient.put(`/api/basket/${this.currentBasket}`, { products: payload });
+        if (this.updateGeneration !== generationForThisUpdate) return;
+        if (response.data.success && response.data.products) {
+          this.products = response.data.products;
+          this.persistProductsToLocalStorage();
+          const added = this.products.find(p => p.name === payload.find(x => !x.id)?.name);
+          if (added && !added.type) this.getProductType(added.id);
+          this._setSyncStatus('success');
+        } else {
+          throw new Error(response.data.error || 'Update failed');
+        }
+      } catch (error) {
+        console.error(error);
+        if (this.updateGeneration === generationForThisUpdate) {
+          this.products = previous;
+          this.persistProductsToLocalStorage();
+          this._setSyncStatus('error');
+          toast.error(i18n.global.t("internal-server-error"));
+        }
+      }
     },
 
     resetNewBasketData() {
@@ -203,17 +285,6 @@ export const basket = defineStore("basket", {
 
     async checkIfBasketExists(slug) {
       try {
-        if (this.offlineMode) {
-          let basket = this.getBasketCredentials(slug);
-          if (basket) {
-            this.connectBasketData.name = basket.name;
-            this.connectBasketData.slug = slug;
-            return true;
-          } else {
-            return false;
-          }
-        }
-
         this.loading.checkIfBasketExists = true;
         const response = await apiClient.get(`/api/basket/check-if-basket-exists/${slug}`);
         if (response.data.exists) {
@@ -237,20 +308,6 @@ export const basket = defineStore("basket", {
 
     async connectToBasket() {
       try {
-        if (this.offlineMode) {
-          let basket = this.getBasketCredentials(this.connectBasketData.slug);
-          if (basket) {
-            this.lastUsedBasket = this.connectBasketData.slug;
-            this.currentBasket = this.connectBasketData.slug;
-            this.connectBasketData = {};
-            return true;
-          } else {
-            this.lastUsedBasket = '';
-            this.currentBasket = '';
-            return false;
-          }
-        }
-
         this.loading.connectToBasket = true;
         const response = await apiClient.post(`/api/basket/connect`, this.connectBasketData);
         if (response.data.success) {
@@ -265,7 +322,7 @@ export const basket = defineStore("basket", {
       } catch (error) {
         this.lastUsedBasket = '';
 
-        if (error.response.data.error === 'invalid-password') {
+        if (error.response?.data?.error === 'invalid-password') {
           toast.error(i18n.global.t("invalid-password"));
         } else {
           toast.error(i18n.global.t("internal-server-error"));
@@ -276,86 +333,55 @@ export const basket = defineStore("basket", {
       }
     },
 
-    async syncBasketState() {
-      /* After the app has been disconnected for a moment/while
-      it will look at the basket products and create any products
-      that have been added while offline.
-      */
+    addProductToBasket(productName) {
+      const name = (typeof productName === 'string' ? productName : productName?.name || '').trim();
+      if (!name) return;
 
-      console.warn("Syncing basket state");
-      const productsToCreate = this.products.filter(product => product.offline);
-      console.log("Products to create", productsToCreate);
-      for (const product of productsToCreate) {
-        await this.addProductToBasket(product.name);
+      const parsed = name.toLowerCase().replace(/[^a-z0-9\sñ]/g, '');
+      const existing = this.products.find(p => (p.name || '').toLowerCase().replace(/[^a-z0-9\sñ]/g, '') === parsed);
+      if (existing && existing.is_added) return;
+
+      let next;
+      if (existing) {
+        next = this.products.map(p =>
+          p.id === existing.id
+            ? { ...p, quantity: 1, is_added: true, last_added_at: new Date().toISOString() }
+            : p
+        );
+      } else {
+        next = [
+          ...this.products,
+          {
+            id: null,
+            name: name,
+            quantity: 1,
+            is_added: true,
+            last_added_at: new Date().toISOString(),
+            times_added: 1,
+          },
+        ];
       }
-
-      const productsToRemove = this.products.filter(product => product.offline).map(product => product.id);
-      console.log("Products to remove", productsToRemove);
-      for (const productId of productsToRemove) {
-        await this.removeProductFromBasket(productId);
-      }
-
-      this.offlineProductsToRemove = [];
+      this.updateBasket(next);
     },
 
-    async addProductToBasket(product) {
-      try {
-        this.shouldAutoUpdate = false;
-        this.loading.addProductToBasketNames.push(product);
+    setProductAdded(productId, is_added) {
+      const next = this.products.map(p =>
+        p.id === productId
+          ? { ...p, is_added: !!is_added, quantity: is_added ? 1 : (p.quantity || 1) }
+          : p
+      );
+      this.updateBasket(next);
+    },
 
-        let parsedProductName = product.trim().toLowerCase();
-        parsedProductName = parsedProductName.replace(/[^a-z0-9\sñ]/g, '');
+    setProductQuantity(productId, quantity) {
+      const q = Math.max(1, parseInt(quantity, 10) || 1);
+      const next = this.products.map(p => (p.id === productId ? { ...p, quantity: q } : p));
+      this.updateBasket(next);
+    },
 
-        const existingProduct = this.products.find(p => p.name.toLowerCase() === parsedProductName);
-        if (existingProduct && existingProduct.is_added) {
-          return true;
-        }
-
-        if (this.offlineMode) {
-          let existingProduct = this.products.find(p => p.name === product);
-          let productId = existingProduct ? existingProduct.id : Math.floor(Math.random() * 10000);
-
-          if (!existingProduct) {
-            this.products.push({
-              name: product,
-              id: productId,
-              offline: true,
-              quantity: 0,
-              is_added: false,
-            });
-          }
-
-          let prod = this.products.find(p => p.id === productId);
-          prod.quantity++;
-          prod.is_added = true;
-          prod.last_added_at = new Date().toISOString();
-
-          return true;
-        }
-
-        const response = await apiClient.post(`/api/basket/${this.currentBasket}/add-product`, {
-          product: product,
-        });
-        if (response.data.success) {
-          this.newProductInput = "";
-          this.products = response.data.products;
-
-          let addedProduct = this.products.find(p => p.name === product);
-          if (!addedProduct?.type) {
-            this.getProductType(addedProduct.id);
-          }
-
-          return true;
-        } else {
-          throw new Error(response.data.error);
-        }
-      } catch (error) {
-        toast.error(i18n.global.t("internal-server-error"));
-        console.error(error);
-      } finally {
-        this.loading.addProductToBasketNames = this.loading.addProductToBasketNames.filter(name => name !== product);
-        this.shouldAutoUpdate = true;
-      }
+    removeAllProductsFromBasket() {
+      const next = this.products.map(p => ({ ...p, is_added: false }));
+      this.updateBasket(next);
     },
 
     async getProductType(productId) {
@@ -374,115 +400,32 @@ export const basket = defineStore("basket", {
       }
     },
 
-    async editProductQuantity(productId, quantity) {
-      try {
-        this.shouldAutoUpdate = false;
-
-        const response = await apiClient.post(`/api/basket/${this.currentBasket}/edit-product-quantity`, {
-          product_id: productId,
-          quantity: quantity,
-        });
-        if (response.data.success) {
-          this.products = this.products.map(p => (p.id === productId ? { ...p, quantity: quantity } : p));
-
-          return true;
-        } else {
-          throw new Error(response.data.error);
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error(i18n.global.t("internal-server-error"));
-      } finally {
-        this.shouldAutoUpdate = true;
-      }
-    },
-
-    async removeAllProductsFromBasket() {
-      try {
-        if (this.offlineMode) {
-          return;
-        }
-
-        this.shouldAutoUpdate = false;
-        this.loading.removeAllProductsFromBasket = true;
-
-        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-all-products-from-basket`);
-
-        if (response.data.success) {
-          this.products.forEach(p => (p.is_added = false));
-          return true;
-        } else {
-          throw new Error(response.data.error);
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error(i18n.global.t(error.response.data.error));
-        return false;
-      } finally {
-        this.loading.removeAllProductsFromBasket = false;
-        this.shouldAutoUpdate = true;
-      }
+    removeProductFromBasket(productId) {
+      this.setProductAdded(productId, false);
     },
 
     async removeProductPermanently(productId) {
+      const previous = [...this.products];
+      this.products = this.products.filter(p => p.id !== productId);
+      this.editQuantityModal = false;
+      this.productDetailsId = null;
+      this.persistProductsToLocalStorage();
+
       try {
-        if (this.offlineMode) {
-          return;
-        }
-
-        this.shouldAutoUpdate = false;
-
         const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-permanently`, {
           product_id: productId,
         });
-        if (response.data.success) {
-          this.editQuantityModal = false;
-          this.productDetailsId = null;
-          this.products = this.products.filter(p => p.id !== productId);
-          this.productDetailsId = null;
-          return true;
-        } else {
-          throw new Error(response.data.error);
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error(i18n.global.t("internal-server-error"));
-      } finally {
-        this.loading.removeProductPermanentlyIds = this.loading.removeProductPermanentlyIds.filter(id => id !== productId);
-        this.shouldAutoUpdate = true;
-      }
-    },
-
-    async removeProductFromBasket(productId) {
-      try {
-        this.shouldAutoUpdate = false;
-        this.loading.removeProductFromBasketIds.push(productId);
-
-        if (this.offlineMode) {
-          this.offlineProductsToRemove.push(productId);
-
-          let prod = this.products.find(p => p.id === productId);
-          prod.is_added = false;
-
-          return true;
-        }
-
-        const response = await apiClient.post(`/api/basket/${this.currentBasket}/remove-product-from-basket`, {
-          product_id: productId,
-        });
-        if (response.data.success) {
+        if (response.data.success && response.data.products) {
           this.products = response.data.products;
-
-          return true;
+          this.persistProductsToLocalStorage();
         } else {
-          throw new Error(response.data.error);
+          throw new Error(response.data?.error || 'Delete failed');
         }
       } catch (error) {
         console.error(error);
+        this.products = previous;
+        this.persistProductsToLocalStorage();
         toast.error(i18n.global.t("internal-server-error"));
-      } finally {
-        this.loading.removeProductFromBasketIds = this.loading.removeProductFromBasketIds.filter(id => id !== productId);
-        this.shouldAutoUpdate = true;
       }
     },
 
@@ -508,57 +451,44 @@ export const basket = defineStore("basket", {
       }
     },
 
-    async getBasketProducts(fromAutoUpdate = false) {
+    async getBasketProducts(isBackgroundRefresh = false) {
+      const generationWhenStarted = this.updateGeneration;
+      if (!isBackgroundRefresh) {
+        this.hydrateProductsFromLocalStorage(this.currentBasket);
+      }
+
       try {
-        if (this.offlineMode) {
-          return;
-        }
-
-        if (fromAutoUpdate && !this.shouldAutoUpdate) {
-          return;
-        }
-
-        if (!fromAutoUpdate) {
-          this.loading.basketProducts = true;
-        }
-
         const response = await apiClient.get(`/api/basket/${this.currentBasket}`);
-        this.basketProducts = response.data.basketProducts;
-        this.products = [];
-        response.data.products.forEach(product => {
-          this.products.push(product);
-        });
+        if (this.updateGeneration !== generationWhenStarted) return;
+        if (response.data.products && Array.isArray(response.data.products)) {
+          this.products = response.data.products;
+          this.persistProductsToLocalStorage();
+        } else if (isBackgroundRefresh) {
+          this._setSyncStatus('error');
+        }
       } catch (error) {
         console.error(error);
-      } finally {
-        this.loading.basketProducts = false;
+        if (this.updateGeneration === generationWhenStarted && isBackgroundRefresh) {
+          this._setSyncStatus('error');
+        }
       }
     },
 
     openEditQuantityModal(productId) {
-      if (this.offlineMode) {
-        return;
-      }
-
       this.productDetailsId = productId;
       this.editQuantityModal = true;
     },
 
-    async closeEditQuantityModal(newQuantity) {
-
+    closeEditQuantityModal(newQuantity) {
       this.editQuantityModal = false;
-
-      let product = this.products.find(p => p.id === this.productDetailsId);
-
-      if (newQuantity === product.quantity) {
+      const product = this.products.find(p => p.id === this.productDetailsId);
+      if (newQuantity === product?.quantity) {
         this.productDetailsId = null;
         return;
       }
-
       if (product) {
-        await this.editProductQuantity(this.productDetailsId, newQuantity);
+        this.setProductQuantity(this.productDetailsId, newQuantity);
       }
-
       this.productDetailsId = null;
     },
   },

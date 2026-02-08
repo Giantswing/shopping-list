@@ -1,8 +1,7 @@
-const CACHE_NAME = 'basketi-v8'; // Incremented to force update
+const CACHE_NAME = 'basketi-v9'; // Incremented to force update
 const urlsToCache = [
   '/',
   '/index.html',
-  '/offline.html', // Optional: Add if you create an offline fallback page
   '/favicon/favicon-96x96.png',
   '/favicon/apple-touch-icon.png',
   '/favicon/web-app-manifest-512x512.png',
@@ -47,7 +46,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
-        .catch(() => caches.match('/index.html') || caches.match('/offline.html')) // Fallback to cached home or offline page
+        .catch(() => caches.match('/index.html'))
     );
   } else {
     // Handle asset requests (JS, CSS, images, etc.)
@@ -83,7 +82,7 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   self.deferredPrompt = event; // Store for manual triggering if needed
-  
+
   // Notify all clients about the install prompt availability
   self.clients.matchAll().then(clients => {
     clients.forEach(client => {
