@@ -95,7 +95,7 @@ onBeforeUnmount(() => {
     <BurguerMenu />
 
     <div
-      class="flex-grow w-full overflow-y-auto overflow-x-hidden"
+      class="flex-grow min-h-0 w-full overflow-y-auto overflow-x-hidden"
       :class="[useBasket.burguerMenuOpen ? 'pointer-events-none' : '']"
     >
       <BasketList />

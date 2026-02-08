@@ -4,6 +4,8 @@
 
 html {
   box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
 }
 
 *,
@@ -22,6 +24,12 @@ html {
 
 body {
   @apply bg-gradient-to-b from-white to-blue-50;
+  height: 100%;
+  overflow: hidden;
+}
+
+#app {
+  height: 100%;
 }
 
 

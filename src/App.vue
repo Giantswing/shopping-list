@@ -62,20 +62,32 @@ onMounted(() => {
 
   // Add popstate listener for browser back functionality
   window.addEventListener("popstate", handlePopState);
+
+  // When an input is focused (e.g. add product), re-measure viewport after a tick so the keyboard resize is captured (helps on iOS)
+  window.addEventListener("focusin", onInputFocusForViewport);
 });
 
 // Dynamic height for viewport, adjusting for keyboard
 const dynamicHeight = ref(window.innerHeight);
 
-// Update height based on visualViewport or window resize
+const onInputFocusForViewport = () => {
+  requestAnimationFrame(() => {
+    updateHeight();
+    setTimeout(updateHeight, 100);
+    setTimeout(updateHeight, 300);
+  });
+};
+
+// Update height based on visualViewport or window resize (keyboard open = smaller height)
 const updateHeight = () => {
   dynamicHeight.value = window.visualViewport ? window.visualViewport.height : window.innerHeight;
 };
 
-// Set initial height and listen for resize events
+// Set initial height and listen for resize + scroll (scroll fires when keyboard opens on some iOS)
 updateHeight();
 if (window.visualViewport) {
   window.visualViewport.addEventListener("resize", updateHeight);
+  window.visualViewport.addEventListener("scroll", updateHeight);
 } else {
   window.addEventListener("resize", updateHeight);
 }
@@ -86,8 +98,10 @@ onUnmounted(() => {
   window.removeEventListener("offline", checkOnlineStatus);
   window.removeEventListener("popstate", handlePopState);
 
+  window.removeEventListener("focusin", onInputFocusForViewport);
   if (window.visualViewport) {
     window.visualViewport.removeEventListener("resize", updateHeight);
+    window.visualViewport.removeEventListener("scroll", updateHeight);
   } else {
     window.removeEventListener("resize", updateHeight);
   }
@@ -138,9 +152,11 @@ onUnmounted(() => {
   />
 
   <div
-    class="relative w-full flex flex-col items-center justify-center max-w-xl mx-auto"
-    :style="{ height: dynamicHeight + 'px' }"
+    class="relative w-full flex flex-col items-center justify-center max-w-xl mx-auto overflow-hidden min-h-0"
+    :style="{ height: dynamicHeight + 'px', maxHeight: dynamicHeight + 'px' }"
   >
-    <RouterView />
+    <div class="flex-1 min-h-0 w-full flex flex-col">
+      <RouterView />
+    </div>
   </div>
 </template>
