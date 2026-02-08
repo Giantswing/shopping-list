@@ -67,29 +67,52 @@ onMounted(() => {
   window.addEventListener("focusin", onInputFocusForViewport);
 });
 
-// Dynamic height for viewport, adjusting for keyboard
+// Dynamic viewport: on iOS the layout viewport doesn't resize when the keyboard opens,
+// so we use position:fixed + full visualViewport rect so the app always fills the visible area.
 const dynamicHeight = ref(window.innerHeight);
+const viewportRect = ref({
+  top: 0,
+  left: 0,
+  width: window.innerWidth,
+  height: window.innerHeight
+});
 
 const onInputFocusForViewport = () => {
   requestAnimationFrame(() => {
-    updateHeight();
-    setTimeout(updateHeight, 100);
-    setTimeout(updateHeight, 300);
+    updateViewport();
+    setTimeout(updateViewport, 100);
+    setTimeout(updateViewport, 300);
   });
 };
 
-// Update height based on visualViewport or window resize (keyboard open = smaller height)
-const updateHeight = () => {
-  dynamicHeight.value = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+const updateViewport = () => {
+  if (window.visualViewport) {
+    const vv = window.visualViewport;
+    dynamicHeight.value = vv.height;
+    viewportRect.value = {
+      top: vv.offsetTop,
+      left: vv.offsetLeft,
+      width: vv.width,
+      height: vv.height
+    };
+  } else {
+    dynamicHeight.value = window.innerHeight;
+    viewportRect.value = {
+      top: 0,
+      left: 0,
+      width: window.innerWidth,
+      height: window.innerHeight
+    };
+  }
 };
 
-// Set initial height and listen for resize + scroll (scroll fires when keyboard opens on some iOS)
-updateHeight();
+// Set initial size and listen for resize + scroll (scroll fires when keyboard opens on iOS)
+updateViewport();
 if (window.visualViewport) {
-  window.visualViewport.addEventListener("resize", updateHeight);
-  window.visualViewport.addEventListener("scroll", updateHeight);
+  window.visualViewport.addEventListener("resize", updateViewport);
+  window.visualViewport.addEventListener("scroll", updateViewport);
 } else {
-  window.addEventListener("resize", updateHeight);
+  window.addEventListener("resize", updateViewport);
 }
 
 // Cleanup event listeners on component unmount
@@ -100,10 +123,10 @@ onUnmounted(() => {
 
   window.removeEventListener("focusin", onInputFocusForViewport);
   if (window.visualViewport) {
-    window.visualViewport.removeEventListener("resize", updateHeight);
-    window.visualViewport.removeEventListener("scroll", updateHeight);
+    window.visualViewport.removeEventListener("resize", updateViewport);
+    window.visualViewport.removeEventListener("scroll", updateViewport);
   } else {
-    window.removeEventListener("resize", updateHeight);
+    window.removeEventListener("resize", updateViewport);
   }
 });
 </script>
@@ -152,8 +175,15 @@ onUnmounted(() => {
   />
 
   <div
-    class="relative w-full flex flex-col items-center justify-center max-w-xl mx-auto overflow-hidden min-h-0"
-    :style="{ height: dynamicHeight + 'px', maxHeight: dynamicHeight + 'px' }"
+    class="app-viewport-wrapper relative w-full flex flex-col items-center justify-center max-w-xl mx-auto overflow-hidden min-h-0"
+    :style="{
+      position: 'fixed',
+      top: viewportRect.top + 'px',
+      left: viewportRect.left + 'px',
+      width: viewportRect.width + 'px',
+      height: viewportRect.height + 'px',
+      maxHeight: viewportRect.height + 'px'
+    }"
   >
     <div class="flex-1 min-h-0 w-full flex flex-col">
       <RouterView />
