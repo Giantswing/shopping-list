@@ -12,7 +12,7 @@ const SYNC_STATUS_SHOW_MS = 2000;
 
 export const basket = defineStore("basket", {
   state: () => ({
-    basketAppVersion: '2.1.0',
+    basketAppVersion: '2.1.1',
     newProductInput: '',
     currentView: 'list',
     burguerMenuOpen: false,

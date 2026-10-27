@@ -8,7 +8,7 @@ import BasketEntry from "./BasketEntry.vue";
 import pwaManager from "@/includes/pwa";
 
 const filteredBasketEntries = computed(() => {
-  let result = useBasket?.products || [];
+  let result = [...(useBasket?.products || [])];
 
   if (result.length > 0 && useBasket.currentView === "list") {
     result = result.filter(entry => entry?.is_added);

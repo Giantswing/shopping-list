@@ -55,10 +55,10 @@ const type = computed(() => {
   <!-- GRID VIEW -->
   <div
     v-else-if="useBasket.currentView === 'grid'"
-    class="w-full py-1 flex flex-col justify-between items-center transition-all duration-100 rounded-[20px] h-[90px] border-2 group/entry active:scale-[1.2] transition-all duration-100 active:delay-[-50ms] px-[5px] active:z-50 relative overflow-hidden border-white"
+    class="w-full py-1 flex flex-col justify-between items-center transition-all duration-100 rounded-[20px] h-[90px] border-2 group/entry px-[5px] relative overflow-hidden border-white"
     @click.stop="
       () => {
-        if (props.entry.is_added == false) {
+        if (!props.entry.is_added) {
           useBasket.addProductToBasket(props.entry.name);
         }
       }
@@ -66,21 +66,24 @@ const type = computed(() => {
     :class="[
       entry.is_added
         ? 'bg-white text-gray-800 shadow-md shadow-black/50 outline outline-2 outline-white'
-        : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300',
+        : 'bg-gray-100 opacity-[0.6] text-gray-800 border-gray-300 active:scale-[1.2] active:delay-[-50ms] active:z-50',
       useBasket.filters.groupBy != 'none' && useBasket.currentView === 'grid' ? 'min-w-[120px] max-w-[120px]' : ''
     ]"
     :style="{
       outlineColor: type?.color
     }"
   >
-    <div class="absolute inset-0 bg-white flex justify-center items-center" :style="{ backgroundColor: type?.color + '50' }">
+    <div
+      class="absolute inset-0 bg-white flex justify-center items-center pointer-events-none"
+      :style="{ backgroundColor: type?.color + '50' }"
+    >
       <span class="block translate-x-[20%] rotate-[10deg] text-[80px] font-semibold text-white opacity-20">{{
         type?.emoji
       }}</span>
     </div>
 
     <p
-      class="text-sm text-center leading-none font-bold px-2 h-full flex items-center justify-center pb-2 line-clamp-2 text-ellipsis z-10"
+      class="text-sm text-center leading-none font-bold px-2 h-full flex items-center justify-center pb-2 line-clamp-2 text-ellipsis z-10 pointer-events-none"
     >
       {{ props.entry.name }}
     </p>
@@ -95,26 +98,15 @@ const type = computed(() => {
         <p class="text-center font-semibold text-sm text-blue-900">{{ props.entry?.quantity }}</p>
       </div>
 
-      <!-- ADD TO BASKET BUTTON -->
       <button
         v-if="props.entry.is_added"
-        class="cursor-pointer rounded-full p-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms] flex justify-center items-center border-2 border-white"
-        :class="[
-          props.entry.is_added ? 'bg-rose-400 rounded-r-[18px] rounded-l-md w-[50%]' : 'bg-emerald-500 w-[100%] rounded-[18px]'
-        ]"
-        @click="
-          () => {
-            if (props.entry.is_added) {
-              useBasket.removeProductFromBasket(props.entry.id);
-            } else {
-              useBasket.addProductToBasket(props.entry.name);
-            }
-          }
-        "
+        type="button"
+        class="cursor-pointer p-2 px-4 text-white group/button active:brightness-[1.3] transition-all duration-100 active:delay-[-50ms] flex justify-center items-center border-2 border-white bg-rose-400 rounded-r-[18px] rounded-l-md w-[50%]"
+        @click.stop="useBasket.removeProductFromBasket(props.entry.id)"
       >
         <CIcon
-          :icon="props.entry.is_added ? 'jam:delete-f' : 'material-symbols:add-shopping-cart'"
-          class="transition-all duration-100 text-xl group-active/button:scale-[1.8] transition-all duration-100 group-active/button:delay-[-50ms]"
+          :icon="'jam:delete-f'"
+          class="transition-all duration-100 text-xl group-active/button:scale-[1.8] group-active/button:delay-[-50ms]"
         />
       </button>
     </div>
